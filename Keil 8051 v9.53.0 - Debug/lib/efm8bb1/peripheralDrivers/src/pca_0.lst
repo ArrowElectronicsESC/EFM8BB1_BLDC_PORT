@@ -1,0 +1,313 @@
+C51 COMPILER V9.53.0.0   PCA_0                                                             01/15/2020 15:49:39 PAGE 1   
+
+
+C51 COMPILER V9.53.0.0, COMPILATION OF MODULE PCA_0
+OBJECT MODULE PLACED IN .\lib\efm8bb1\peripheralDrivers\src\pca_0.OBJ
+COMPILER INVOKED BY: c:\SiliconLabs\SimplicityStudio\v4\developer\toolchains\keil_8051\9.53\BIN\C51.exe C:\SiliconLabs\S
+                    -implicityStudio\v4\developer\sdks\8051\v4.1.7\Device\EFM8BB1\peripheral_driver\src\pca_0.c OMF2 SMALL DEBUG OBJECTEXTEND
+                    - ROM(LARGE) WARNINGLEVEL(2) FLOATFUZZY(3) OPTIMIZE(8,SPEED) INTVECTOR(0X0000) INTPROMOTE INCDIR(C:\Users\A92862\Simplici
+                    -tyStudio\v4_workspace\EFM8BB1_BLDC_PORT\inc;C:\Users\A92862\SimplicityStudio\v4_workspace\EFM8BB1_BLDC_PORT\inc\config;C
+                    -:/SiliconLabs/SimplicityStudio/v4/developer/sdks/8051/v4.1.7//Lib/efm8_assert;C:/SiliconLabs/SimplicityStudio/v4/develop
+                    -er/sdks/8051/v4.1.7//kits/common/bsp;C:/SiliconLabs/SimplicityStudio/v4/developer/sdks/8051/v4.1.7//kits/EFM8BB1_LCK/con
+                    -fig;C:/SiliconLabs/SimplicityStudio/v4/developer/sdks/8051/v4.1.7//Device/shared/si8051Base;C:/SiliconLabs/SimplicityStu
+                    -dio/v4/developer/sdks/8051/v4.1.7//Device/EFM8BB1/inc;C:/SiliconLabs/SimplicityStudio/v4/developer/sdks/8051/v4.1.7//Dev
+                    -ice/EFM8BB1/peripheral_driver/inc) PRINT(.\lib\efm8bb1\peripheralDrivers\src\pca_0.lst) COND PAGEWIDTH(120) PAGELENGTH(6
+                    -5) OBJECT(.\lib\efm8bb1\peripheralDrivers\src\pca_0.OBJ)
+
+line level    source
+
+   1          /**************************************************************************//**
+   2           * Copyright (c) 2015 by Silicon Laboratories Inc. All rights reserved.
+   3           *
+   4           * http://developer.silabs.com/legal/version/v11/Silicon_Labs_Software_License_Agreement.txt
+   5           *****************************************************************************/
+   6          
+   7          #include "pca_0.h"
+   8          
+   9          #include "assert.h"
+  10          
+  11          uint8_t PCA0_getIntFlags()
+  12          {
+  13   1        uint8_t val;
+  14   1        val = PCA0CN0 & (PCA0_OVERFLOW_IF
+  15   1                         | PCA0_CHAN0_IF
+  16   1                         | PCA0_CHAN1_IF
+  17   1                         | PCA0_CHAN2_IF);
+  18   1        return val | (PCA0PWM & PCA0_IOVERFLOW_IF);
+  19   1      }
+  20          
+  21          void PCA0_clearIntFlag(uint8_t flag)
+  22          {
+  23   1        PCA0CN0  &= ~(flag & ~PCA0_IOVERFLOW_IF);
+  24   1        PCA0PWM &= ~(flag & PCA0_IOVERFLOW_IF);
+  25   1      }
+  26          
+  27          void PCA0_enableInt(uint8_t flag, bool enable)
+  28          {
+  29   1        uint8_t en = (uint8_t) enable;
+  30   1      
+  31   1        if(flag & PCA0_CHAN0_IF){
+  32   2          PCA0CPM0 &= ~PCA0CPM0_ECCF__BMASK;
+  33   2          PCA0CPM0 |= en << PCA0CPM0_ECCF__SHIFT;
+  34   2        }
+  35   1        if(flag & PCA0_CHAN1_IF){
+  36   2          PCA0CPM1 &= ~PCA0CPM1_ECCF__BMASK;
+  37   2          PCA0CPM1 |= en << PCA0CPM1_ECCF__SHIFT;
+  38   2        }
+  39   1        if(flag & PCA0_CHAN2_IF){
+  40   2          PCA0CPM2 &= ~PCA0CPM2_ECCF__BMASK;
+  41   2          PCA0CPM2 |= en << PCA0CPM2_ECCF__SHIFT;
+  42   2        }
+  43   1        if(flag & PCA0_OVERFLOW_IF){
+  44   2          PCA0MD &= ~PCA0MD_ECF__BMASK;
+  45   2          PCA0MD |= en << PCA0MD_ECF__SHIFT;
+  46   2        }
+  47   1        if(flag & PCA0_IOVERFLOW_IF){
+C51 COMPILER V9.53.0.0   PCA_0                                                             01/15/2020 15:49:39 PAGE 2   
+
+  48   2          PCA0PWM &= ~PCA0PWM_ECOV__BMASK;
+  49   2          PCA0PWM |= en << PCA0PWM_ECOV__SHIFT;
+  50   2        }
+  51   1      }
+  52          
+  53          uint16_t PCA0_readChannel(PCA0_Channel_t channel)
+  54          {
+  55   1        switch(channel)
+  56   1        {
+  57   2        case 0:
+  58   2          return PCA0CP0;
+  59   2        case 1:
+  60   2          return PCA0CP1;
+  61   2        case 2:
+  62   2          return PCA0CP2;
+  63   2        }
+  64   1        return 0x0;
+  65   1      }
+  66          
+  67          void PCA0_writeChannel(PCA0_Channel_t channel, uint16_t value)
+  68          {
+  69   1        uint8_t lower = value >> 8;
+  70   1        switch(channel)
+  71   1        {
+  72   2        case 0:
+  73   2          PCA0CPL0 = value;
+  74   2          PCA0CPH0 = lower;
+  75   2          break;
+  76   2        case 1:
+  77   2          PCA0CPL1 = value;
+  78   2          PCA0CPH1 = lower;
+  79   2          break;
+  80   2        case 2:
+  81   2          PCA0CPL2 = value;
+  82   2          PCA0CPH2 = lower;
+  83   2          break;
+  84   2        }
+  85   1      }
+  86          
+  87          uint16_t PCA0_readCounter()
+  88          {
+  89   1        //PCA0L must be read first for accurate results. If PCA0
+  90   1        //  is returned then PCA0H will be read first (compiler specific).
+  91   1        return PCA0L + (PCA0H << 8);
+  92   1      }
+  93          
+  94          void PCA0_writeCounter(uint16_t value)
+  95          {
+  96   1        PCA0 = value;
+  97   1      }
+  98          
+  99          void PCA0_run()
+ 100          {
+ 101   1        PCA0CN0_CR = 1;
+ 102   1      }
+ 103          
+ 104          void PCA0_halt()
+ 105          {
+ 106   1        PCA0CN0_CR = 0;
+ 107   1      }
+ 108          
+ 109          void PCA0_init(PCA0_Timebase_t  timebase, PCA0_IdleState_t idleState)
+ 110          {
+C51 COMPILER V9.53.0.0   PCA_0                                                             01/15/2020 15:49:39 PAGE 3   
+
+ 111   1        PCA0MD &= ~(PCA0MD_CPS__FMASK | PCA0MD_CIDL__BMASK);
+ 112   1        PCA0MD |= timebase + idleState;
+ 113   1      }
+ 114          
+ 115          void PCA0_initChannel(PCA0_Channel_t channel,
+ 116                                PCA0_ChannelMode_t  mode,
+ 117                                PCA0_ChannelOutPolatiry_t pol
+ 118                                )
+ 119          {
+ 120   1        #define MODE_MASK  ~(PCA0CPM0_PWM16__BMASK \
+ 121   1                             | PCA0CPM0_ECOM__BMASK \
+ 122   1                             | PCA0CPM0_CAPP__BMASK \
+ 123   1                             | PCA0CPM0_CAPN__BMASK \
+ 124   1                             | PCA0CPM0_MAT__BMASK \
+ 125   1                             | PCA0CPM0_TOG__BMASK \
+ 126   1                             | PCA0CPM0_PWM__BMASK)
+ 127   1        #define PWM_MASK  ~(PCA0PWM_ARSEL__BMASK \
+ 128   1                            | PCA0PWM_CLSEL__FMASK)
+ 129   1      
+ 130   1        #define NBIT_VALUE_MASK 0x07
+ 131   1        #define NBIT_MASK 0x70
+ 132   1        #define NBIT_PCM   PCA0CPM0_PWM16__8_BIT \
+ 133   1                           | PCA0CPM0_ECOM__ENABLED \
+ 134   1                           | PCA0CPM0_CAPP__DISABLED \
+ 135   1                           | PCA0CPM0_CAPN__DISABLED \
+ 136   1                           | PCA0CPM0_MAT__ENABLED \
+ 137   1                           | PCA0CPM0_TOG__DISABLED \
+ 138   1                           | PCA0CPM0_PWM__ENABLED
+ 139   1        # define IS_16BIT 0x80
+ 140   1      
+ 141   1        uint8_t pwmValue = (uint8_t) mode;
+ 142   1      
+ 143   1        //Set channel polarity
+ 144   1        PCA0POL &= ~(0x01 << channel);
+ 145   1        PCA0POL |= (pol << channel);
+ 146   1      
+ 147   1        //UPDATE PWM if we are a PWM mode
+ 148   1        if( (mode & NBIT_MASK) == NBIT_MASK)
+ 149   1        {
+ 150   2          PCA0PWM &= PWM_MASK;
+ 151   2      
+ 152   2      
+ 153   2          if(mode & IS_16BIT)
+ 154   2          {
+ 155   3            pwmValue = NBIT_PCM | IS_16BIT;
+ 156   3          }
+ 157   2          else
+ 158   2          {
+ 159   3            PCA0PWM |= (mode & NBIT_VALUE_MASK) | PCA0PWM_ARSEL__AUTORELOAD;
+ 160   3            pwmValue = NBIT_PCM;
+ 161   3          }
+ 162   2      
+ 163   2          //Update center/edge selection
+ 164   2          PCA0CENT &= ~(0x01 << channel);
+ 165   2          PCA0CENT |= ((mode & 0x08) >> 3) << channel;
+ 166   2        }
+ 167   1      
+ 168   1        //Set channel mode
+ 169   1        switch (channel)
+ 170   1        {
+ 171   2        case 0:
+ 172   2          PCA0CPM0 &= MODE_MASK;
+ 173   2          PCA0CPM0 |= pwmValue;
+C51 COMPILER V9.53.0.0   PCA_0                                                             01/15/2020 15:49:39 PAGE 4   
+
+ 174   2          break;
+ 175   2      
+ 176   2        case 1:
+ 177   2          PCA0CPM1 &= MODE_MASK;
+ 178   2          PCA0CPM1 |= pwmValue;
+ 179   2          break;
+ 180   2      
+ 181   2        case 2:
+ 182   2          PCA0CPM2 &= MODE_MASK;
+ 183   2          PCA0CPM2 |= pwmValue;
+ 184   2          break;
+ 185   2        }
+ 186   1      }
+ 187          
+ 188          void PCA0_reset()
+ 189          {
+ 190   1        //Reset channels
+ 191   1        uint8_t i;
+ 192   1        for (i=0; i<=2; i++)
+ 193   1        {
+ 194   2          PCA0_resetChannel(i);
+ 195   2        }
+ 196   1      
+ 197   1        //Reset PCA regs
+ 198   1        PCA0MD  = 0x0;
+ 199   1        PCA0CN0  = 0x0;
+ 200   1        PCA0    = 0x0;
+ 201   1        PCA0PWM = 0x0;
+ 202   1      }
+ 203          
+ 204          void PCA0_resetChannel(PCA0_Channel_t channel)
+ 205          {
+ 206   1        //Clear polarity and center align
+ 207   1        PCA0POL &= ~(0x01 << channel);
+ 208   1        PCA0CENT &= ~(0x01 << channel);
+ 209   1      
+ 210   1      
+ 211   1        switch (channel)
+ 212   1        {
+ 213   2        case 0:
+ 214   2          PCA0CP0 = 0x00;
+ 215   2          PCA0CPM0 = 0x0;
+ 216   2          return;
+ 217   2        case 1:
+ 218   2          PCA0CP1 = 0x00;
+ 219   2          PCA0CPM1 = 0x0;
+ 220   2          return;
+ 221   2        case 2:
+ 222   2          PCA0CP2 = 0x00;
+ 223   2          PCA0CPM2 = 0x0;
+ 224   2          return;
+ 225   2        }
+ 226   1      }
+ 227          
+ 228          #if EFM8PDL_PCA0_USE_ISR == 1
+              
+              SI_INTERRUPT(PCA0_ISR, PCA0_IRQn)
+              {
+                //Save and clear flags
+                uint8_t flags = PCA0CN0 & (PCA0CN0_CF__BMASK
+                                                     | PCA0CN0_CCF0__BMASK
+                                                     | PCA0CN0_CCF1__BMASK
+                                                     | PCA0CN0_CCF2__BMASK);
+C51 COMPILER V9.53.0.0   PCA_0                                                             01/15/2020 15:49:39 PAGE 5   
+
+                PCA0CN0 &= ~flags;
+              
+                if( (PCA0PWM & PCA0PWM_COVF__BMASK)
+                    && (PCA0PWM & PCA0PWM_ECOV__BMASK))
+                {
+                  PCA0_intermediateOverflowCb();
+                }
+                PCA0PWM &= ~PCA0PWM_COVF__BMASK;
+              
+                if((flags & PCA0CN0_CF__BMASK)
+                   && (PCA0MD & PCA0MD_ECF__BMASK))
+                {
+                  PCA0_overflowCb();
+                }
+                if((flags & PCA0CN0_CCF0__BMASK)
+                   && (PCA0CPM0 & PCA0CPM0_ECCF__BMASK))
+                {
+                  PCA0_channel0EventCb();
+                }
+                if((flags & PCA0CN0_CCF1__BMASK)
+                  && (PCA0CPM1 & PCA0CPM1_ECCF__BMASK))
+                {
+                  PCA0_channel1EventCb();
+                }
+                if((flags & PCA0CN0_CCF2__BMASK)
+                    && (PCA0CPM2 & PCA0CPM2_ECCF__BMASK))
+                {
+                  PCA0_channel2EventCb();
+                }
+              }
+              
+              
+              #endif //EFM8PDL_PCA0_USE_ISR
+
+
+MODULE INFORMATION:   STATIC OVERLAYABLE
+   CODE SIZE        =    371    ----
+   CONSTANT SIZE    =   ----    ----
+   XDATA SIZE       =   ----    ----
+   PDATA SIZE       =   ----    ----
+   DATA SIZE        =   ----       1
+   IDATA SIZE       =   ----    ----
+   BIT SIZE         =   ----       1
+   EDATA SIZE       =   ----    ----
+   HDATA SIZE       =   ----    ----
+   XDATA CONST SIZE =   ----    ----
+   FAR CONST SIZE   =   ----    ----
+END OF MODULE INFORMATION.
+
+
+C51 COMPILATION COMPLETE.  0 WARNING(S),  0 ERROR(S)
