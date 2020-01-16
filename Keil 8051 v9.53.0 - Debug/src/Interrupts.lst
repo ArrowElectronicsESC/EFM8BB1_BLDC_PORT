@@ -1,4 +1,4 @@
-C51 COMPILER V9.53.0.0   INTERRUPTS                                                        01/15/2020 15:49:38 PAGE 1   
+C51 COMPILER V9.53.0.0   INTERRUPTS                                                        01/16/2020 14:06:03 PAGE 1   
 
 
 C51 COMPILER V9.53.0.0, COMPILATION OF MODULE INTERRUPTS
@@ -11,7 +11,8 @@ COMPILER INVOKED BY: c:\SiliconLabs\SimplicityStudio\v4\developer\toolchains\kei
                     -common/bsp;C:/SiliconLabs/SimplicityStudio/v4/developer/sdks/8051/v4.1.7//kits/EFM8BB1_LCK/config;C:/SiliconLabs/Simplic
                     -ityStudio/v4/developer/sdks/8051/v4.1.7//Device/shared/si8051Base;C:/SiliconLabs/SimplicityStudio/v4/developer/sdks/8051
                     -/v4.1.7//Device/EFM8BB1/inc;C:/SiliconLabs/SimplicityStudio/v4/developer/sdks/8051/v4.1.7//Device/EFM8BB1/peripheral_dri
-                    -ver/inc) PRINT(.\src\Interrupts.lst) COND PAGEWIDTH(120) PAGELENGTH(65) OBJECT(.\src\Interrupts.OBJ)
+                    -ver/inc;C:\SiliconLabs\SimplicityStudio\v4\developer\sdks\8051\v4.1.7\kits\common\drivers\efm8_retargetserial) PRINT(.\s
+                    -rc\Interrupts.lst) COND PAGEWIDTH(120) PAGELENGTH(65) OBJECT(.\src\Interrupts.OBJ)
 
 line level    source
 
@@ -25,68 +26,177 @@ line level    source
    8          
    9          // USER INCLUDES
   10          #include <SI_EFM8BB1_Register_Enums.h>
-  11          
-  12          //-----------------------------------------------------------------------------
-  13          // ADC0EOC_ISR
-  14          //-----------------------------------------------------------------------------
-  15          //
-  16          // ADC0EOC ISR Content goes here. Remember to clear flag bits:
-  17          // ADC0CN0::ADINT (Conversion Complete Interrupt Flag)
-  18          //
-  19          //-----------------------------------------------------------------------------
-  20          SI_INTERRUPT (ADC0EOC_ISR, ADC0EOC_IRQn)
-  21          {
-  22   1      
-  23   1      }
-  24          
-  25          //-----------------------------------------------------------------------------
-  26          // PCA0_ISR
-  27          //-----------------------------------------------------------------------------
-  28          //
-  29          // PCA0 ISR Content goes here. Remember to clear flag bits:
-  30          // PCA0CN0::CCF0 (PCA Module 0 Capture/Compare Flag)
-  31          // PCA0CN0::CCF1 (PCA Module 1 Capture/Compare Flag)
-  32          // PCA0CN0::CCF2 (PCA Module 2 Capture/Compare Flag)
-  33          // PCA0CN0::CF (PCA Counter/Timer Overflow Flag)
-  34          // PCA0PWM::COVF (Cycle Overflow Flag)
-  35          //
-  36          //-----------------------------------------------------------------------------
-  37          SI_INTERRUPT (PCA0_ISR, PCA0_IRQn)
-  38          {
-  39   1      
-  40   1      }
-  41          
-  42          //-----------------------------------------------------------------------------
-  43          // CMP1_ISR
-  44          //-----------------------------------------------------------------------------
-  45          //
-  46          // CMP1 ISR Content goes here. Remember to clear flag bits:
-  47          // CMP1CN0::CPFIF (Comparator Falling-Edge Flag)
-  48          // CMP1CN0::CPRIF (Comparator Rising-Edge Flag)
-C51 COMPILER V9.53.0.0   INTERRUPTS                                                        01/15/2020 15:49:38 PAGE 2   
+  11          #include "bldcdk.h"
+*** WARNING C322 IN LINE 130 OF \Users\A92862\SimplicityStudio\v4_workspace\EFM8BB1_BLDC_PORT\inc\BLDC_RD_Build_Params.h
+             -: unknown identifier
+  12          
+  13          //-----------------------------------------------------------------------------
+  14          // ADC0EOC_ISR
+  15          //-----------------------------------------------------------------------------
+  16          //
+  17          // ADC0EOC ISR Content goes here. Remember to clear flag bits:
+  18          // ADC0CN0::ADINT (Conversion Complete Interrupt Flag)
+  19          //
+  20          //-----------------------------------------------------------------------------
+  21          SI_INTERRUPT (ADC0EOC_ISR, ADC0EOC_IRQn)
+  22          {
+  23   1              static uint32_t accumulator = 0;     // Accumulator for averaging
+  24   1              static uint16_t measurements = 2048; // Measurement counter
+  25   1              uint32_t result = 0;
+  26   1              uint32_t mV;                         // Measured voltage in mV
+  27   1      
+  28   1              ADC0CN0_ADINT = 0;                  // Clear ADC0 conv. complete flag
+  29   1      
+  30   1              accumulator += ADC0;
+  31   1              measurements--;
+  32   1      
+  33   1              if(measurements == 0)
+  34   1              {
+  35   2                measurements = 2048;
+  36   2                result = accumulator / 2048;
+  37   2                accumulator = 0;
+  38   2      
+  39   2                // The 10-bit ADC value is averaged across 2048 measurements.
+  40   2                // The measured voltage applied to P1.7 is then:
+  41   2                //
+  42   2                //                           Vref (mV)
+  43   2                //   measurement (mV) =   --------------- * result (bits)
+  44   2                //                       (2^10)-1 (bits)
+  45   2      
+C51 COMPILER V9.53.0.0   INTERRUPTS                                                        01/16/2020 14:06:03 PAGE 2   
 
-  49          //
-  50          //-----------------------------------------------------------------------------
-  51          SI_INTERRUPT (CMP1_ISR, CMP1_IRQn)
-  52          {
-  53   1      
-  54   1      }
-  55          
+  46   2                mV =  (result * 3300) / 1023;
+  47   2      
+  48   2                RETARGET_PRINTF ("\nP0.7 voltage: %ld mV\n", mV);
+  49   2              }
+  50   1      }
+  51          
+  52          //-----------------------------------------------------------------------------
+  53          // PCA0_ISR
+  54          //-----------------------------------------------------------------------------
+  55          //
+  56          // PCA0 ISR Content goes here. Remember to clear flag bits:
+  57          // PCA0CN0::PCA0CN0_CCF0 (PCA Module 0 Capture/Compare Flag)
+  58          // PCA0CN0::CCF1 (PCA Module 1 Capture/Compare Flag)
+  59          // PCA0CN0::CCF2 (PCA Module 2 Capture/Compare Flag)
+  60          // PCA0CN0::CF (PCA Counter/Timer Overflow Flag)
+  61          // PCA0PWM::COVF (Cycle Overflow Flag)
+  62          //
+  63          //-----------------------------------------------------------------------------
+  64          SI_INTERRUPT (PCA0_ISR, PCA0_IRQn)
+  65          {
+  66   1      //    static UU16 xpca_count;
+  67   1      //    U16 user_timer;
+  68   1      //    static UU16 new_duty;
+  69   1      //    static UU16 new_cpblank_duty;
+  70   1      //    static U8 new_polarity;
+  71   1      //
+  72   1      //    if ( (PCA0PWM & 0x60) == 0x60 )
+  73   1      //    {
+  74   1      //        // PCA Cycle counter overflow interrupt - this is enabled because
+  75   1      //        // user needs to update duty cycle of both the motor PWM and
+  76   1      //        // the blanking PWM signal
+  77   1      //
+  78   1      //        PCA0PWM = (PWM_RESOLUTION - 8) | 0x80;
+  79   1      //        // protect from high priority interrupt service
+  80   1      //        IE_EA = 0;
+  81   1      //        PCA0POL = new_polarity;
+  82   1      //        PCA0CN0_CCF0 = 0;
+  83   1      //        MOTPWM_CCF = 0;
+  84   1      //        // This clIE_EArs the ECOM bit-causing PWM output to go to inactive state
+  85   1      //        PCA0CPL0 = new_cpblank_duty.U8[LSB];
+  86   1      //        // This sets the ECOM bit
+  87   1      //        PCA0CPH0 = new_cpblank_duty.U8[MSB];
+  88   1      //        // This clIE_EArs the ECOM bit-causing PWM output to go to inactive state
+  89   1      //        MOTPWM_PCA0CPL = new_duty.U8[LSB];
+  90   1      //        MOTPWM_PCA0CPH = new_duty.U8[MSB];
+  91   1      //        PCA0PWM = (PWM_RESOLUTION - 8);
+  92   1      //        // CEX1, match flag is set
+  93   1      //        if (MOTPWM_CCF)
+  94   1      //        {
+  95   1      //            xpca_count.U8[LSB] = PCA0L;
+  96   1      //            xpca_count.U8[MSB] = PCA0H;
+  97   1      //            // Additional hIE_EAdroom due to delays in execution
+  98   1      //            // in case we miss the match event (toggling CEXn), we ensure that
+  99   1      //            // postponed(+32) event occur. Otherwise, it could make 1(one) 100%
+ 100   1      //            // or 0% pwm cycle once in a while. This is happening at very low
+ 101   1      //            // or very high duty cycle when the period between pca cycle overflow
+ 102   1      //            // and match event is very short.
+ 103   1      //            xpca_count.U16 += 32;
+ 104   1      //            MOTPWM_PCA0CPL = xpca_count.U8[LSB];
+ 105   1      //            MOTPWM_PCA0CPH = xpca_count.U8[MSB];
+ 106   1      //        }
+ 107   1      //        // CEX0, match flag is set
+ 108   1      //        if (PCA0CN0_CCF0)
+C51 COMPILER V9.53.0.0   INTERRUPTS                                                        01/16/2020 14:06:03 PAGE 3   
+
+ 109   1      //        {
+ 110   1      //            xpca_count.U8[LSB] = PCA0L;
+ 111   1      //            xpca_count.U8[MSB] = PCA0H;
+ 112   1      //            // Additional hIE_EAdroom due to delays in execution
+ 113   1      //            // in case we miss the match event (toggling CEXn), we ensure that
+ 114   1      //            // postponed(+32) event occur. Otherwise, it could make 1(one) 100%
+ 115   1      //            // or 0% pwm cycle once in a while. This is happening at very low
+ 116   1      //            // or very high duty cycle when the period between pca cycle overflow
+ 117   1      //            // and match event is very short.
+ 118   1      //            xpca_count.U16 += 32;
+ 119   1      //            PCA0CPL0 = xpca_count.U8[LSB];
+ 120   1      //            PCA0CPH0 = xpca_count.U8[MSB];
+ 121   1      //        }
+ 122   1      //        IE_EA = 1;
+ 123   1      //        // for application level information.
+ 124   1      //        SLW_pwm_updated = 1;
+ 125   1      //    }
+ 126   1      //
+ 127   1      //    if (PCA0CN0_CF)
+ 128   1      //    {
+ 129   1      //        // Disable global interrupts to ensure coherence
+ 130   1      //        // in upper 16-bits of timer by higher priority interrupt.
+ 131   1      //        IE_EA = 0;
+ 132   1      //        PCA0CN0_CF = 0;
+ 133   1      //        user_timer++;
+ 134   1      //        IE_EA = 1;
+ 135   1      //
+ 136   1      //        if( 0 == ((U8)user_timer & pid_calc_interval) )
+ 137   1      //        {
+ 138   1      //            pid_flag = 1;
+ 139   1      //        }
+ 140   1      //    }
+ 141   1      }
+ 142          
+ 143          //-----------------------------------------------------------------------------
+ 144          // CMP1_ISR
+ 145          //-----------------------------------------------------------------------------
+ 146          //
+ 147          // CMP1 ISR Content goes here. Remember to clear flag bits:
+ 148          // CMP1CN0::CPFIF (Comparator Falling-Edge Flag)
+ 149          // CMP1CN0::CPRIF (Comparator Rising-Edge Flag)
+ 150          //
+ 151          //-----------------------------------------------------------------------------
+ 152          SI_INTERRUPT (CMP1_ISR, CMP1_IRQn)
+ 153          {
+ 154   1      
+ 155   1      }
+ 156          
+*** WARNING C316 IN LINE 156 OF C:\Users\A92862\SimplicityStudio\v4_workspace\EFM8BB1_BLDC_PORT\src\Interrupts.c: unterm
+             -inated conditionals
 
 
 MODULE INFORMATION:   STATIC OVERLAYABLE
-   CODE SIZE        =     12    ----
-   CONSTANT SIZE    =   ----    ----
+   CODE SIZE        =    208    ----
+   CONSTANT SIZE    =     23    ----
    XDATA SIZE       =   ----    ----
    PDATA SIZE       =   ----    ----
-   DATA SIZE        =   ----    ----
+   DATA SIZE        =      6       4
    IDATA SIZE       =   ----    ----
    BIT SIZE         =   ----    ----
    EDATA SIZE       =   ----    ----
    HDATA SIZE       =   ----    ----
    XDATA CONST SIZE =   ----    ----
+C51 COMPILER V9.53.0.0   INTERRUPTS                                                        01/16/2020 14:06:03 PAGE 4   
+
    FAR CONST SIZE   =   ----    ----
 END OF MODULE INFORMATION.
 
 
-C51 COMPILATION COMPLETE.  0 WARNING(S),  0 ERROR(S)
+C51 COMPILATION COMPLETE.  2 WARNING(S),  0 ERROR(S)

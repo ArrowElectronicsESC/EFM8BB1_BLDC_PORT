@@ -1,4 +1,4 @@
-C51 COMPILER V9.53.0.0   ASSERT                                                            01/15/2020 15:49:40 PAGE 1   
+C51 COMPILER V9.53.0.0   ASSERT                                                            01/16/2020 14:01:17 PAGE 1   
 
 
 C51 COMPILER V9.53.0.0, COMPILATION OF MODULE ASSERT
@@ -11,8 +11,8 @@ COMPILER INVOKED BY: c:\SiliconLabs\SimplicityStudio\v4\developer\toolchains\kei
                     -/kits/common/bsp;C:/SiliconLabs/SimplicityStudio/v4/developer/sdks/8051/v4.1.7//kits/EFM8BB1_LCK/config;C:/SiliconLabs/S
                     -implicityStudio/v4/developer/sdks/8051/v4.1.7//Device/shared/si8051Base;C:/SiliconLabs/SimplicityStudio/v4/developer/sdk
                     -s/8051/v4.1.7//Device/EFM8BB1/inc;C:/SiliconLabs/SimplicityStudio/v4/developer/sdks/8051/v4.1.7//Device/EFM8BB1/peripher
-                    -al_driver/inc) PRINT(.\lib\efm8_assert\assert.lst) COND PAGEWIDTH(120) PAGELENGTH(65) OBJECT(.\lib\efm8_assert\assert.OB
-                    -J)
+                    -al_driver/inc;C:\SiliconLabs\SimplicityStudio\v4\developer\sdks\8051\v4.1.7\kits\common\drivers\efm8_retargetserial) PRI
+                    -NT(.\lib\efm8_assert\assert.lst) COND PAGEWIDTH(120) PAGELENGTH(65) OBJECT(.\lib\efm8_assert\assert.OBJ)
 
 line level    source
 

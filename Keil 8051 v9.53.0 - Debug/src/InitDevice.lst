@@ -1,4 +1,4 @@
-C51 COMPILER V9.53.0.0   INITDEVICE                                                        01/15/2020 15:49:38 PAGE 1   
+C51 COMPILER V9.53.0.0   INITDEVICE                                                        01/16/2020 14:01:16 PAGE 1   
 
 
 C51 COMPILER V9.53.0.0, COMPILATION OF MODULE INITDEVICE
@@ -11,7 +11,8 @@ COMPILER INVOKED BY: c:\SiliconLabs\SimplicityStudio\v4\developer\toolchains\kei
                     -common/bsp;C:/SiliconLabs/SimplicityStudio/v4/developer/sdks/8051/v4.1.7//kits/EFM8BB1_LCK/config;C:/SiliconLabs/Simplic
                     -ityStudio/v4/developer/sdks/8051/v4.1.7//Device/shared/si8051Base;C:/SiliconLabs/SimplicityStudio/v4/developer/sdks/8051
                     -/v4.1.7//Device/EFM8BB1/inc;C:/SiliconLabs/SimplicityStudio/v4/developer/sdks/8051/v4.1.7//Device/EFM8BB1/peripheral_dri
-                    -ver/inc) PRINT(.\src\InitDevice.lst) COND PAGEWIDTH(120) PAGELENGTH(65) OBJECT(.\src\InitDevice.OBJ)
+                    -ver/inc;C:\SiliconLabs\SimplicityStudio\v4\developer\sdks\8051\v4.1.7\kits\common\drivers\efm8_retargetserial) PRINT(.\s
+                    -rc\InitDevice.lst) COND PAGEWIDTH(120) PAGELENGTH(65) OBJECT(.\src\InitDevice.OBJ)
 
 line level    source
 
@@ -62,9 +63,9 @@ line level    source
   45          extern void WDT_0_enter_DefaultMode_from_RESET(void) {
   46   1              // $[Watchdog Timer Init Variable Declarations]
   47   1              uint32_t i;
-  48   1              bool ea;
-C51 COMPILER V9.53.0.0   INITDEVICE                                                        01/15/2020 15:49:38 PAGE 2   
+C51 COMPILER V9.53.0.0   INITDEVICE                                                        01/16/2020 14:01:16 PAGE 2   
 
+  48   1              bool ea;
   49   1              // [Watchdog Timer Init Variable Declarations]$
   50   1      
   51   1              // $[WDTCN - Watchdog Timer Control]
@@ -127,9 +128,9 @@ line level    source
  108   1               - P0.6 pin is configured for digital mode
  109   1               - P0.7 pin is configured for analog mode
  110   1               ***********************************************************************/
- 111   1              P0MDIN = P0MDIN_B0__DIGITAL | P0MDIN_B1__DIGITAL | P0MDIN_B2__DIGITAL
-C51 COMPILER V9.53.0.0   INITDEVICE                                                        01/15/2020 15:49:38 PAGE 3   
+C51 COMPILER V9.53.0.0   INITDEVICE                                                        01/16/2020 14:01:16 PAGE 3   
 
+ 111   1              P0MDIN = P0MDIN_B0__DIGITAL | P0MDIN_B1__DIGITAL | P0MDIN_B2__DIGITAL
  112   1                              | P0MDIN_B3__DIGITAL | P0MDIN_B4__DIGITAL | P0MDIN_B5__DIGITAL
  113   1                              | P0MDIN_B6__DIGITAL | P0MDIN_B7__ANALOG;
  114   1              // [P0MDIN - Port 0 Input Mode]$
@@ -192,9 +193,9 @@ line level    source
  171   1               - P1.2 pin is skipped by the crossbar
  172   1               - P1.3 pin is skipped by the crossbar
  173   1               - P1.4 pin is skipped by the crossbar
- 174   1               - P1.5 pin is skipped by the crossbar
-C51 COMPILER V9.53.0.0   INITDEVICE                                                        01/15/2020 15:49:38 PAGE 4   
+C51 COMPILER V9.53.0.0   INITDEVICE                                                        01/16/2020 14:01:16 PAGE 4   
 
+ 174   1               - P1.5 pin is skipped by the crossbar
  175   1               - P1.6 pin is skipped by the crossbar
  176   1               - P1.7 pin is skipped by the crossbar
  177   1               ***********************************************************************/
@@ -257,9 +258,9 @@ line level    source
  234   1               - SYSCLK is equal to selected clock source divided by 1
  235   1               ***********************************************************************/
  236   1              CLKSEL = CLKSEL_CLKSL__HFOSC | CLKSEL_CLKDIV__SYSCLK_DIV_1;
- 237   1              // [CLKSEL - Clock Select]$
-C51 COMPILER V9.53.0.0   INITDEVICE                                                        01/15/2020 15:49:38 PAGE 5   
+C51 COMPILER V9.53.0.0   INITDEVICE                                                        01/16/2020 14:01:16 PAGE 5   
 
+ 237   1              // [CLKSEL - Clock Select]$
  238   1      
  239   1      }
  240          
@@ -322,9 +323,9 @@ line level    source
  297          //================================================================================
  298          extern void PCACH_0_enter_DefaultMode_from_RESET(void) {
  299   1              // $[PCA0 Settings Save]
- 300   1              // Select Capture/Compare register)
-C51 COMPILER V9.53.0.0   INITDEVICE                                                        01/15/2020 15:49:38 PAGE 6   
+C51 COMPILER V9.53.0.0   INITDEVICE                                                        01/16/2020 14:01:16 PAGE 6   
 
+ 300   1              // Select Capture/Compare register)
  301   1              PCA0PWM &= ~PCA0PWM_ARSEL__BMASK;
  302   1              // [PCA0 Settings Save]$
  303   1      
@@ -387,9 +388,9 @@ line level    source
  360   1      
  361   1              // $[ADC0TK - ADC0 Burst Mode Track Time]
  362   1              // [ADC0TK - ADC0 Burst Mode Track Time]$
- 363   1      
-C51 COMPILER V9.53.0.0   INITDEVICE                                                        01/15/2020 15:49:38 PAGE 7   
+C51 COMPILER V9.53.0.0   INITDEVICE                                                        01/16/2020 14:01:16 PAGE 7   
 
+ 363   1      
  364   1              // $[ADC0PWR - ADC0 Power Control]
  365   1              // [ADC0PWR - ADC0 Power Control]$
  366   1      
@@ -452,9 +453,9 @@ line level    source
  423   1              // [Timer Initialization]$
  424   1      
  425   1              // $[TH0 - Timer 0 High Byte]
- 426   1              // [TH0 - Timer 0 High Byte]$
-C51 COMPILER V9.53.0.0   INITDEVICE                                                        01/15/2020 15:49:38 PAGE 8   
+C51 COMPILER V9.53.0.0   INITDEVICE                                                        01/16/2020 14:01:16 PAGE 8   
 
+ 426   1              // [TH0 - Timer 0 High Byte]$
  427   1      
  428   1              // $[TL0 - Timer 0 Low Byte]
  429   1              // [TL0 - Timer 0 Low Byte]$
@@ -517,9 +518,9 @@ line level    source
  486   1              // [TMR2CN0]$
  487   1      
  488   1              // $[Timer Restoration]
- 489   1              // Restore Timer Configuration
-C51 COMPILER V9.53.0.0   INITDEVICE                                                        01/15/2020 15:49:38 PAGE 9   
+C51 COMPILER V9.53.0.0   INITDEVICE                                                        01/16/2020 14:01:16 PAGE 9   
 
+ 489   1              // Restore Timer Configuration
  490   1              TMR2CN0 |= TMR2CN0_TR2_save;
  491   1              // [Timer Restoration]$
  492   1      
@@ -582,9 +583,9 @@ line level    source
  549   1               - Disable CP0 interrupts
  550   1               - Enable interrupt requests generated by the comparator 1 CPRIF or CPFIF
  551   1               flags
- 552   1               - Disable all Port Match interrupts
-C51 COMPILER V9.53.0.0   INITDEVICE                                                        01/15/2020 15:49:38 PAGE 10  
+C51 COMPILER V9.53.0.0   INITDEVICE                                                        01/16/2020 14:01:16 PAGE 10  
 
+ 552   1               - Disable all Port Match interrupts
  553   1               - Enable interrupt requests generated by PCA0
  554   1               - Disable all SMB0 interrupts
  555   1               - Disable Timer 3 interrupts
