@@ -1,4 +1,4 @@
-C51 COMPILER V9.53.0.0   PCA                                                               01/16/2020 14:06:03 PAGE 1   
+C51 COMPILER V9.53.0.0   PCA                                                               01/16/2020 15:26:39 PAGE 1   
 
 
 C51 COMPILER V9.53.0.0, COMPILATION OF MODULE PCA
@@ -7,12 +7,12 @@ COMPILER INVOKED BY: c:\SiliconLabs\SimplicityStudio\v4\developer\toolchains\kei
                     -SimplicityStudio\v4_workspace\EFM8BB1_BLDC_PORT\src\pca.c OMF2 SMALL DEBUG OBJECTEXTEND ROM(LARGE) WARNINGLEVEL(2) FLOAT
                     -FUZZY(3) OPTIMIZE(8,SPEED) INTVECTOR(0X0000) INTPROMOTE INCDIR(C:\Users\A92862\SimplicityStudio\v4_workspace\EFM8BB1_BLD
                     -C_PORT\inc;C:\Users\A92862\SimplicityStudio\v4_workspace\EFM8BB1_BLDC_PORT\inc\config;C:/SiliconLabs/SimplicityStudio/v4
-                    -/developer/sdks/8051/v4.1.7//Lib/efm8_assert;C:/SiliconLabs/SimplicityStudio/v4/developer/sdks/8051/v4.1.7//kits/common/
-                    -bsp;C:/SiliconLabs/SimplicityStudio/v4/developer/sdks/8051/v4.1.7//kits/EFM8BB1_LCK/config;C:/SiliconLabs/SimplicityStud
-                    -io/v4/developer/sdks/8051/v4.1.7//Device/shared/si8051Base;C:/SiliconLabs/SimplicityStudio/v4/developer/sdks/8051/v4.1.7
-                    -//Device/EFM8BB1/inc;C:/SiliconLabs/SimplicityStudio/v4/developer/sdks/8051/v4.1.7//Device/EFM8BB1/peripheral_driver/inc
-                    -;C:\SiliconLabs\SimplicityStudio\v4\developer\sdks\8051\v4.1.7\kits\common\drivers\efm8_retargetserial) PRINT(.\src\pca.
-                    -lst) COND PAGEWIDTH(120) PAGELENGTH(65) OBJECT(.\src\pca.OBJ)
+                    -/developer/sdks/8051/v4.1.7//kits/common/drivers/efm8_retargetserial;C:/SiliconLabs/SimplicityStudio/v4/developer/sdks/8
+                    -051/v4.1.7//Lib/efm8_assert;C:/SiliconLabs/SimplicityStudio/v4/developer/sdks/8051/v4.1.7//kits/common/bsp;C:/SiliconLab
+                    -s/SimplicityStudio/v4/developer/sdks/8051/v4.1.7//kits/EFM8BB1_LCK/config;C:/SiliconLabs/SimplicityStudio/v4/developer/s
+                    -dks/8051/v4.1.7//Device/shared/si8051Base;C:/SiliconLabs/SimplicityStudio/v4/developer/sdks/8051/v4.1.7//Device/EFM8BB1/
+                    -inc;C:/SiliconLabs/SimplicityStudio/v4/developer/sdks/8051/v4.1.7//Device/EFM8BB1/peripheral_driver/inc) PRINT(.\src\pca
+                    -.lst) COND PAGEWIDTH(120) PAGELENGTH(65) OBJECT(.\src\pca.OBJ)
 
 line level    source
 
@@ -52,131 +52,134 @@ line level    source
   32          // Function Prototypes
   33          //-----------------------------------------------------------------------------
   34          
-  35          
-  36          
+  35          //-----------------------------------------------------------------------------
+  36          // Global Variables
   37          //-----------------------------------------------------------------------------
-  38          // PCA_set_initial_polarity
-  39          //-----------------------------------------------------------------------------
-  40          //
-  41          // Return Value : None
-  42          // Parameters   : None
-  43          // Description  :
-  44          //-----------------------------------------------------------------------------
-  45          void PCA_set_initial_polarity(void)
-C51 COMPILER V9.53.0.0   PCA                                                               01/16/2020 14:06:03 PAGE 2   
+  38          U16 user_timer;
+  39          
+  40          //-----------------------------------------------------------------------------
+  41          // PCA_set_initial_polarity
+  42          //-----------------------------------------------------------------------------
+  43          //
+  44          // Return Value : None
+  45          // Parameters   : None
+C51 COMPILER V9.53.0.0   PCA                                                               01/16/2020 15:26:39 PAGE 2   
 
-  46          {
-  47   1          PCA0POL = LOW_DUTY_POLARITY;
-  48   1      }
-  49          
-  50          //-----------------------------------------------------------------------------
-  51          // PCA_enable_pwm
-  52          //-----------------------------------------------------------------------------
-  53          //
-  54          // Return Value : None
-  55          // Parameters   : None
-  56          // Description  :
-  57          //-----------------------------------------------------------------------------
-  58          void PCA_enable_pwm(void)
-  59          {
-  60   1          // 8-11 bit and PWM enable
-  61   1          PCA0CPM0 |= (0x01<<1);
-  62   1          MOTPWM_PCA0CPM |= (0x01<<1);
-  63   1      }
-  64          
-  65          //-----------------------------------------------------------------------------
-  66          // PCA_disable_pwm
-  67          //-----------------------------------------------------------------------------
-  68          //
-  69          // Return Value : None
-  70          // Parameters   : None
-  71          // Description  :
-  72          //-----------------------------------------------------------------------------
-  73          void PCA_disable_pwm(void)
-  74          {
-  75   1          // 8-11 bit and PWM enable
-  76   1          PCA0CPM0 &= ~(0x01<<1);
-  77   1          MOTPWM_PCA0CPM &= ~(0x01<<1);
-  78   1      }
-  79          
-  80          
-  81          //-----------------------------------------------------------------------------
-  82          // PCA_change_duty_cycle
-  83          //-----------------------------------------------------------------------------
-  84          //
-  85          // Return Value : None
-  86          // Parameters   :
-  87          //   duty : new duty cycle to be changed.
-  88          //
-  89          // Description:
-  90          //   user(application) is handling 16 bit duty cycle(max 0xFFFF) but
-  91          //   rIE_EAl max duty cycle is (2^PWM_RESOLUTION - 1).
-  92          //   scaling down is required.
-  93          //   Actual new pwm will be updated at pca cycling overflow interrupt.
-  94          //
-  95          //   high/low duty cycle have different scheme of pwm filtering.
-  96          //   PlIE_EAse refer to application note.
-  97          //-----------------------------------------------------------------------------
-  98          #if (BLDC_RD_PWM_METHOD == H_BRIDGE_HIGH_SIDE_PWM) || \
-  99              (BLDC_RD_PWM_METHOD == H_BRIDGE_LOW_SIDE_PWM) || \
- 100              (BLDC_RD_PWM_METHOD == H_BRIDGE_MIXED_MODE_PWM)
- 101          void PCA_change_duty_cycle(U16 duty)
- 102          {
- 103   1              static U16 prev_duty = INITIAL_PCA_DUTY;
- 104   1      
- 105   1              static UU16 new_duty;
- 106   1              static UU16 new_cpblank_duty;
- 107   1              static U8 new_polarity;
- 108   1      
-C51 COMPILER V9.53.0.0   PCA                                                               01/16/2020 14:06:03 PAGE 3   
+  46          // Description  :
+  47          //-----------------------------------------------------------------------------
+  48          void PCA_set_initial_polarity(void)
+  49          {
+  50   1          PCA0POL = LOW_DUTY_POLARITY;
+  51   1      }
+  52          
+  53          //-----------------------------------------------------------------------------
+  54          // PCA_enable_pwm
+  55          //-----------------------------------------------------------------------------
+  56          //
+  57          // Return Value : None
+  58          // Parameters   : None
+  59          // Description  :
+  60          //-----------------------------------------------------------------------------
+  61          void PCA_enable_pwm(void)
+  62          {
+  63   1          // 8-11 bit and PWM enable
+  64   1          PCA0CPM0 |= (0x01<<1);
+  65   1          MOTPWM_PCA0CPM |= (0x01<<1);
+  66   1      }
+  67          
+  68          //-----------------------------------------------------------------------------
+  69          // PCA_disable_pwm
+  70          //-----------------------------------------------------------------------------
+  71          //
+  72          // Return Value : None
+  73          // Parameters   : None
+  74          // Description  :
+  75          //-----------------------------------------------------------------------------
+  76          void PCA_disable_pwm(void)
+  77          {
+  78   1          // 8-11 bit and PWM enable
+  79   1          PCA0CPM0 &= ~(0x01<<1);
+  80   1          MOTPWM_PCA0CPM &= ~(0x01<<1);
+  81   1      }
+  82          
+  83          
+  84          //-----------------------------------------------------------------------------
+  85          // PCA_change_duty_cycle
+  86          //-----------------------------------------------------------------------------
+  87          //
+  88          // Return Value : None
+  89          // Parameters   :
+  90          //   duty : new duty cycle to be changed.
+  91          //
+  92          // Description:
+  93          //   user(application) is handling 16 bit duty cycle(max 0xFFFF) but
+  94          //   rIE_EAl max duty cycle is (2^PWM_RESOLUTION - 1).
+  95          //   scaling down is required.
+  96          //   Actual new pwm will be updated at pca cycling overflow interrupt.
+  97          //
+  98          //   high/low duty cycle have different scheme of pwm filtering.
+  99          //   PlIE_EAse refer to application note.
+ 100          //-----------------------------------------------------------------------------
+ 101          #if (BLDC_RD_PWM_METHOD == H_BRIDGE_HIGH_SIDE_PWM) || \
+ 102              (BLDC_RD_PWM_METHOD == H_BRIDGE_LOW_SIDE_PWM) || \
+ 103              (BLDC_RD_PWM_METHOD == H_BRIDGE_MIXED_MODE_PWM)
+ 104          void PCA_change_duty_cycle(U16 duty)
+ 105          {
+ 106   1              static U16 prev_duty = INITIAL_PCA_DUTY;
+ 107   1      
+ 108   1              static UU16 new_duty;
+C51 COMPILER V9.53.0.0   PCA                                                               01/16/2020 15:26:39 PAGE 3   
 
- 109   1          bit saved_IE_EA;
- 110   1          U16 ringing;
- 111   1          static bit enable_during_pwmon = 0;
- 112   1          U8 x_new_polarity;
- 113   1          UU16 x_new_cpblank_duty;
- 114   1      
- 115   1          // Scale down 16-bit PWM to PWM_RESOLUTION
- 116   1          duty = duty >> (16 - PWM_RESOLUTION);
- 117   1          if(prev_duty == duty)
- 118   1          {
- 119   2              return;
- 120   2          }
- 121   1          prev_duty = duty;
- 122   1      
- 123   1          //if duty cycle is large, we want comparator to examine during PWM on
- 124   1          if ( (duty > PWM_FILTER_HIGHHYS) ||
- 125   1               (enable_during_pwmon && (duty >= PWM_FILTER_LOWHYS)) )
- 126   1          {
- 127   2              x_new_polarity = HIGH_DUTY_POLARITY;
- 128   2              duty = MAX_PWM_VALUE - duty;
- 129   2              ringing = duty>>(2 + PWM_RESOLUTION - 10);
- 130   2              x_new_cpblank_duty.U16 = duty - ringing;
- 131   2              enable_during_pwmon = 1;
- 132   2          }
- 133   1          else
- 134   1          {
- 135   2              x_new_polarity = LOW_DUTY_POLARITY;
- 136   2              // For low duty cycle, we just need to blank out the short
- 137   2              // transition from PWM ON to PWM OFF.
- 138   2              // additional 4 make minimum blanking period;
- 139   2              ringing = 4 + (duty >> 2);
- 140   2              x_new_cpblank_duty.U16 = duty + ringing;
- 141   2              enable_during_pwmon = 0;
- 142   2          }
- 143   1      
- 144   1          MTR_ATOMIC_ACCESS_START();
- 145   1          new_polarity = x_new_polarity;
- 146   1          new_cpblank_duty.U16 = x_new_cpblank_duty.U16;
- 147   1          new_duty.U16 = duty;
- 148   1          MTR_ATOMIC_ACCESS_END();
- 149   1          // Enable PCA Cycle overflow interrupt.
- 150   1          // This will avoid updating POLARITY register at the middle of pwm cycle.
- 151   1          // Polarity register doesn't have auto-reload one.
- 152   1          PCA0PWM = (PWM_RESOLUTION - 8) | 0x40;
- 153   1      }
- 154          #endif
-*** WARNING C316 IN LINE 154 OF C:\Users\A92862\SimplicityStudio\v4_workspace\EFM8BB1_BLDC_PORT\src\pca.c: unterminated 
+ 109   1              static UU16 new_cpblank_duty;
+ 110   1              static U8 new_polarity;
+ 111   1      
+ 112   1          bit saved_IE_EA;
+ 113   1          U16 ringing;
+ 114   1          static bit enable_during_pwmon = 0;
+ 115   1          U8 x_new_polarity;
+ 116   1          UU16 x_new_cpblank_duty;
+ 117   1      
+ 118   1          // Scale down 16-bit PWM to PWM_RESOLUTION
+ 119   1          duty = duty >> (16 - PWM_RESOLUTION);
+ 120   1          if(prev_duty == duty)
+ 121   1          {
+ 122   2              return;
+ 123   2          }
+ 124   1          prev_duty = duty;
+ 125   1      
+ 126   1          //if duty cycle is large, we want comparator to examine during PWM on
+ 127   1          if ( (duty > PWM_FILTER_HIGHHYS) ||
+ 128   1               (enable_during_pwmon && (duty >= PWM_FILTER_LOWHYS)) )
+ 129   1          {
+ 130   2              x_new_polarity = HIGH_DUTY_POLARITY;
+ 131   2              duty = MAX_PWM_VALUE - duty;
+ 132   2              ringing = duty>>(2 + PWM_RESOLUTION - 10);
+ 133   2              x_new_cpblank_duty.U16 = duty - ringing;
+ 134   2              enable_during_pwmon = 1;
+ 135   2          }
+ 136   1          else
+ 137   1          {
+ 138   2              x_new_polarity = LOW_DUTY_POLARITY;
+ 139   2              // For low duty cycle, we just need to blank out the short
+ 140   2              // transition from PWM ON to PWM OFF.
+ 141   2              // additional 4 make minimum blanking period;
+ 142   2              ringing = 4 + (duty >> 2);
+ 143   2              x_new_cpblank_duty.U16 = duty + ringing;
+ 144   2              enable_during_pwmon = 0;
+ 145   2          }
+ 146   1      
+ 147   1          MTR_ATOMIC_ACCESS_START();
+ 148   1          new_polarity = x_new_polarity;
+ 149   1          new_cpblank_duty.U16 = x_new_cpblank_duty.U16;
+ 150   1          new_duty.U16 = duty;
+ 151   1          MTR_ATOMIC_ACCESS_END();
+ 152   1          // Enable PCA Cycle overflow interrupt.
+ 153   1          // This will avoid updating POLARITY register at the middle of pwm cycle.
+ 154   1          // Polarity register doesn't have auto-reload one.
+ 155   1          PCA0PWM = (PWM_RESOLUTION - 8) | 0x40;
+ 156   1      }
+ 157          #endif
+*** WARNING C316 IN LINE 157 OF C:\Users\A92862\SimplicityStudio\v4_workspace\EFM8BB1_BLDC_PORT\src\pca.c: unterminated 
              -conditionals
 
 
@@ -185,16 +188,16 @@ MODULE INFORMATION:   STATIC OVERLAYABLE
    CONSTANT SIZE    =   ----    ----
    XDATA SIZE       =   ----    ----
    PDATA SIZE       =   ----    ----
-   DATA SIZE        =      7       2
+   DATA SIZE        =      9       2
    IDATA SIZE       =   ----    ----
    BIT SIZE         =      1       1
    EDATA SIZE       =   ----    ----
    HDATA SIZE       =   ----    ----
+C51 COMPILER V9.53.0.0   PCA                                                               01/16/2020 15:26:39 PAGE 4   
+
    XDATA CONST SIZE =   ----    ----
    FAR CONST SIZE   =   ----    ----
 END OF MODULE INFORMATION.
-
-C51 COMPILER V9.53.0.0   PCA                                                               01/16/2020 14:06:03 PAGE 4   
 
 
 C51 COMPILATION COMPLETE.  2 WARNING(S),  0 ERROR(S)

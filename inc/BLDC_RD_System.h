@@ -47,11 +47,11 @@
 // FEATURE_BTN1
 //   BTN1 functionality - P2.1 on ref design board
 
-#define FEATURE_FG
+//#define FEATURE_FG
 #define FEATURE_OVERCURRENT
 #define FEATURE_MEAS_VMDC
 #define FEATURE_MEAS_POT
-#define FEATURE_HYPERDRIVE
+//#define FEATURE_HYPERDRIVE
 #define FEATURE_LED0
 #define FEATURE_RPM_STALL_DETECTION
 //#define FEATURE_PID_TUNE_FUNCTION

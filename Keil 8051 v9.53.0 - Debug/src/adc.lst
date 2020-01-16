@@ -1,0 +1,160 @@
+C51 COMPILER V9.53.0.0   ADC                                                               01/16/2020 15:23:34 PAGE 1   
+
+
+C51 COMPILER V9.53.0.0, COMPILATION OF MODULE ADC
+OBJECT MODULE PLACED IN .\src\adc.OBJ
+COMPILER INVOKED BY: c:\SiliconLabs\SimplicityStudio\v4\developer\toolchains\keil_8051\9.53\BIN\C51.exe C:\Users\A92862\
+                    -SimplicityStudio\v4_workspace\EFM8BB1_BLDC_PORT\src\adc.c OMF2 SMALL DEBUG OBJECTEXTEND ROM(LARGE) WARNINGLEVEL(2) FLOAT
+                    -FUZZY(3) OPTIMIZE(8,SPEED) INTVECTOR(0X0000) INTPROMOTE INCDIR(C:\Users\A92862\SimplicityStudio\v4_workspace\EFM8BB1_BLD
+                    -C_PORT\inc;C:\Users\A92862\SimplicityStudio\v4_workspace\EFM8BB1_BLDC_PORT\inc\config;C:/SiliconLabs/SimplicityStudio/v4
+                    -/developer/sdks/8051/v4.1.7//kits/common/drivers/efm8_retargetserial;C:/SiliconLabs/SimplicityStudio/v4/developer/sdks/8
+                    -051/v4.1.7//Lib/efm8_assert;C:/SiliconLabs/SimplicityStudio/v4/developer/sdks/8051/v4.1.7//kits/common/bsp;C:/SiliconLab
+                    -s/SimplicityStudio/v4/developer/sdks/8051/v4.1.7//kits/EFM8BB1_LCK/config;C:/SiliconLabs/SimplicityStudio/v4/developer/s
+                    -dks/8051/v4.1.7//Device/shared/si8051Base;C:/SiliconLabs/SimplicityStudio/v4/developer/sdks/8051/v4.1.7//Device/EFM8BB1/
+                    -inc;C:/SiliconLabs/SimplicityStudio/v4/developer/sdks/8051/v4.1.7//Device/EFM8BB1/peripheral_driver/inc) PRINT(.\src\adc
+                    -.lst) COND PAGEWIDTH(120) PAGELENGTH(65) OBJECT(.\src\adc.OBJ)
+
+line level    source
+
+   1          /*
+   2           * adc.c
+   3           *
+   4           *  Created on: Jan 16, 2020
+   5           *      Author: a92862
+   6           */
+   7          
+   8          //-----------------------------------------------------------------------------
+   9          // Includes
+  10          //-----------------------------------------------------------------------------
+  11          #include "bldcdk.h"
+*** WARNING C322 IN LINE 130 OF \Users\A92862\SimplicityStudio\v4_workspace\EFM8BB1_BLDC_PORT\inc\BLDC_RD_Build_Params.h
+             -: unknown identifier
+  12          
+  13          //-----------------------------------------------------------------------------
+  14          // Global Constants
+  15          //-----------------------------------------------------------------------------
+  16          
+  17          
+  18          //-----------------------------------------------------------------------------
+  19          // Function Prototypes
+  20          //-----------------------------------------------------------------------------
+  21          void ADC_initialize_adc(void);
+  22          
+  23          //-----------------------------------------------------------------------------
+  24          // Global Variables
+  25          //-----------------------------------------------------------------------------
+  26          // ADC mux table for POT(speed input), VMDC, Current
+  27          const U8 code adc_mux[NUM_ADC_POINTS] = {
+  28          #ifdef FEATURE_OVERCURRENT
+  29              IMEAS_ADCMX,
+  30          #endif
+  31          #ifdef FEATURE_MEAS_VMDC
+  32              VMDC_ADCMX,
+  33          #endif
+  34          #ifdef FEATURE_MEAS_POT
+  35              POT_ADCMX
+  36          #endif
+  37          };
+  38          
+  39          static SEG_IDATA U8 adc_index;
+  40          SEG_XDATA U16       adc_result[NUM_ADC_POINTS];
+  41          SEG_DATA U8         adc_flags;
+  42          
+  43          //-----------------------------------------------------------------------------
+  44          // ADC_initialize_adc
+  45          //-----------------------------------------------------------------------------
+C51 COMPILER V9.53.0.0   ADC                                                               01/16/2020 15:23:34 PAGE 2   
+
+  46          //
+  47          // Return Value : None
+  48          // Parameters   : None
+  49          //
+  50          // Burst mode timing consists of the following segments for non-low-mode:
+  51          // (A) Start Burst mode Preparation:
+  52          //       7 HFO clocks
+  53          // (B) Each SAR conversion consists of:
+  54          //       1 HFO clock for MS Bit SAR preparation:
+  55          //       4*ADTM SAR clocks before conversion
+  56          //       11 SAR clocks for conversion
+  57          //       1 HFO clock at end of SAR for LS bit latching
+  58          //     Sub-Total = number of accumulation x (sum of above)
+  59          // (C) Burst mode tracking time BETWEEN SAR conversion:
+  60          //        66-ADTK HFO clocks
+  61          //     Sub-Total = (number of accumulation - 1) x (sum of above)
+  62          // (D) Synchronization: 3 SYSCLK to transfer status into ADINT bit.
+  63          //
+  64          // ADC Timing is synchronized with pwm signal to calculate average current.
+  65          //
+  66          // We use ADSC = 4 (i.e. SARCLK = 5 HFOCLKS)
+  67          //        ADTM = 0
+  68          //        ADTK = 59
+  69          //        ADRPT = 5 (64x accumulation)
+  70          // Ignoring (D), the total time for 64 accumulation:
+  71          //  7 + ( 1 + ((11 + 4*0) * 5) + 1 ) * 64 + (66 - 59) * (64 - 1) = 4096 HFO clocks
+  72          // As the PWM frequency is 10-bit, and 1 SYSCLK = 1 HFO clock, the ADC averaging
+  73          //  occurs over exactly 4 PWM cycles
+  74          //-----------------------------------------------------------------------------
+  75          void ADC_initialize_adc(void)
+  76          {
+  77   1          // initiate 1st conversion of adc.
+  78   1          ADC_CLEAR_FLAG();
+  79   1          adc_index = 0;
+  80   1          ADC0MX = adc_mux[adc_index];
+  81   1          ADC0CN0_ADBUSY = 1;
+  82   1          adc_flags = 0;
+  83   1      }
+  84          
+  85          //-----------------------------------------------------------------------------
+  86          // ADC_task
+  87          //-----------------------------------------------------------------------------
+  88          // Return Value : None
+  89          // Parameters   : None
+  90          //
+  91          // Description  :
+  92          //  AD0BUSY initiate conversion.
+  93          //  Once conversion is done, adc_flags updated accordingly. The latest result
+  94          //  can be found at the adc_result[] in the point of application level.
+  95          //  User application should call this function regularly.
+  96          //-----------------------------------------------------------------------------
+  97          void ADC_task(void)
+  98          {
+  99   1          if(ADC0CN0_ADINT)
+ 100   1          {
+ 101   2              adc_result[adc_index] = ADC0;
+ 102   2              ADC_CLEAR_FLAG();
+ 103   2      
+ 104   2              adc_flags |= (1<<adc_index);
+ 105   2              adc_index++;
+ 106   2              if( adc_index >= NUM_ADC_POINTS)
+ 107   2              {
+ 108   3                  adc_index = 0;
+C51 COMPILER V9.53.0.0   ADC                                                               01/16/2020 15:23:34 PAGE 3   
+
+ 109   3              }
+ 110   2              ADC0MX = adc_mux[adc_index];
+ 111   2              // start conversion
+ 112   2              ADC_START();
+ 113   2          }
+ 114   1      }
+ 115          
+ 116          
+*** WARNING C316 IN LINE 116 OF C:\Users\A92862\SimplicityStudio\v4_workspace\EFM8BB1_BLDC_PORT\src\adc.c: unterminated 
+             -conditionals
+
+
+MODULE INFORMATION:   STATIC OVERLAYABLE
+   CODE SIZE        =     82    ----
+   CONSTANT SIZE    =      3    ----
+   XDATA SIZE       =      6    ----
+   PDATA SIZE       =   ----    ----
+   DATA SIZE        =      1    ----
+   IDATA SIZE       =      1    ----
+   BIT SIZE         =   ----    ----
+   EDATA SIZE       =   ----    ----
+   HDATA SIZE       =   ----    ----
+   XDATA CONST SIZE =   ----    ----
+   FAR CONST SIZE   =   ----    ----
+END OF MODULE INFORMATION.
+
+
+C51 COMPILATION COMPLETE.  2 WARNING(S),  0 ERROR(S)

@@ -21,31 +21,31 @@
 SI_INTERRUPT (ADC0EOC_ISR, ADC0EOC_IRQn)
 {
 	static uint32_t accumulator = 0;     // Accumulator for averaging
-	static uint16_t measurements = 2048; // Measurement counter
+	static uint16_t measurements = 2048;// Measurement counter
 	uint32_t result = 0;
-	uint32_t mV;                         // Measured voltage in mV
+	uint32_t mV;// Measured voltage in mV
 
-	ADC0CN0_ADINT = 0;                  // Clear ADC0 conv. complete flag
+	ADC0CN0_ADINT = 0;// Clear ADC0 conv. complete flag
 
 	accumulator += ADC0;
 	measurements--;
 
 	if(measurements == 0)
 	{
-	  measurements = 2048;
-	  result = accumulator / 2048;
-	  accumulator = 0;
+		measurements = 2048;
+		result = accumulator / 2048;
+		accumulator = 0;
 
-	  // The 10-bit ADC value is averaged across 2048 measurements.
-	  // The measured voltage applied to P1.7 is then:
-	  //
-	  //                           Vref (mV)
-	  //   measurement (mV) =   --------------- * result (bits)
-	  //                       (2^10)-1 (bits)
+		// The 10-bit ADC value is averaged across 2048 measurements.
+		// The measured voltage applied to P1.7 is then:
+		//
+		//                           Vref (mV)
+		//   measurement (mV) =   --------------- * result (bits)
+		//                       (2^10)-1 (bits)
 
-	  mV =  (result * 3300) / 1023;
+		mV = (result * 3300) / 1023;
 
-	  RETARGET_PRINTF ("\nP0.7 voltage: %ld mV\n", mV);
+		RETARGET_PRINTF ("\nP0.7 voltage: %ld mV\n", mV);
 	}
 }
 
@@ -63,81 +63,81 @@ SI_INTERRUPT (ADC0EOC_ISR, ADC0EOC_IRQn)
 //-----------------------------------------------------------------------------
 SI_INTERRUPT (PCA0_ISR, PCA0_IRQn)
 {
-//    static UU16 xpca_count;
-//    U16 user_timer;
-//    static UU16 new_duty;
-//    static UU16 new_cpblank_duty;
-//    static U8 new_polarity;
-//
-//    if ( (PCA0PWM & 0x60) == 0x60 )
-//    {
-//        // PCA Cycle counter overflow interrupt - this is enabled because
-//        // user needs to update duty cycle of both the motor PWM and
-//        // the blanking PWM signal
-//
-//        PCA0PWM = (PWM_RESOLUTION - 8) | 0x80;
-//        // protect from high priority interrupt service
-//        IE_EA = 0;
-//        PCA0POL = new_polarity;
-//        PCA0CN0_CCF0 = 0;
-//        MOTPWM_CCF = 0;
-//        // This clIE_EArs the ECOM bit-causing PWM output to go to inactive state
-//        PCA0CPL0 = new_cpblank_duty.U8[LSB];
-//        // This sets the ECOM bit
-//        PCA0CPH0 = new_cpblank_duty.U8[MSB];
-//        // This clIE_EArs the ECOM bit-causing PWM output to go to inactive state
-//        MOTPWM_PCA0CPL = new_duty.U8[LSB];
-//        MOTPWM_PCA0CPH = new_duty.U8[MSB];
-//        PCA0PWM = (PWM_RESOLUTION - 8);
-//        // CEX1, match flag is set
-//        if (MOTPWM_CCF)
-//        {
-//            xpca_count.U8[LSB] = PCA0L;
-//            xpca_count.U8[MSB] = PCA0H;
-//            // Additional hIE_EAdroom due to delays in execution
-//            // in case we miss the match event (toggling CEXn), we ensure that
-//            // postponed(+32) event occur. Otherwise, it could make 1(one) 100%
-//            // or 0% pwm cycle once in a while. This is happening at very low
-//            // or very high duty cycle when the period between pca cycle overflow
-//            // and match event is very short.
-//            xpca_count.U16 += 32;
-//            MOTPWM_PCA0CPL = xpca_count.U8[LSB];
-//            MOTPWM_PCA0CPH = xpca_count.U8[MSB];
-//        }
-//        // CEX0, match flag is set
-//        if (PCA0CN0_CCF0)
-//        {
-//            xpca_count.U8[LSB] = PCA0L;
-//            xpca_count.U8[MSB] = PCA0H;
-//            // Additional hIE_EAdroom due to delays in execution
-//            // in case we miss the match event (toggling CEXn), we ensure that
-//            // postponed(+32) event occur. Otherwise, it could make 1(one) 100%
-//            // or 0% pwm cycle once in a while. This is happening at very low
-//            // or very high duty cycle when the period between pca cycle overflow
-//            // and match event is very short.
-//            xpca_count.U16 += 32;
-//            PCA0CPL0 = xpca_count.U8[LSB];
-//            PCA0CPH0 = xpca_count.U8[MSB];
-//        }
-//        IE_EA = 1;
-//        // for application level information.
-//        SLW_pwm_updated = 1;
-//    }
-//
-//    if (PCA0CN0_CF)
-//    {
-//        // Disable global interrupts to ensure coherence
-//        // in upper 16-bits of timer by higher priority interrupt.
-//        IE_EA = 0;
-//        PCA0CN0_CF = 0;
-//        user_timer++;
-//        IE_EA = 1;
-//
-//        if( 0 == ((U8)user_timer & pid_calc_interval) )
-//        {
-//            pid_flag = 1;
-//        }
-//    }
+	static UU16 xpca_count;
+	U16 user_timer;
+	static UU16 new_duty;
+	static UU16 new_cpblank_duty;
+	static U8 new_polarity;
+
+	if ( (PCA0PWM & 0x60) == 0x60 )
+	{
+		// PCA Cycle counter overflow interrupt - this is enabled because
+		// user needs to update duty cycle of both the motor PWM and
+		// the blanking PWM signal
+
+		PCA0PWM = (PWM_RESOLUTION - 8) | 0x80;
+		// protect from high priority interrupt service
+		IE_EA = 0;
+		PCA0POL = new_polarity;
+		PCA0CN0_CCF0 = 0;
+		MOTPWM_CCF = 0;
+		// This clIE_EArs the ECOM bit-causing PWM output to go to inactive state
+		PCA0CPL0 = new_cpblank_duty.U8[LSB];
+		// This sets the ECOM bit
+		PCA0CPH0 = new_cpblank_duty.U8[MSB];
+		// This clIE_EArs the ECOM bit-causing PWM output to go to inactive state
+		MOTPWM_PCA0CPL = new_duty.U8[LSB];
+		MOTPWM_PCA0CPH = new_duty.U8[MSB];
+		PCA0PWM = (PWM_RESOLUTION - 8);
+		// CEX1, match flag is set
+		if (MOTPWM_CCF)
+		{
+			xpca_count.U8[LSB] = PCA0L;
+			xpca_count.U8[MSB] = PCA0H;
+			// Additional hIE_EAdroom due to delays in execution
+			// in case we miss the match event (toggling CEXn), we ensure that
+			// postponed(+32) event occur. Otherwise, it could make 1(one) 100%
+			// or 0% pwm cycle once in a while. This is happening at very low
+			// or very high duty cycle when the period between pca cycle overflow
+			// and match event is very short.
+			xpca_count.U16 += 32;
+			MOTPWM_PCA0CPL = xpca_count.U8[LSB];
+			MOTPWM_PCA0CPH = xpca_count.U8[MSB];
+		}
+		// CEX0, match flag is set
+		if (PCA0CN0_CCF0)
+		{
+			xpca_count.U8[LSB] = PCA0L;
+			xpca_count.U8[MSB] = PCA0H;
+			// Additional hIE_EAdroom due to delays in execution
+			// in case we miss the match event (toggling CEXn), we ensure that
+			// postponed(+32) event occur. Otherwise, it could make 1(one) 100%
+			// or 0% pwm cycle once in a while. This is happening at very low
+			// or very high duty cycle when the period between pca cycle overflow
+			// and match event is very short.
+			xpca_count.U16 += 32;
+			PCA0CPL0 = xpca_count.U8[LSB];
+			PCA0CPH0 = xpca_count.U8[MSB];
+		}
+		IE_EA = 1;
+		// for application level information.
+		SLW_pwm_updated = 1;
+	}
+
+	if (PCA0CN0_CF)
+	{
+		// Disable global interrupts to ensure coherence
+		// in upper 16-bits of timer by higher priority interrupt.
+		IE_EA = 0;
+		PCA0CN0_CF = 0;
+		user_timer++;
+		IE_EA = 1;
+
+		if( 0 == ((U8)user_timer & pid_calc_interval) )
+		{
+			pid_flag = 1;
+		}
+	}
 }
 
 //-----------------------------------------------------------------------------
@@ -150,6 +150,20 @@ SI_INTERRUPT (PCA0_ISR, PCA0_IRQn)
 //
 //-----------------------------------------------------------------------------
 SI_INTERRUPT (CMP1_ISR, CMP1_IRQn)
+{
+
+}
+
+//-----------------------------------------------------------------------------
+// TIMER3_ISR
+//-----------------------------------------------------------------------------
+//
+// TIMER3 ISR Content goes here. Remember to clear flag bits:
+// TMR3CN0::TF3H (Timer # High Byte Overflow Flag)
+// TMR3CN0::TF3L (Timer # Low Byte Overflow Flag)
+//
+//-----------------------------------------------------------------------------
+SI_INTERRUPT (TIMER3_ISR, TIMER3_IRQn)
 {
 
 }

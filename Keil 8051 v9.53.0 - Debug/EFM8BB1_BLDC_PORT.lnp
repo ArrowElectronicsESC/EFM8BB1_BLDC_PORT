@@ -4,5 +4,9 @@
 "./src/InitDevice.OBJ",
 "./src/Interrupts.OBJ",
 "./src/SILABS_STARTUP.OBJ",
-"./src/pca.OBJ"
+"./src/adc.OBJ",
+"./src/motor.OBJ",
+"./src/mtrpid.OBJ",
+"./src/pca.OBJ",
+"./src/timers.OBJ"
 TO "EFM8BB1_BLDC_PORT.OMF.CRBUILD" REMOVEUNUSED PRINT(.\EFM8BB1_BLDC_PORT.m51) PAGEWIDTH (120) PAGELENGTH (65) CLASSES( ECODE(C:0x0 - C:0x1ffe), HCONST(C:0x0 - C:0x1ffe), XDATA(X:0x0 - X:0xff), HDATA(X:0x0 - X:0xff))

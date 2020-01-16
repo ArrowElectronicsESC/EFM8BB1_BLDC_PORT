@@ -21,6 +21,7 @@
     <property object="INTERRUPT_0" propertyId="interrupt.extendedinterruptenable1.enableadc0conversioncompleteinterrupt" value="Enabled"/>
     <property object="INTERRUPT_0" propertyId="interrupt.extendedinterruptenable1.enablecomparator1cp1interrupt" value="Enabled"/>
     <property object="INTERRUPT_0" propertyId="interrupt.extendedinterruptenable1.enableprogrammablecounterarraypca0interrupt" value="Enabled"/>
+    <property object="INTERRUPT_0" propertyId="interrupt.extendedinterruptenable1.enabletimer3interrupt" value="Enabled"/>
     <property object="INTERRUPT_0" propertyId="interrupt.interruptenable.enableallinterrupts" value="Enabled"/>
     <property object="P0.0" propertyId="ports.settings.iomode" value="Digital Push-Pull Output"/>
     <property object="P0.0" propertyId="ports.settings.outputmode" value="Push-pull"/>
@@ -73,6 +74,8 @@
     <property object="TIMER16_2" propertyId="timer16.reloadhighbyte.reloadhighbyte" value="255"/>
     <property object="TIMER16_2" propertyId="timer16.reloadlowbyte.reloadlowbyte" value="52"/>
     <property object="TIMER16_3" propertyId="ABPeripheral.included" value="true"/>
+    <property object="TIMER16_3" propertyId="timer16.control.runcontrol" value="Start"/>
+    <property object="TIMER16_3" propertyId="timer16.control.timerrunningstate" value="Timer is Running"/>
     <property object="TIMER_SETUP_0" propertyId="ABPeripheral.included" value="true"/>
     <property object="TIMER_SETUP_0" propertyId="timer_setup.timer01control.timer1runcontrol" value="Start"/>
     <property object="TIMER_SETUP_0" propertyId="timer_setup.timer1.clocksource" value="Use SYSCLK"/>
