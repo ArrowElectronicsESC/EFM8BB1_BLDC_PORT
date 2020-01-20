@@ -1,4 +1,4 @@
-C51 COMPILER V9.53.0.0   MOTOR                                                             01/16/2020 15:23:34 PAGE 1   
+C51 COMPILER V9.53.0.0   MOTOR                                                             01/20/2020 13:39:21 PAGE 1   
 
 
 C51 COMPILER V9.53.0.0, COMPILATION OF MODULE MOTOR
@@ -63,7 +63,7 @@ line level    source
   43          // comMux[0~5] is for Falling bemf
   44          // comMux[6~11] is for Rising bemf
   45          const U8 code compMux[12] = {
-C51 COMPILER V9.53.0.0   MOTOR                                                             01/16/2020 15:23:34 PAGE 2   
+C51 COMPILER V9.53.0.0   MOTOR                                                             01/20/2020 13:39:21 PAGE 2   
 
   46              (CPMUX_Y << 4) | CPMUX_C,
   47              (CPMUX_Y << 4) | CPMUX_A,
@@ -128,7 +128,7 @@ line level    source
  106                      ~MOTDRV_BH_MASK, ~MOTDRV_BH_MASK, ~MOTDRV_AH_MASK
  107                  },
  108                  {
-C51 COMPILER V9.53.0.0   MOTOR                                                             01/16/2020 15:23:34 PAGE 3   
+C51 COMPILER V9.53.0.0   MOTOR                                                             01/20/2020 13:39:21 PAGE 3   
 
  109                      ~MOTDRV_BL_MASK, ~MOTDRV_BL_MASK, ~MOTDRV_AL_MASK,
  110                      ~MOTDRV_AL_MASK, ~MOTDRV_CL_MASK, ~MOTDRV_CL_MASK
@@ -193,7 +193,7 @@ line level    source
  169          // for fast phase reference.
  170          SEG_DATA U8       open_phase;
  171          
-C51 COMPILER V9.53.0.0   MOTOR                                                             01/16/2020 15:23:34 PAGE 4   
+C51 COMPILER V9.53.0.0   MOTOR                                                             01/20/2020 13:39:21 PAGE 4   
 
  172          // timer for hyperdrive mode
  173          #ifdef FEATURE_HYPERDRIVE
@@ -258,7 +258,7 @@ line level    source
  232          static SEG_XDATA U8     accum_motor_current_count;
  233          static SEG_XDATA U8     average_motor_current_adc;
  234          
-C51 COMPILER V9.53.0.0   MOTOR                                                             01/16/2020 15:23:34 PAGE 5   
+C51 COMPILER V9.53.0.0   MOTOR                                                             01/20/2020 13:39:21 PAGE 5   
 
  235          // number of oc debounce at register. 0x05
  236          SEG_XDATA U8 SLW_oc_debounce;
@@ -323,7 +323,7 @@ line level    source
  295   1      }
  296          
  297          
-C51 COMPILER V9.53.0.0   MOTOR                                                             01/16/2020 15:23:34 PAGE 6   
+C51 COMPILER V9.53.0.0   MOTOR                                                             01/20/2020 13:39:21 PAGE 6   
 
  298          //-----------------------------------------------------------------------------
  299          // SL_MTR_motor
@@ -388,7 +388,7 @@ line level    source
  358   2          }
  359   1          // respect user selected direction
  360   1          MTR_set_direction(SLW_user_direction);
-C51 COMPILER V9.53.0.0   MOTOR                                                             01/16/2020 15:23:34 PAGE 7   
+C51 COMPILER V9.53.0.0   MOTOR                                                             01/20/2020 13:39:21 PAGE 7   
 
  361   1          MTR_check_motor_spinning();
  362   1          if(!motor_spinning)
@@ -453,7 +453,7 @@ line level    source
  421   1          SLR_motor_state = MOTOR_STOPPED;
  422   1          SLR_motor_current_rpm = 0;
  423   1          SLW_rpm_updated = 1;                // for apps level status.
-C51 COMPILER V9.53.0.0   MOTOR                                                             01/16/2020 15:23:34 PAGE 8   
+C51 COMPILER V9.53.0.0   MOTOR                                                             01/20/2020 13:39:21 PAGE 8   
 
  424   1          SLR_pwm_duty = SLR_minimum_duty.U16;
  425   1          PCA_change_duty_cycle(SLR_pwm_duty);
@@ -518,7 +518,7 @@ line level    source
  484   1          cptout = ((CMP1CN0 & 0x40) == 0x40);
  485   1          if( cptout == motor_direction)
  486   1          {
-C51 COMPILER V9.53.0.0   MOTOR                                                             01/16/2020 15:23:34 PAGE 9   
+C51 COMPILER V9.53.0.0   MOTOR                                                             01/20/2020 13:39:21 PAGE 9   
 
  487   2              motor_spinning = 1;
  488   2          }
@@ -583,7 +583,7 @@ line level    source
                   }
                   else
                   {
-C51 COMPILER V9.53.0.0   MOTOR                                                             01/16/2020 15:23:34 PAGE 10  
+C51 COMPILER V9.53.0.0   MOTOR                                                             01/20/2020 13:39:21 PAGE 10  
 
                       P1 = (P1 & ~MOTDRV_ALL_MASK) | hyperactive_gpio[open_phase];
                   }
@@ -648,7 +648,7 @@ line level    source
  610          // Please refer to application note for more details.
  611          //-----------------------------------------------------------------------------
  612          void MTR_start_spinning(void)
-C51 COMPILER V9.53.0.0   MOTOR                                                             01/16/2020 15:23:34 PAGE 11  
+C51 COMPILER V9.53.0.0   MOTOR                                                             01/20/2020 13:39:21 PAGE 11  
 
  613          {
  614   1          U8 idx, tmp;
@@ -713,7 +713,7 @@ line level    source
  673   3              }
  674   2              else
  675   2              {
-C51 COMPILER V9.53.0.0   MOTOR                                                             01/16/2020 15:23:34 PAGE 12  
+C51 COMPILER V9.53.0.0   MOTOR                                                             01/20/2020 13:39:21 PAGE 12  
 
  676   3                  // calculate next commutation time. approximately calculated
  677   3                  // to avoid using sqrt() function.
@@ -778,7 +778,7 @@ line level    source
  736          //
  737          // Return Value : None
  738          // Parameters   : None
-C51 COMPILER V9.53.0.0   MOTOR                                                             01/16/2020 15:23:34 PAGE 13  
+C51 COMPILER V9.53.0.0   MOTOR                                                             01/20/2020 13:39:21 PAGE 13  
 
  739          //
  740          // Description:
@@ -843,7 +843,7 @@ line level    source
  799   3      
  800   3      
  801   3                  // BEMF Falling, comparator output Falling edge
-C51 COMPILER V9.53.0.0   MOTOR                                                             01/16/2020 15:23:34 PAGE 14  
+C51 COMPILER V9.53.0.0   MOTOR                                                             01/20/2020 13:39:21 PAGE 14  
 
  802   3                  if (CMP1CN0 & 0x10)
  803   3                  {
@@ -908,7 +908,7 @@ line level    source
  862   1          // This is for 30deg rotate(zero-crossing to commutation)
  863   1          ticks.U32 = 2UL * prev_zc_time.U16[LSB];
  864   1      
-C51 COMPILER V9.53.0.0   MOTOR                                                             01/16/2020 15:23:34 PAGE 15  
+C51 COMPILER V9.53.0.0   MOTOR                                                             01/20/2020 13:39:21 PAGE 15  
 
  865   1          // zc_commutate_time is a period between zero crossing.
  866   1          // NOTE : need to initialize zc_commute_time, zc_time, pre_zc_time
@@ -973,7 +973,7 @@ line level    source
  925          //
  926          // Return Value : None
  927          // Parameters   : None
-C51 COMPILER V9.53.0.0   MOTOR                                                             01/16/2020 15:23:34 PAGE 16  
+C51 COMPILER V9.53.0.0   MOTOR                                                             01/20/2020 13:39:21 PAGE 16  
 
  928          //
  929          // Description:
@@ -1038,7 +1038,7 @@ line level    source
  988          // Parameters   : None
  989          //
  990          // Description:
-C51 COMPILER V9.53.0.0   MOTOR                                                             01/16/2020 15:23:34 PAGE 17  
+C51 COMPILER V9.53.0.0   MOTOR                                                             01/20/2020 13:39:21 PAGE 17  
 
  991          //      If BLDC_RD_RPM_OR_PWM is PWM_PARAMETER,
  992          //      - target speed controlled by SLW_target_pwm_duty variables.
@@ -1103,7 +1103,7 @@ line level    source
                           scaled_pwm = MAX_USER_PWM_VALUE;
                       }
               
-C51 COMPILER V9.53.0.0   MOTOR                                                             01/16/2020 15:23:34 PAGE 18  
+C51 COMPILER V9.53.0.0   MOTOR                                                             01/20/2020 13:39:21 PAGE 18  
 
                       // Hyperdrive will start working when scaled_pwm is 100%,
                       // or SLR_pwm_duty > (65536.0/PWM_SCALE_FACTOR).
@@ -1168,7 +1168,7 @@ line level    source
 1113          //-----------------------------------------------------------------------------
 1114          // SL_MTR_change_num_poles
 1115          //-----------------------------------------------------------------------------
-C51 COMPILER V9.53.0.0   MOTOR                                                             01/16/2020 15:23:34 PAGE 19  
+C51 COMPILER V9.53.0.0   MOTOR                                                             01/20/2020 13:39:21 PAGE 19  
 
 1116          //
 1117          // Return Value : None
@@ -1233,7 +1233,7 @@ line level    source
 1176   4      
 1177   4                      //current in 0.01A
 1178   4                      // Only 14bits need for PC side. (2^14 * 0.01A = 163A max value)
-C51 COMPILER V9.53.0.0   MOTOR                                                             01/16/2020 15:23:34 PAGE 20  
+C51 COMPILER V9.53.0.0   MOTOR                                                             01/20/2020 13:39:21 PAGE 20  
 
 1179   4                      SLR_motor_current = (((U32)tmp.U16 * ROUND_DIV((U32)CURRENT_UNIT * \
 1180   4                              (U32)ADC_REF_VOLTAGE*2UL*(1 << (16-ADC_RESOLUTION)), \
@@ -1298,7 +1298,7 @@ line level    source
 1239   2              if( SLW_oc_debounce && SLW_current_limit)
 1240   2              {
 1241   3                  if ( (MOTOR_RUNNING == SLR_motor_state) && \
-C51 COMPILER V9.53.0.0   MOTOR                                                             01/16/2020 15:23:34 PAGE 21  
+C51 COMPILER V9.53.0.0   MOTOR                                                             01/20/2020 13:39:21 PAGE 21  
 
 1242   3                          ( average_motor_current_adc >= SLW_current_limit) )
 1243   3                  {
@@ -1363,7 +1363,7 @@ MODULE INFORMATION:   STATIC OVERLAYABLE
    XDATA SIZE       =     39      14
    PDATA SIZE       =   ----    ----
    DATA SIZE        =     29      13
-C51 COMPILER V9.53.0.0   MOTOR                                                             01/16/2020 15:23:34 PAGE 22  
+C51 COMPILER V9.53.0.0   MOTOR                                                             01/20/2020 13:39:21 PAGE 22  
 
    IDATA SIZE       =      1    ----
    BIT SIZE         =     11       8

@@ -1,4 +1,4 @@
-C51 COMPILER V9.53.0.0   PCA                                                               01/16/2020 15:26:39 PAGE 1   
+C51 COMPILER V9.53.0.0   PCA                                                               01/20/2020 13:39:22 PAGE 1   
 
 
 C51 COMPILER V9.53.0.0, COMPILATION OF MODULE PCA
@@ -63,7 +63,7 @@ line level    source
   43          //
   44          // Return Value : None
   45          // Parameters   : None
-C51 COMPILER V9.53.0.0   PCA                                                               01/16/2020 15:26:39 PAGE 2   
+C51 COMPILER V9.53.0.0   PCA                                                               01/20/2020 13:39:22 PAGE 2   
 
   46          // Description  :
   47          //-----------------------------------------------------------------------------
@@ -128,7 +128,7 @@ line level    source
  106   1              static U16 prev_duty = INITIAL_PCA_DUTY;
  107   1      
  108   1              static UU16 new_duty;
-C51 COMPILER V9.53.0.0   PCA                                                               01/16/2020 15:26:39 PAGE 3   
+C51 COMPILER V9.53.0.0   PCA                                                               01/20/2020 13:39:22 PAGE 3   
 
  109   1              static UU16 new_cpblank_duty;
  110   1              static U8 new_polarity;
@@ -193,7 +193,7 @@ MODULE INFORMATION:   STATIC OVERLAYABLE
    BIT SIZE         =      1       1
    EDATA SIZE       =   ----    ----
    HDATA SIZE       =   ----    ----
-C51 COMPILER V9.53.0.0   PCA                                                               01/16/2020 15:26:39 PAGE 4   
+C51 COMPILER V9.53.0.0   PCA                                                               01/20/2020 13:39:22 PAGE 4   
 
    XDATA CONST SIZE =   ----    ----
    FAR CONST SIZE   =   ----    ----

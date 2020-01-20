@@ -1,0 +1,750 @@
+C51 COMPILER V9.53.0.0   MCP_REGISTERS                                                     01/20/2020 13:39:19 PAGE 1   
+
+
+C51 COMPILER V9.53.0.0, COMPILATION OF MODULE MCP_REGISTERS
+OBJECT MODULE PLACED IN .\src\MCP_Registers.OBJ
+COMPILER INVOKED BY: c:\SiliconLabs\SimplicityStudio\v4\developer\toolchains\keil_8051\9.53\BIN\C51.exe C:\Users\A92862\
+                    -SimplicityStudio\v4_workspace\EFM8BB1_BLDC_PORT\src\MCP_Registers.c OMF2 SMALL DEBUG OBJECTEXTEND ROM(LARGE) WARNINGLEVE
+                    -L(2) FLOATFUZZY(3) OPTIMIZE(8,SPEED) INTVECTOR(0X0000) INTPROMOTE INCDIR(C:\Users\A92862\SimplicityStudio\v4_workspace\E
+                    -FM8BB1_BLDC_PORT\inc;C:\Users\A92862\SimplicityStudio\v4_workspace\EFM8BB1_BLDC_PORT\inc\config;C:/SiliconLabs/Simplicit
+                    -yStudio/v4/developer/sdks/8051/v4.1.7//kits/common/drivers/efm8_retargetserial;C:/SiliconLabs/SimplicityStudio/v4/develo
+                    -per/sdks/8051/v4.1.7//Lib/efm8_assert;C:/SiliconLabs/SimplicityStudio/v4/developer/sdks/8051/v4.1.7//kits/common/bsp;C:/
+                    -SiliconLabs/SimplicityStudio/v4/developer/sdks/8051/v4.1.7//kits/EFM8BB1_LCK/config;C:/SiliconLabs/SimplicityStudio/v4/d
+                    -eveloper/sdks/8051/v4.1.7//Device/shared/si8051Base;C:/SiliconLabs/SimplicityStudio/v4/developer/sdks/8051/v4.1.7//Devic
+                    -e/EFM8BB1/inc;C:/SiliconLabs/SimplicityStudio/v4/developer/sdks/8051/v4.1.7//Device/EFM8BB1/peripheral_driver/inc) PRINT
+                    -(.\src\MCP_Registers.lst) COND PAGEWIDTH(120) PAGELENGTH(65) OBJECT(.\src\MCP_Registers.OBJ)
+
+line level    source
+
+   1          //------------------------------------------------------------------------------
+   2          // MCP_Registers.c
+   3          //------------------------------------------------------------------------------
+   4          // Copyright (C) 2013, Silicon Laboratories, Inc.
+   5          // http://www.silabs.com
+   6          //
+   7          // Description:
+   8          //
+   9          // This file allocates memory for MCP registers. It also allocates 2 bits per
+  10          // register. These bits define access type and and status update enable/disable.
+  11          // BLDC registers are divided into two groups depending on register size. First
+  12          // group contains 8-bit registers while second group contain 16-bit registers.
+  13          // 16-bit registers are defined in big-endian format.
+  14          //
+  15          // Release 0.0 - April 11, 2013 mufayyuz
+  16          //    -Initial Revision.
+  17          //
+  18          
+  19          //------------------------------------------------------------------------------
+  20          // INCLUDES
+  21          //------------------------------------------------------------------------------
+  22          #include "bldcdk.h"
+*** WARNING C322 IN LINE 130 OF \Users\A92862\SimplicityStudio\v4_workspace\EFM8BB1_BLDC_PORT\inc\BLDC_RD_Build_Params.h
+             -: unknown identifier
+  23          
+  24          #define MCP_REG_MEM_TYPE xdata
+  25          
+  26          #define BLDC_RD_FW_VERSION      1
+  27          #define BLDC_RD_DEFAULT_DIR     0 //0: clockwise, 1: counter-clockwise
+  28          #define BLDC_RD_CURRENT_TH      MOTOR_OC                //Over current threshold value
+  29          #define BLDC_RD_CURRENT_COUNT   MOTOR_OC_MAX_DEBOUNCE   //Over current persistence
+  30          
+  31          #define BLDC_RD_CURRENT_SAMPLING_PERIOD     1 //0.1 msec
+  32          #define BLDC_RD_MAXIMUM_OPERAIONAL_SPEED    MOTOR_MAX_RPM
+  33          #define BLDC_RD_ACCELERATION_STEP_SIZE      ACCELERATION_STEP_SIZE
+  34          #define BLDC_RD_DECELERATION_STEP_SIZE      DECELERATION_STEP_SIZE
+  35          #define BLDC_RD_PI_PROPORTIONAL_GAIN        PI_PROPORTIONAL_GAIN
+  36          #define BLDC_RD_PI_INTEGRAL_GAIN            PI_INTEGRAL_GAIN
+  37          
+  38          #define INDEX_PRESENT_MOTOR_SPEED       0
+  39          #define INDEX_MOTOR_COIL_CURRENT        1
+  40          #define INDEX_MOTOR_OPERATING_VOLTAGE   2
+  41          #define INDEX_ACTIVE_PWM_DUTY_CYCLE     3
+  42          #define INDEX_CURRENT_SAMPLING_PERIOD   4
+  43          #define INDEX_MAXIMUM_OPERATIONAL_SPEED 5
+  44          #define INDEX_TARGET_MOTOR_SPEED        6
+  45          #define INDEX_TARGET_PWM_DUTY_CYCLE     7
+C51 COMPILER V9.53.0.0   MCP_REGISTERS                                                     01/20/2020 13:39:19 PAGE 2   
+
+  46          #define INDEX_ACCELERATION_STEP_SIZE    8
+  47          #define INDEX_DECELERATION_STEP_SIZE    9
+  48          #define INDEX_PROPORTIONAL_GAIN         10
+  49          #define INDEX_INTEGRAL_GAIN             11
+  50          
+  51          #define MCP_ATOMIC_ACCESS_START() \
+  52          do                                \
+  53          {                                 \
+  54              int_status = IE_EA;              \
+  55              IE_EA = 0;                       \
+  56          } while (0)
+  57          
+  58          #define MCP_ATOMIC_ACCESS_END()   \
+  59          do                                \
+  60          {                                 \
+  61              IE_EA = int_status;              \
+  62          } while (0)
+  63          
+  64          //------------------------------------------------------------------------------
+  65          // Data
+  66          //------------------------------------------------------------------------------
+  67          
+  68          //------------------------------------------------------------------------------
+  69          // MCP_Reg8_Status_Update_Map:
+  70          // It is 16-bit read-write register. It is updated by Enable/Disable Status
+  71          // Command (#regaddr 0/1\n). It is read by F/W to select individual registers
+  72          // during status update.
+  73          // Values:
+  74          //     Each bit enables/disables one of 8-bit registers for status update.
+  75          // WARNING: Only 9 registers are defined in this revision of firmware.
+  76          //------------------------------------------------------------------------------
+  77          volatile U16 data MCP_reg8_status_update_map;
+  78          
+  79          //------------------------------------------------------------------------------
+  80          // MCP_Reg16_Status_Update_Map:
+  81          // It is 32-bit read-write register. It is updated by Enable/Disable Status
+  82          // Command (#regaddr 0/1\n). It is read by F/W to select individual registers
+  83          // during status update.
+  84          // Values:
+  85          //     Each bit enables/disables one of 16-bit register for status update.
+  86          // WARNING: Only 12 registers are defined in this revision of firmware.
+  87          //------------------------------------------------------------------------------
+  88          //volatile U32 data MCP_reg16_status_update_map;
+  89          volatile U8 data MCP_reg16_status_update_map[4];
+  90          
+  91          //------------------------------------------------------------------------------
+  92          // MCP_Reg8_Dirty_Bit_Map:
+  93          // It is 16-bit read-write register. Each bit represents one of 8-bit registers.
+  94          // A particular bit is set when corresponding register is written/updated. It
+  95          // is cleared when corresponding register value is sent during status update.
+  96          //
+  97          // WARNING: Only 9 registers are defined in this revision of firmware.
+  98          //------------------------------------------------------------------------------
+  99          volatile U16 data MCP_reg8_dirty_bit_map;
+ 100          
+ 101          //------------------------------------------------------------------------------
+ 102          // MCP_Reg16_Dirty_Bit_Map:
+ 103          // It is 32-bit read-write register. Each bit represents one of 16-bit registers
+ 104          // A particular bit is set when corresponding register is written/updated. It
+ 105          // is cleared when corresponding register value is sent during status update.
+ 106          //
+ 107          // WARNING: Only 12 registers are defined in this revision of firmware.
+ 108          //------------------------------------------------------------------------------
+C51 COMPILER V9.53.0.0   MCP_REGISTERS                                                     01/20/2020 13:39:19 PAGE 3   
+
+ 109          //volatile U32 data MCP_reg16_dirty_bit_map;
+ 110          volatile U8 data MCP_reg16_dirty_bit_map[4];
+ 111          
+ 112          //------------------------------------------------------------------------------
+ 113          // MCP_Reg8_Access_Type:
+ 114          // It is 16-bit read-only register. It is updated only at build time. It is read
+ 115          // by F/W to check if an 8-bit register is writable.
+ 116          // Values:
+ 117          //     0: Corresponding register is read-only
+ 118          //     1: Corresponding register is read-write
+ 119          // If source of direction is not Controller then restrict 'target direction'
+ 120          // register to read-only operations
+ 121          // WARNING: Only 9 registers are defined in this revision of firmware.
+ 122          //------------------------------------------------------------------------------
+ 123          code U16 MCP_reg8_access_type = 0x0074 & ~(0 << 2);
+ 124          
+ 125          //------------------------------------------------------------------------------
+ 126          // MCP_Reg16_Access_Type:
+ 127          // It is 32-bit read-only register. It is updated only at build time. It is read
+ 128          // by F/W to check if an 16-bit register is writable.
+ 129          // Values:
+ 130          //     0: Corresponding register is read-only
+ 131          //     1: Corresponding register is read-write
+ 132          // If speed is not being controlled then restrict 'maximum operational speed'
+ 133          // register to read-only operations
+ 134          // If speed is not being controlled or it is being controlled but its source
+ 135          // of control is not Controller then restrict 'target motor speed' register
+ 136          // to read-only operations
+ 137          // If PWM is not being controlled then restrict 'target PWM duty cycle'
+ 138          // register to read-only operations
+ 139          // WARNING: Only 12 registers are defined in this revision of firmware.
+ 140          //------------------------------------------------------------------------------
+ 141          //code U32 MCP_reg16_access_type = 0x00000FE0 &
+ 142          //             ~(BLDC_RD_RPM_OR_PWM << 5) &
+ 143          //             ~(((BLDC_RD_RPM_OR_PWM == 1) | (BLDC_RD_RPM_PWM_SRC != 0)) << 6) &
+ 144          //             ~(((BLDC_RD_RPM_OR_PWM == 0) | (BLDC_RD_RPM_PWM_SRC != 0)) << 7);
+ 145          
+ 146          code U8 MCP_reg16_access_type[4] =
+ 147          {
+ 148              0xE0 &
+ 149              ~(BLDC_RD_RPM_OR_PWM << 5) &
+ 150              ~(((BLDC_RD_RPM_OR_PWM == PWM_PARAMETER)) << 6) &
+ 151              ~(((BLDC_RD_RPM_OR_PWM == RPM_PARAMETER)) << 7),
+ 152              0x0F,
+ 153              0x00,
+ 154              0x00
+ 155          };
+ 156          
+ 157          //------------------------------------------------------------------------------
+ 158          // BLDC Register Map - 8-bit registers
+ 159          // It contains 48 registers (Addresses 0x00 to 0x2F) but only few are allocated.
+ 160          //
+ 161          // Post Review 1: All 8-bit registers are grouped together into an array and
+ 162          // are no longer mapped to a fixed memory address (7 dummy registers).
+ 163          //------------------------------------------------------------------------------
+ 164          volatile U8 MCP_REG_MEM_TYPE    MCP_8_bit_registers[16];
+ 165          
+ 166          //------------------------------------------------------------------------------
+ 167          // BLDC Register Map - 16-bit registers
+ 168          // It contains 104 registers (Addresses 0x30 to 0xFE) but only few are allocated.
+ 169          //
+ 170          // Post Review 1: All 16-bit registers are grouped together into an array and
+ 171          // are no longer mapped to a fixed memory address (4 dummy registers).
+C51 COMPILER V9.53.0.0   MCP_REGISTERS                                                     01/20/2020 13:39:19 PAGE 4   
+
+ 172          //------------------------------------------------------------------------------
+ 173          volatile U16 MCP_REG_MEM_TYPE    MCP_16_bit_registers[16];
+ 174          
+ 175          //------------------------------------------------------------------------------
+ 176          // Local Functions Prototypes
+ 177          //------------------------------------------------------------------------------
+ 178          static bit MCP_check_address (U8 address);
+ 179          
+ 180          //------------------------------------------------------------------------------
+ 181          // APIs
+ 182          //------------------------------------------------------------------------------
+ 183          
+ 184          //------------------------------------------------------------------------------
+ 185          // MCP_init_registers:
+ 186          // void MCP_init_registers (void)
+ 187          //
+ 188          // Return Value:
+ 189          //     None
+ 190          //
+ 191          // Parameters:
+ 192          //     None
+ 193          //
+ 194          // Description:
+ 195          //     This function initializes MCP registers to default values and must be
+ 196          //     called by MCP at start-up.
+ 197          //------------------------------------------------------------------------------
+ 198          void MCP_init_registers (void)
+ 199          {
+ 200   1          //8-bit register default settings
+ 201   1          MCP_8_bit_registers[MCP_REG_FIRMWARE_REVISION] = BLDC_RD_FW_VERSION;
+ 202   1          MCP_8_bit_registers[MCP_REG_PRESENT_MOTOR_DIRECTION] = BLDC_RD_DEFAULT_DIR;
+ 203   1          MCP_8_bit_registers[MCP_REG_TARGET_MOTOR_DIRECTION] = BLDC_RD_DEFAULT_DIR;
+ 204   1          // no more DIRECTION_BY_HOST.
+ 205   1          MCP_8_bit_registers[MCP_REG_MOTOR_CONTROL_SOURCE] =
+ 206   1                                                 ((BLDC_RD_RPM_PWM_SRC & 0x03) << 0) |
+ 207   1                                                 ((BLDC_RD_RPM_OR_PWM & 0x01) << 3)  |
+ 208   1                                                 ((0x01) << 4);
+ 209   1      
+ 210   1          MCP_8_bit_registers[MCP_REG_OVER_CURRENT_THRESHOLD] = BLDC_RD_CURRENT_TH;
+ 211   1          MCP_8_bit_registers[MCP_REG_OVER_CURRENT_PERSISTANCE] =
+ 212   1                                                                BLDC_RD_CURRENT_COUNT;
+ 213   1          MCP_8_bit_registers[MCP_REG_MOTOR_POLE_PAIRS_COUNT] = BLDC_RD_NUM_POLES/2;
+ 214   1          MCP_8_bit_registers[MCP_REG_PWM_SWITCHING] = BLDC_RD_PWM_METHOD;
+ 215   1          MCP_8_bit_registers[MCP_REG_COMMUTATION_METHOD] = BLDC_RD_COMMUT_METHOD;
+ 216   1      
+ 217   1          //16-bit register default settings
+ 218   1          MCP_16_bit_registers[INDEX_PRESENT_MOTOR_SPEED] = 0;
+ 219   1          MCP_16_bit_registers[INDEX_MOTOR_COIL_CURRENT] = 0;
+ 220   1          MCP_16_bit_registers[INDEX_MOTOR_OPERATING_VOLTAGE] = 0;
+ 221   1          MCP_16_bit_registers[INDEX_ACTIVE_PWM_DUTY_CYCLE] = 0;
+ 222   1          MCP_16_bit_registers[INDEX_CURRENT_SAMPLING_PERIOD] =
+ 223   1                                                      BLDC_RD_CURRENT_SAMPLING_PERIOD;
+ 224   1          MCP_16_bit_registers[INDEX_MAXIMUM_OPERATIONAL_SPEED] =
+ 225   1                                                     BLDC_RD_MAXIMUM_OPERAIONAL_SPEED;
+ 226   1          MCP_16_bit_registers[INDEX_TARGET_MOTOR_SPEED] = 0;
+ 227   1          MCP_16_bit_registers[INDEX_TARGET_PWM_DUTY_CYCLE] = 0;
+ 228   1          MCP_16_bit_registers[INDEX_ACCELERATION_STEP_SIZE] =
+ 229   1                                                       BLDC_RD_ACCELERATION_STEP_SIZE;
+ 230   1          MCP_16_bit_registers[INDEX_DECELERATION_STEP_SIZE] =
+ 231   1                                                       BLDC_RD_DECELERATION_STEP_SIZE;
+ 232   1          MCP_16_bit_registers[INDEX_PROPORTIONAL_GAIN] =
+ 233   1                                                         BLDC_RD_PI_PROPORTIONAL_GAIN;
+ 234   1      
+C51 COMPILER V9.53.0.0   MCP_REGISTERS                                                     01/20/2020 13:39:19 PAGE 5   
+
+ 235   1          MCP_16_bit_registers[INDEX_INTEGRAL_GAIN] = BLDC_RD_PI_INTEGRAL_GAIN;
+ 236   1      }
+ 237          
+ 238          //------------------------------------------------------------------------------
+ 239          // MCP_set_8bit_register:
+ 240          // bit MCP_set_8bit_register (U8 address, U8 value, bit external_access)
+ 241          //
+ 242          // Return Value:
+ 243          //     0: Success
+ 244          //     1: Failure - Invalid address or attempt to write to a read-only register
+ 245          //
+ 246          // Parameters:
+ 247          //     address: A unique ID of an 8-bit MCP register
+ 248          //     value: Value to be written to register.
+ 249          //     external_access:
+ 250          //         0: Function is called internally by F/W
+ 251          //         1: Function is called as a result of Write Register Command ('=')
+ 252          //
+ 253          // Description:
+ 254          //     This function is called by MCP when a Write Register Command for 8-bit
+ 255          //     register is received from controller. It can also be called internally
+ 256          //     by other components of F/W. If register is reserved/undefined then it
+ 257          //     returns 1. For a valid register, it returns 1 if it is read-only and
+ 258          //     returns 0 otherwise. A read-only register is read-only for external
+ 259          //     access via Write Register Command. All registers are writable internally
+ 260          //     by F/W. When a register is written (modified), corresponding dirty bit
+ 261          //     is also set.
+ 262          //------------------------------------------------------------------------------
+ 263          bit MCP_set_8bit_register (U8 address, U8 value, bit external_access)
+ 264          {
+ 265   1          U16 temp16;
+ 266   1      
+ 267   1          if (MCP_REG_RESERVED_START <= address)
+ 268   1          {
+ 269   2              return 1;
+ 270   2          }
+ 271   1      
+ 272   1          temp16 = ((U16)1 << address);
+ 273   1      
+ 274   1          if (external_access && (0 == (MCP_reg8_access_type & temp16)))
+ 275   1          {
+ 276   2              return 1;
+ 277   2          }
+ 278   1      
+ 279   1          MCP_8_bit_registers[address] = value;
+ 280   1      
+ 281   1          MCP_reg8_dirty_bit_map |= temp16;
+ 282   1      
+ 283   1          return 0;
+ 284   1      }
+ 285          
+ 286          //------------------------------------------------------------------------------
+ 287          // MCP_set_16bit_register:
+ 288          // bit MCP_set_16bit_register (U8 address, U16 value, bit external_access)
+ 289          //
+ 290          // Return Value:
+ 291          //     0: Success
+ 292          //     1: Failure - Invalid address or attempt to write to a read-only register
+ 293          //
+ 294          // Parameters:
+ 295          //     address: A unique ID of an 16-bit MCP register
+ 296          //     value: Value to be written to register.
+ 297          //     external_access:
+C51 COMPILER V9.53.0.0   MCP_REGISTERS                                                     01/20/2020 13:39:19 PAGE 6   
+
+ 298          //         0: Function is called internally by F/W
+ 299          //         1: Function is called as a result of Write Register Command ('=')
+ 300          //
+ 301          // Description:
+ 302          //     This function is called by MCP when a Write Register Command for 16-bit
+ 303          //     register is received from controller. It can also be called internally
+ 304          //     by other components of F/W. If register is reserved/undefined then it
+ 305          //     returns 1. For a valid register, it returns 1 if it is read-only and
+ 306          //     returns 0 otherwise. A read-only register is read-only for external
+ 307          //     access via Write Register Command. All registers are writable internally
+ 308          //     by F/W. When a register is written (modified), corresponding dirty bit
+ 309          //     is also set.
+ 310          //
+ 311          //------------------------------------------------------------------------------
+ 312          bit MCP_set_16bit_register (U8 address, U16 value, bit external_access)
+ 313          {
+ 314   1          //This bit is used by MCP_ATOMIC_ACCESS_START and MCP_ATOMIC_ACCESS_END
+ 315   1          bit int_status;
+ 316   1          U16 MCP_REG_MEM_TYPE *ptr;
+ 317   1          U8 byte_num;
+ 318   1          U8 bit_mask;
+ 319   1      
+ 320   1          if (MCP_REG_UNDEFINED_START <= address)
+ 321   1          {
+ 322   2              return 1;
+ 323   2          }
+ 324   1      
+ 325   1          address = (address - MCP_REG_PRESENT_MOTOR_SPEED) >> 1;
+ 326   1      
+ 327   1          ptr = &MCP_16_bit_registers[address];
+ 328   1      
+ 329   1          byte_num = (address & 0xF8) >> 3;
+ 330   1          bit_mask = 1 << (address & 0x07);
+ 331   1      
+ 332   1          if (external_access && (0 == (MCP_reg16_access_type[byte_num] & (bit_mask))))
+ 333   1          {
+ 334   2              return 1;
+ 335   2          }
+ 336   1      
+ 337   1          MCP_ATOMIC_ACCESS_START();
+ 338   1      
+ 339   1          *ptr = value;
+ 340   1      
+ 341   1          MCP_ATOMIC_ACCESS_END();
+ 342   1      
+ 343   1          MCP_reg16_dirty_bit_map[byte_num] |= (bit_mask);
+ 344   1      
+ 345   1          return 0;
+ 346   1      }
+ 347          
+ 348          //------------------------------------------------------------------------------
+ 349          // MCP_set_8bit_register_isr:
+ 350          // void MCP_set_8bit_register_isr (U8 address, U8 value)
+ 351          //
+ 352          // Return Value:
+ 353          //     None
+ 354          //
+ 355          // Parameters:
+ 356          //     address: A unique ID of an MCP register
+ 357          //     value: Value to be written to register.
+ 358          //
+ 359          // Description:
+ 360          //     This function is called by ISR to update a register. It assumes that the
+C51 COMPILER V9.53.0.0   MCP_REGISTERS                                                     01/20/2020 13:39:19 PAGE 7   
+
+ 361          //     address of valid 8-bit register is passed to it. It can write all 8-bit
+ 362          //     registers. When a register is written (modified), corresponding dirty bit
+ 363          //     is also set.
+ 364          //
+ 365          //------------------------------------------------------------------------------
+ 366          void MCP_set_8bit_register_isr (U8 address, U8 value)
+ 367          {
+ 368   1          MCP_8_bit_registers[address] = value;
+ 369   1      
+ 370   1          MCP_reg8_dirty_bit_map |= ((U16)1 << address);
+ 371   1      }
+ 372          
+ 373          //------------------------------------------------------------------------------
+ 374          // MCP_set_16bit_register_isr:
+ 375          // void MCP_set_16bit_register_isr (U8 address, U16 value)
+ 376          //
+ 377          // Return Value:
+ 378          //     None
+ 379          //
+ 380          // Parameters:
+ 381          //     address: A unique ID of an MCP register
+ 382          //     value: Value to be written to register.
+ 383          //
+ 384          // Description:
+ 385          //     This function is called by ISR to update a register. It assumes that the
+ 386          //     address of valid 16-bit register is passed to it. It can write all 16-bit
+ 387          //     registers. When a register is written (modified), corresponding dirty bit
+ 388          //     is also set.
+ 389          //
+ 390          //------------------------------------------------------------------------------
+ 391          void MCP_set_16bit_register_isr (U8 address, U16 value)
+ 392          {
+ 393   1          U16 MCP_REG_MEM_TYPE *ptr;
+ 394   1          U8 byte_num;
+ 395   1          U8 bit_mask;
+ 396   1      
+ 397   1          address = (address - MCP_REG_PRESENT_MOTOR_SPEED) >> 1;
+ 398   1      
+ 399   1          ptr = &MCP_16_bit_registers[address];
+ 400   1      
+ 401   1          byte_num = (address & 0xF8) >> 3;
+ 402   1          bit_mask = 1 << (address & 0x07);
+ 403   1      
+ 404   1          IE_EA = 0;
+ 405   1      
+ 406   1          *ptr = value;
+ 407   1      
+ 408   1          IE_EA = 1;
+ 409   1      
+ 410   1          MCP_reg16_dirty_bit_map[byte_num] |= (bit_mask);
+ 411   1      }
+ 412          
+ 413          //------------------------------------------------------------------------------
+ 414          // MCP_get_8bit_register:
+ 415          // U8 MCP_get_8bit_register (U8 address)
+ 416          //
+ 417          // Return Value:
+ 418          //     Contents of addressed register
+ 419          //
+ 420          // Parameters:
+ 421          //     address: A unique ID of an MCP register
+ 422          //
+ 423          // Description:
+C51 COMPILER V9.53.0.0   MCP_REGISTERS                                                     01/20/2020 13:39:19 PAGE 8   
+
+ 424          //     This function is called by MCP when a Read Register Command is received
+ 425          //     from controller. It assumes that address validity is checked by caller.
+ 426          //------------------------------------------------------------------------------
+ 427          U8 MCP_get_8bit_register (U8 address)
+ 428          {
+ 429   1          return(MCP_8_bit_registers[address]);
+ 430   1      }
+ 431          
+ 432          //------------------------------------------------------------------------------
+ 433          // MCP_get_16bit_register:
+ 434          // U16 MCP_get_16bit_register (U8 address)
+ 435          //
+ 436          // Return Value:
+ 437          //     Contents of addressed register
+ 438          //
+ 439          // Parameters:
+ 440          //     address: A unique ID of an MCP register
+ 441          //
+ 442          // Description:
+ 443          //     This function is called by MCP when a Read Register Command is received
+ 444          //     from controller. It assumes that address validity is checked by caller.
+ 445          //------------------------------------------------------------------------------
+ 446          U16 MCP_get_16bit_register (U8 address)
+ 447          {
+ 448   1          //This bit is used by MCP_ATOMIC_ACCESS_START and MCP_ATOMIC_ACCESS_END
+ 449   1          bit int_status;
+ 450   1          U16 value;
+ 451   1          U16 MCP_REG_MEM_TYPE *ptr;
+ 452   1      
+ 453   1          ptr = &MCP_16_bit_registers[(address - MCP_REG_PRESENT_MOTOR_SPEED) >> 1];
+ 454   1      
+ 455   1          MCP_ATOMIC_ACCESS_START();
+ 456   1      
+ 457   1          value = *ptr;
+ 458   1      
+ 459   1          MCP_ATOMIC_ACCESS_END();
+ 460   1      
+ 461   1          return(value);
+ 462   1      }
+ 463          
+ 464          //------------------------------------------------------------------------------
+ 465          // MCP_get_8bit_register_isr:
+ 466          // U8 MCP_get_8bit_register_isr (U8 address)
+ 467          //
+ 468          // Return Value:
+ 469          //     Contents of addressed register
+ 470          //
+ 471          // Parameters:
+ 472          //     address: A unique ID of an MCP register
+ 473          //
+ 474          // Description:
+ 475          //     This function is called by ISR to read a register. It assumes that the
+ 476          //     address of valid 8-bit register is passed to it.
+ 477          //
+ 478          //------------------------------------------------------------------------------
+ 479          U8 MCP_get_8bit_register_isr (U8 address)
+ 480          {
+ 481   1          return(MCP_8_bit_registers[address]);
+ 482   1      }
+ 483          
+ 484          //------------------------------------------------------------------------------
+ 485          // MCP_get_16bit_register_isr:
+ 486          // U16 MCP_get_16bit_register_isr (U8 address)
+C51 COMPILER V9.53.0.0   MCP_REGISTERS                                                     01/20/2020 13:39:19 PAGE 9   
+
+ 487          //
+ 488          // Return Value:
+ 489          //     Contents of addressed register
+ 490          //
+ 491          // Parameters:
+ 492          //     address: A unique ID of an MCP register
+ 493          //
+ 494          // Description:
+ 495          //     This function is called by ISR to read a register. It assumes that the
+ 496          //     address of valid 16-bit register is passed to it.
+ 497          //
+ 498          //------------------------------------------------------------------------------
+ 499          U16 MCP_get_16bit_register_isr (U8 address)
+ 500          {
+ 501   1          U16 value;
+ 502   1          U16 MCP_REG_MEM_TYPE *ptr;
+ 503   1      
+ 504   1          ptr = &MCP_16_bit_registers[(address - MCP_REG_PRESENT_MOTOR_SPEED) >> 1];
+ 505   1      
+ 506   1          IE_EA = 0;
+ 507   1      
+ 508   1          value = *ptr;
+ 509   1      
+ 510   1          IE_EA = 1;
+ 511   1      
+ 512   1          return(value);
+ 513   1      }
+ 514          
+ 515          //------------------------------------------------------------------------------
+ 516          // MCP_status_update_register:
+ 517          // bit MCP_status_update_register (U8 address, bit enable)
+ 518          //
+ 519          // Return Value:
+ 520          //     0: Success
+ 521          //     1: Failure - Invalid address
+ 522          //
+ 523          // Parameters:
+ 524          //     address: A unique ID of an MCP register
+ 525          //     enable: Flag indicating enable or disable
+ 526          //         0: Disable sending given register in status update transfer
+ 527          //         1: Enable sending given register in status update transfer
+ 528          //
+ 529          // Description:
+ 530          //     This function is called by MCP when a Enable/Disable Register in Status
+ 531          //     Update Command is received from controller. It sets/resets a register
+ 532          //     specific bit in an internal map register depending on enable parameter.
+ 533          //     Enabled registers will be sent to UART regularly in binary mode.
+ 534          //
+ 535          //------------------------------------------------------------------------------
+ 536          bit MCP_status_update_register (U8 address, bit enable)
+ 537          {
+ 538   1          U16 temp16;
+ 539   1          U8 byte_num;
+ 540   1          U8 bit_mask;
+ 541   1      
+ 542   1          if (MCP_check_address(address))
+ 543   1          {
+ 544   2              return 1;
+ 545   2          }
+ 546   1      
+ 547   1          temp16 = (U16)1 << address;
+ 548   1      
+ 549   1          if (MCP_REG_PRESENT_MOTOR_SPEED > address)
+C51 COMPILER V9.53.0.0   MCP_REGISTERS                                                     01/20/2020 13:39:19 PAGE 10  
+
+ 550   1          {
+ 551   2              if (enable)
+ 552   2              {
+ 553   3                  MCP_reg8_status_update_map |= temp16;
+ 554   3                  //MCP_reg8_dirty_bit_map     |= ((U16)1 << address);
+ 555   3              }
+ 556   2              else
+ 557   2              {
+ 558   3                  MCP_reg8_status_update_map &= ~(temp16);
+ 559   3                  //MCP_reg8_dirty_bit_map     &= ~((U16)1 << address);
+ 560   3              }
+ 561   2          }
+ 562   1          // This check avoids a potential problem. If address is 0x70 or above then
+ 563   1          // byte_num becomes 4 and therefore, MCP_reg16_status_update_map[byte_num]
+ 564   1          // will reference MCP_reg8_dirty_bit_map.
+ 565   1          else if (MCP_REG_UNDEFINED_START > address)
+ 566   1          {
+ 567   2              address = (address - MCP_REG_PRESENT_MOTOR_SPEED) >> 1;
+ 568   2      
+ 569   2              byte_num = (address & 0xF8) >> 3;
+ 570   2              bit_mask = 1 << (address & 0x07);
+ 571   2      
+ 572   2              if (enable)
+ 573   2              {
+ 574   3                  MCP_reg16_status_update_map[byte_num] |= (bit_mask);
+ 575   3                  //MCP_reg16_dirty_bit_map     |= ((U32)1 << address);
+ 576   3              }
+ 577   2              else
+ 578   2              {
+ 579   3                  MCP_reg16_status_update_map[byte_num] &= ~(bit_mask);
+ 580   3                  //MCP_reg16_dirty_bit_map      &= ~((U16)1 << address);
+ 581   3              }
+ 582   2          }
+ 583   1          return 0;
+ 584   1      }
+ 585          
+ 586          //------------------------------------------------------------------------------
+ 587          // MCP_is_8bit_status_update_enabled:
+ 588          // bit MCP_is_8bit_status_update_enabled (U8 address)
+ 589          //
+ 590          // Return Value:
+ 591          //     0: Register is not enabled for status update
+ 592          //     1: Register is enabled for status update
+ 593          //
+ 594          // Parameters:
+ 595          //     address: A unique ID of an 8 bit MCP register
+ 596          //
+ 597          // Description:
+ 598          //     This function is called by MCP during Status Update in binary mode to
+ 599          //     check register can be read and included in status update process.
+ 600          //
+ 601          //------------------------------------------------------------------------------
+ 602          bit MCP_is_8bit_status_update_enabled (U8 address)
+ 603          {
+ 604   1          U16 temp16;
+ 605   1      
+ 606   1          temp16 = (U16)1 << address;
+ 607   1      
+ 608   1          if ((MCP_reg8_status_update_map & (temp16))  &&
+ 609   1              (MCP_reg8_dirty_bit_map     & (temp16)))
+ 610   1          {
+ 611   2              MCP_reg8_dirty_bit_map &= ~(temp16);
+ 612   2              return 1;
+C51 COMPILER V9.53.0.0   MCP_REGISTERS                                                     01/20/2020 13:39:19 PAGE 11  
+
+ 613   2          }
+ 614   1      
+ 615   1          return 0;
+ 616   1      }
+ 617          
+ 618          //------------------------------------------------------------------------------
+ 619          // MCP_is_16bit_status_update_enabled:
+ 620          // bit MCP_is_16bit_status_update_enabled (U8 address)
+ 621          //
+ 622          // Return Value:
+ 623          //     0: Register is not enabled for status update
+ 624          //     1: Register is enabled for status update
+ 625          //
+ 626          // Parameters:
+ 627          //     address: A unique ID of a 16-bit MCP register
+ 628          //
+ 629          // Description:
+ 630          //     This function is called by MCP during Status Update in binary mode to
+ 631          //     check register can be read and included in status update process.
+ 632          //
+ 633          //------------------------------------------------------------------------------
+ 634          bit MCP_is_16bit_status_update_enabled (U8 address)
+ 635          {
+ 636   1          U8 byte_num;
+ 637   1          U8 bit_mask;
+ 638   1      
+ 639   1          address = (address - MCP_REG_PRESENT_MOTOR_SPEED) >> 1;
+ 640   1      
+ 641   1          byte_num = (address & 0xF8) >> 3;
+ 642   1          bit_mask = 1 << (address & 0x07);
+ 643   1      
+ 644   1          if ((MCP_reg16_status_update_map[byte_num] & (bit_mask))  &&
+ 645   1              (MCP_reg16_dirty_bit_map[byte_num] & (bit_mask)))
+ 646   1          {
+ 647   2              MCP_reg16_dirty_bit_map[byte_num] &= ~(bit_mask);
+ 648   2              return 1;
+ 649   2          }
+ 650   1      
+ 651   1          return 0;
+ 652   1      }
+ 653          
+ 654          //------------------------------------------------------------------------------
+ 655          // Local Functions
+ 656          //------------------------------------------------------------------------------
+ 657          
+ 658          //------------------------------------------------------------------------------
+ 659          // MCP_check_address:
+ 660          // static bit MCP_check_address (U8)
+ 661          //
+ 662          // Return Value:
+ 663          //     0: if address of supported register is passed
+ 664          //     1: if address of unsupported register is passed
+ 665          //
+ 666          // Parameters:
+ 667          //     Address of MCP register
+ 668          //
+ 669          // Description:
+ 670          //     It checks if the register referred by address is supported or not.
+ 671          //------------------------------------------------------------------------------
+ 672          static bit MCP_check_address (U8 address)
+ 673          {
+ 674   1          if (((MCP_REG_RESERVED_START <= address)
+ 675   1                             &&
+C51 COMPILER V9.53.0.0   MCP_REGISTERS                                                     01/20/2020 13:39:19 PAGE 12  
+
+ 676   1              (MCP_REG_RESERVED_END    >= address))
+ 677   1                             ||
+ 678   1              (MCP_REG_UNDEFINED_START <= address))
+ 679   1          {
+ 680   2              return 1;
+ 681   2          }
+ 682   1      
+ 683   1          return 0;
+ 684   1      }
+ 685          
+ 686          //------------------------------------------------------------------------------
+ 687          // End Of File
+ 688          //------------------------------------------------------------------------------
+*** WARNING C316 IN LINE 688 OF C:\Users\A92862\SimplicityStudio\v4_workspace\EFM8BB1_BLDC_PORT\src\MCP_Registers.c: unt
+             -erminated conditionals
+
+
+MODULE INFORMATION:   STATIC OVERLAYABLE
+   CODE SIZE        =    719    ----
+   CONSTANT SIZE    =      6    ----
+   XDATA SIZE       =     48    ----
+   PDATA SIZE       =   ----    ----
+   DATA SIZE        =     12       5
+   IDATA SIZE       =   ----    ----
+   BIT SIZE         =   ----       5
+   EDATA SIZE       =   ----    ----
+   HDATA SIZE       =   ----    ----
+   XDATA CONST SIZE =   ----    ----
+   FAR CONST SIZE   =   ----    ----
+END OF MODULE INFORMATION.
+
+
+C51 COMPILATION COMPLETE.  2 WARNING(S),  0 ERROR(S)

@@ -20,33 +20,33 @@
 //-----------------------------------------------------------------------------
 SI_INTERRUPT (ADC0EOC_ISR, ADC0EOC_IRQn)
 {
-	static uint32_t accumulator = 0;     // Accumulator for averaging
-	static uint16_t measurements = 2048;// Measurement counter
-	uint32_t result = 0;
-	uint32_t mV;// Measured voltage in mV
-
-	ADC0CN0_ADINT = 0;// Clear ADC0 conv. complete flag
-
-	accumulator += ADC0;
-	measurements--;
-
-	if(measurements == 0)
-	{
-		measurements = 2048;
-		result = accumulator / 2048;
-		accumulator = 0;
-
-		// The 10-bit ADC value is averaged across 2048 measurements.
-		// The measured voltage applied to P1.7 is then:
-		//
-		//                           Vref (mV)
-		//   measurement (mV) =   --------------- * result (bits)
-		//                       (2^10)-1 (bits)
-
-		mV = (result * 3300) / 1023;
-
-		RETARGET_PRINTF ("\nP0.7 voltage: %ld mV\n", mV);
-	}
+//	static uint32_t accumulator = 0;     // Accumulator for averaging
+//	static uint16_t measurements = 2048;// Measurement counter
+//	uint32_t result = 0;
+//	uint32_t mV;// Measured voltage in mV
+//
+//	ADC0CN0_ADINT = 0;// Clear ADC0 conv. complete flag
+//
+//	accumulator += ADC0;
+//	measurements--;
+//
+//	if(measurements == 0)
+//	{
+//		measurements = 2048;
+//		result = accumulator / 2048;
+//		accumulator = 0;
+//
+//		// The 10-bit ADC value is averaged across 2048 measurements.
+//		// The measured voltage applied to P1.7 is then:
+//		//
+//		//                           Vref (mV)
+//		//   measurement (mV) =   --------------- * result (bits)
+//		//                       (2^10)-1 (bits)
+//
+//		mV = (result * 3300) / 1023;
+//
+//		RETARGET_PRINTF ("\nP0.7 voltage: %ld mV\n", mV);
+//	}
 }
 
 //-----------------------------------------------------------------------------
@@ -167,4 +167,20 @@ SI_INTERRUPT (TIMER3_ISR, TIMER3_IRQn)
 {
 
 }
+
+//-----------------------------------------------------------------------------
+// TIMER1_ISR
+//-----------------------------------------------------------------------------
+//
+// TIMER1 ISR Content goes here. Remember to clear flag bits:
+// TCON::TF1 (Timer 1 Overflow Flag)
+//
+//-----------------------------------------------------------------------------
+SI_INTERRUPT (TIMER1_ISR, TIMER1_IRQn)
+{
+//-----------------------------------------------------------------------------
+// Timer1_ISR - Not invoked
+//-----------------------------------------------------------------------------
+}
+
 

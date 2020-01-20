@@ -90,11 +90,9 @@
 // Button define
 //-----------------------------------------------------------------------------
 // BTN1 is used to start the motor running in the reference design kit.
-#define BTN1_PORT       P2
-#define BTN1_BIT        1
+SI_SBIT (BTN1, SFR_P1, 1);	// Define BTN1
 
-#define BTN0_PORT       P1
-#define BTN0_BIT        1
+SI_SBIT (BTN0, SFR_P2, 1);	// Define BTN0
 
 #define FG_PORT         P2
 #define FG_PIN          0
@@ -499,10 +497,6 @@
 
 
 #ifdef FEATURE_BTN0
-// HERE
-//SBIT(BTN0, BTN0_PORT, BTN0_BIT);
-#define BTN0_MDOUT    PxMDOUT(BTN0_PORT)
-#define CONFIG_BTN0()       do { BTN0_MDOUT &= ~(1 << (BTN0_BIT)); } while (0)
 #define IS_BTN0_PRESSED()   (BTN0 == 0)
 #else
 #define CONFIG_BTN0()
@@ -510,10 +504,6 @@
 #endif
 
 #ifdef FEATURE_BTN1
-// HERE
-//SBIT(BTN1, BTN1_PORT, BTN1_BIT);
-#define BTN1_MDOUT    PxMDOUT(BTN1_PORT)
-#define CONFIG_BTN1()       do { BTN1_MDOUT &= ~(1 << (BTN1_BIT)); } while (0)
 #define IS_BTN1_PRESSED()   (BTN1 == 0)
 #else
 #define CONFIG_BTN1()

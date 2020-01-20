@@ -51,22 +51,6 @@
 // Global Variables
 //-----------------------------------------------------------------------------
 
-
-//-----------------------------------------------------------------------------
-// initialize_pca
-//-----------------------------------------------------------------------------
-//
-// Return Value : None
-// Parameters   : None
-// PWM - 24kHz frequency, 10bit resolution, Edge aligned signal used by default.
-//
-// to check zero crossing time, virtual 32bit timer established.
-// -user_timer(MSB) + PCA0(LSB)
-// CEX0 is used for pwm filtering.
-// CEX1 is for FET driving.
-//-----------------------------------------------------------------------------
-void PCA_initialize_pca(void);
-
 //-----------------------------------------------------------------------------
 // PCA_set_initial_polarity
 //-----------------------------------------------------------------------------

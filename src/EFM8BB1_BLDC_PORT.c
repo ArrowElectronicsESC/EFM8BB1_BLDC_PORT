@@ -9,9 +9,13 @@
 // Includes
 //-----------------------------------------------------------------------------
 
-#include "bsp.h"
-#include "InitDevice.h"
-#include "pca_0.h"
+#include "bldcdk.h"
+
+//-----------------------------------------------------------------------------
+// Function Prototypes
+//-----------------------------------------------------------------------------
+static U8 APP_tune_callback(U16 pwm, U16 disp);
+static bit APP_reset(void);
 
 //-----------------------------------------------------------------------------
 // SiLabs_Startup() Routine
@@ -23,7 +27,8 @@
 //-----------------------------------------------------------------------------
 void SiLabs_Startup (void)
 {
-  // Disable the watchdog here
+    WDTCN = 0xDE;           // Disable watchdog timer
+    WDTCN = 0xAD;
 }
  
 //-----------------------------------------------------------------------------
@@ -32,54 +37,173 @@ void SiLabs_Startup (void)
 
 void main(void)
 {
-  uint16_t delay_count;                       // Used to implement a delay
-  bool duty_direction = 0;                     // 0 = Decrease; 1 = Increase
-  uint8_t duty_cycle = 0x80;
+	enter_DefaultMode_from_RESET();
 
-  enter_DefaultMode_from_RESET();
-
-  while (1)
-  {
-    // Wait a little while
-    for (delay_count = 15000; delay_count > 0; delay_count--);
-
-    if (duty_direction == 1)                  // Direction = Increase
-    {
-      // First, check the ECOM0 bit
-      if ((PCA0CPM0 & PCA0CPM0_ECOM__BMASK) == PCA0CPM0_ECOM__DISABLED)
-      {
-        PCA0CPM0 |= PCA0CPM0_ECOM__ENABLED;   // Set ECOM0 if it is '0'
-      }
-      else                                    // Increase duty cycle otherwise
-      {
-        duty_cycle--;                         // Increase duty cycle
-
-        PCA0_writeChannel(PCA0_CHAN0, duty_cycle << 8);
+	MCP_tune_callback = &APP_tune_callback;
+	MCP_reset_callback = &APP_reset;
+	MCP_init();
+	SL_MTR_init();
+	MTRAPP_init();
 
 
-        if (PCA0CPH0 == 0x00)
-        {
-          duty_direction = 0;                 // Change direction for next time
-        }
-      }
-    }
-    else                                      // Direction = Decrease
-    {
-      if (duty_cycle == 0xFF)
-      {
-        PCA0CPM0 &= ~PCA0CPM0_ECOM__BMASK;    // Clear ECOM0
-        duty_direction = 1;                   // Change direction for next time
-      }
-      else
-      {
-        duty_cycle++;                         // Decrease duty cycle
-
-        PCA0_writeChannel(PCA0_CHAN0, duty_cycle << 8);
-      }
-    }
-
-  }
+	while (1)
+	{
+		ADC_task();
+		btn_process();
+		MTRAPP_task();
+		MCP_task();
+	}
 }
+
+
+//------------------------------------------------------------------------------
+// This call-back will be called by MCP_Task() when TUNE command is executed
+//------------------------------------------------------------------------------
+#ifdef FEATURE_PID_TUNE_FUNCTION
+U16 SEG_XDATA C0;
+U16 SEG_XDATA tune_disp;
+U8 SEG_XDATA tune_cnt = 0;
+U16 SEG_XDATA Y0, Amplitude;
+U16 SEG_XDATA half_pu, Pu;
+U16 SEG_XDATA last_half_pu;
+U16 SEG_XDATA max_speed, last_max_speed;
+U16 SEG_XDATA twait, twait0;
+U16 SEG_XDATA speed, prev_speed;
+U16 SEG_XDATA nKu, nKi, nKp;
+U32 SEG_XDATA KA;
+bit dec;
+bit tune_in_progress;
+extern struct pt SEG_XDATA mcp_tune;
+#define TEST_CNT    20
+
+#define KP_KONST    ((U32)(ROUND_DIV((U32)(65536UL*3.2*3.14),(4UL*256))))
+#define KI_KONST    ((U32)ROUND_DIV( (U32)(65536UL*3.2*2.2*3.14), (4UL*256*((DEFAULT_PID_INTERVAL+1)))))
+
+static U8 APP_tune_callback(U16 pwm, U16 disp)
+{
+    bit event = 0;
+    C0 = pwm;
+    tune_disp = disp;
+
+    tune_in_progress = 1;
+    PT_BEGIN(&mcp_tune);
+
+    // wait until motor started...
+    PT_WAIT_UNTIL(&mcp_tune, (MOTOR_RUNNING == SLR_motor_state));
+
+    // motor started. wait stable running
+    // set initial duty cycle(C0) for test
+    SLR_pwm_duty = C0;
+    PCA_change_duty_cycle(SLR_pwm_duty);
+
+    twait0 = SL_MTR_time();
+    twait = twait0;
+    while((twait - twait0) < 5000)
+    {
+        twait = SL_MTR_time();
+        PT_YIELD(&mcp_tune);
+    }
+
+    // start pid tuning.
+    // save initial speed.
+    Y0 = MCP_get_16bit_register(MCP_REG_PRESENT_MOTOR_SPEED);
+    tune_cnt = 0;
+    dec = 1;
+    half_pu = 0L;
+    max_speed = 0;
+
+    // decrease duty cycle firstly.
+    SLR_pwm_duty = C0 - tune_disp;
+    PCA_change_duty_cycle(SLR_pwm_duty);
+    while(tune_cnt < TEST_CNT)
+    {
+        PT_WAIT_UNTIL(&mcp_tune, ((U8)SL_MTR_time() & DEFAULT_PID_INTERVAL) == 0);
+        speed = MCP_get_16bit_register(MCP_REG_PRESENT_MOTOR_SPEED);
+        if(dec)
+        {
+            if( (speed+2) < Y0)
+            {
+                SLR_pwm_duty = C0 + tune_disp;
+                event = 1;
+            }
+        }
+        else
+        {
+            if( speed > (Y0+2) )
+            {
+                SLR_pwm_duty = C0 - tune_disp;
+                event = 1;
+            }
+        }
+        if(event)
+        {
+            PCA_change_duty_cycle(SLR_pwm_duty);
+            twait = SL_MTR_time();
+            dec = ~dec;
+            tune_cnt++;
+            half_pu = twait - last_half_pu;
+            last_half_pu = twait;
+            last_max_speed = max_speed;
+            event = 0;
+        }
+
+        if( speed > max_speed)
+        {
+            max_speed = speed;
+        }
+        //PT_YIELD(&mcp_tune);
+    }
+
+    // end test
+    Pu = half_pu*2;
+    Amplitude = (last_max_speed-Y0);
+#if 0
+    MCP_debug_print("P%d\n", (U32)Pu);
+    MCP_debug_print("A%d\n", (U32)Amplitude);
+#endif
+
+    // Ku = (4*d)/(a*3.14)
+    // Tyreus-Luyben PI Variables.
+    // Kp = Ku/3.2 = 4*d/(a*3.14*3.2)
+    KA = KP_KONST*Amplitude;
+    nKp = ROUND_DIV((((U32)tune_disp)<<16), KA);
+    // Ki = Kp/(2.2*Pu) = 4*d/(a*3.14*3.2*2.2*Pu);
+    KA = KA*Pu;
+    nKi = ROUND_DIV((((U32)tune_disp)<<16), KA);
+
+    MCP_set_16bit_register(MCP_REG_PROPORTIONAL_GAIN,nKp, 0);
+    MCP_set_16bit_register(MCP_REG_INTEGRAL_GAIN,nKi, 0);
+
+    //Done
+    tune_in_progress = 0;
+    PT_END(&mcp_tune);
+    return 2;
+}
+
+#else
+static U8 APP_tune_callback(U16 pwm, U16 disp)
+{
+    //Done
+    disp = pwm;
+    return 0;
+}
+#endif
+
+//-----------------------------------------------------------------------------
+// APP_reset
+//-----------------------------------------------------------------------------
+//
+// Return Value : 0
+// Parameters   : None
+// Description: This function called when PC send 'RST\n' cmd
+//
+//-----------------------------------------------------------------------------
+static bit APP_reset(void)
+{
+    SL_MTR_stop_motor();
+    return 0;
+}
+
 
 //-----------------------------------------------------------------------------
 // End Of File

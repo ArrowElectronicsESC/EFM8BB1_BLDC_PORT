@@ -1,0 +1,92 @@
+C51 COMPILER V9.53.0.0   COMP                                                              01/20/2020 13:39:21 PAGE 1   
+
+
+C51 COMPILER V9.53.0.0, COMPILATION OF MODULE COMP
+OBJECT MODULE PLACED IN .\src\comp.OBJ
+COMPILER INVOKED BY: c:\SiliconLabs\SimplicityStudio\v4\developer\toolchains\keil_8051\9.53\BIN\C51.exe C:\Users\A92862\
+                    -SimplicityStudio\v4_workspace\EFM8BB1_BLDC_PORT\src\comp.c OMF2 SMALL DEBUG OBJECTEXTEND ROM(LARGE) WARNINGLEVEL(2) FLOA
+                    -TFUZZY(3) OPTIMIZE(8,SPEED) INTVECTOR(0X0000) INTPROMOTE INCDIR(C:\Users\A92862\SimplicityStudio\v4_workspace\EFM8BB1_BL
+                    -DC_PORT\inc;C:\Users\A92862\SimplicityStudio\v4_workspace\EFM8BB1_BLDC_PORT\inc\config;C:/SiliconLabs/SimplicityStudio/v
+                    -4/developer/sdks/8051/v4.1.7//kits/common/drivers/efm8_retargetserial;C:/SiliconLabs/SimplicityStudio/v4/developer/sdks/
+                    -8051/v4.1.7//Lib/efm8_assert;C:/SiliconLabs/SimplicityStudio/v4/developer/sdks/8051/v4.1.7//kits/common/bsp;C:/SiliconLa
+                    -bs/SimplicityStudio/v4/developer/sdks/8051/v4.1.7//kits/EFM8BB1_LCK/config;C:/SiliconLabs/SimplicityStudio/v4/developer/
+                    -sdks/8051/v4.1.7//Device/shared/si8051Base;C:/SiliconLabs/SimplicityStudio/v4/developer/sdks/8051/v4.1.7//Device/EFM8BB1
+                    -/inc;C:/SiliconLabs/SimplicityStudio/v4/developer/sdks/8051/v4.1.7//Device/EFM8BB1/peripheral_driver/inc) PRINT(.\src\co
+                    -mp.lst) COND PAGEWIDTH(120) PAGELENGTH(65) OBJECT(.\src\comp.OBJ)
+
+line level    source
+
+   1          //-----------------------------------------------------------------------------
+   2          // comp.c
+   3          //-----------------------------------------------------------------------------
+   4          // Copyright 2013, Silicon Laboratories, Inc.
+   5          // http://www.silabs.com
+   6          //
+   7          // Created on: Mat 20, 2013
+   8          //     Author: sgghang
+   9          //-----------------------------------------------------------------------------
+  10          
+  11          //-----------------------------------------------------------------------------
+  12          // Includes
+  13          //-----------------------------------------------------------------------------
+  14          #include "bldcdk.h"
+*** WARNING C322 IN LINE 130 OF \Users\A92862\SimplicityStudio\v4_workspace\EFM8BB1_BLDC_PORT\inc\BLDC_RD_Build_Params.h
+             -: unknown identifier
+  15          
+  16          //-----------------------------------------------------------------------------
+  17          // Global Constants
+  18          //-----------------------------------------------------------------------------
+  19          
+  20          
+  21          //-----------------------------------------------------------------------------
+  22          // Function Prototypes
+  23          //-----------------------------------------------------------------------------
+  24          
+  25          
+  26          //-----------------------------------------------------------------------------
+  27          // Global Variables
+  28          //-----------------------------------------------------------------------------
+  29          
+  30          //-----------------------------------------------------------------------------
+  31          // COMP_initialize_comp
+  32          //-----------------------------------------------------------------------------
+  33          //
+  34          // Return Value : None
+  35          // Parameters   : None
+  36          //
+  37          // Description  :
+  38          //-----------------------------------------------------------------------------
+  39          #if (BLDC_RD_PWM_METHOD == H_BRIDGE_HIGH_SIDE_PWM) || \
+  40              (BLDC_RD_PWM_METHOD == H_BRIDGE_LOW_SIDE_PWM) || \
+  41              (BLDC_RD_PWM_METHOD == H_BRIDGE_MIXED_MODE_PWM)
+  42          void COMP_initialize_comp(void)
+  43          {
+  44   1              CMP1MX = compMux[0];
+  45   1      
+C51 COMPILER V9.53.0.0   COMP                                                              01/20/2020 13:39:21 PAGE 2   
+
+  46   1          // enable comparator 0
+  47   1          // Hysteresis 0mV
+  48   1      }
+  49          #endif
+  50          
+*** WARNING C316 IN LINE 50 OF C:\Users\A92862\SimplicityStudio\v4_workspace\EFM8BB1_BLDC_PORT\src\comp.c: unterminated 
+             -conditionals
+
+
+MODULE INFORMATION:   STATIC OVERLAYABLE
+   CODE SIZE        =      8    ----
+   CONSTANT SIZE    =   ----    ----
+   XDATA SIZE       =   ----    ----
+   PDATA SIZE       =   ----    ----
+   DATA SIZE        =   ----    ----
+   IDATA SIZE       =   ----    ----
+   BIT SIZE         =   ----    ----
+   EDATA SIZE       =   ----    ----
+   HDATA SIZE       =   ----    ----
+   XDATA CONST SIZE =   ----    ----
+   FAR CONST SIZE   =   ----    ----
+END OF MODULE INFORMATION.
+
+
+C51 COMPILATION COMPLETE.  2 WARNING(S),  0 ERROR(S)
