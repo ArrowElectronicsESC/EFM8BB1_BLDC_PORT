@@ -1,4 +1,4 @@
-C51 COMPILER V9.53.0.0   PCA_0                                                             01/20/2020 13:37:34 PAGE 1   
+C51 COMPILER V9.53.0.0   PCA_0                                                             01/20/2020 15:38:45 PAGE 1   
 
 
 C51 COMPILER V9.53.0.0, COMPILATION OF MODULE PCA_0
@@ -63,7 +63,7 @@ line level    source
   44   2          PCA0MD &= ~PCA0MD_ECF__BMASK;
   45   2          PCA0MD |= en << PCA0MD_ECF__SHIFT;
   46   2        }
-C51 COMPILER V9.53.0.0   PCA_0                                                             01/20/2020 13:37:34 PAGE 2   
+C51 COMPILER V9.53.0.0   PCA_0                                                             01/20/2020 15:38:45 PAGE 2   
 
   47   1        if(flag & PCA0_IOVERFLOW_IF){
   48   2          PCA0PWM &= ~PCA0PWM_ECOV__BMASK;
@@ -128,7 +128,7 @@ line level    source
  107   1      }
  108          
  109          void PCA0_init(PCA0_Timebase_t  timebase, PCA0_IdleState_t idleState)
-C51 COMPILER V9.53.0.0   PCA_0                                                             01/20/2020 13:37:34 PAGE 3   
+C51 COMPILER V9.53.0.0   PCA_0                                                             01/20/2020 15:38:45 PAGE 3   
 
  110          {
  111   1        PCA0MD &= ~(PCA0MD_CPS__FMASK | PCA0MD_CIDL__BMASK);
@@ -193,7 +193,7 @@ line level    source
  170   1        {
  171   2        case 0:
  172   2          PCA0CPM0 &= MODE_MASK;
-C51 COMPILER V9.53.0.0   PCA_0                                                             01/20/2020 13:37:34 PAGE 4   
+C51 COMPILER V9.53.0.0   PCA_0                                                             01/20/2020 15:38:45 PAGE 4   
 
  173   2          PCA0CPM0 |= pwmValue;
  174   2          break;
@@ -258,7 +258,7 @@ line level    source
                 uint8_t flags = PCA0CN0 & (PCA0CN0_CF__BMASK
                                                      | PCA0CN0_CCF0__BMASK
                                                      | PCA0CN0_CCF1__BMASK
-C51 COMPILER V9.53.0.0   PCA_0                                                             01/20/2020 13:37:34 PAGE 5   
+C51 COMPILER V9.53.0.0   PCA_0                                                             01/20/2020 15:38:45 PAGE 5   
 
                                                      | PCA0CN0_CCF2__BMASK);
                 PCA0CN0 &= ~flags;

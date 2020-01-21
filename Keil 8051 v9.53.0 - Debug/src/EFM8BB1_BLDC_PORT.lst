@@ -1,4 +1,4 @@
-C51 COMPILER V9.53.0.0   EFM8BB1_BLDC_PORT                                                 01/20/2020 14:03:39 PAGE 1   
+C51 COMPILER V9.53.0.0   EFM8BB1_BLDC_PORT                                                 01/20/2020 15:34:31 PAGE 1   
 
 
 C51 COMPILER V9.53.0.0, COMPILATION OF MODULE EFM8BB1_BLDC_PORT
@@ -63,7 +63,7 @@ line level    source
   43   1              MCP_reset_callback = &APP_reset;
   44   1              MCP_init();
   45   1              SL_MTR_init();
-C51 COMPILER V9.53.0.0   EFM8BB1_BLDC_PORT                                                 01/20/2020 14:03:39 PAGE 2   
+C51 COMPILER V9.53.0.0   EFM8BB1_BLDC_PORT                                                 01/20/2020 15:34:31 PAGE 2   
 
   46   1              MTRAPP_init();
   47   1      
@@ -128,7 +128,7 @@ line level    source
               
                   // start pid tuning.
                   // save initial speed.
-C51 COMPILER V9.53.0.0   EFM8BB1_BLDC_PORT                                                 01/20/2020 14:03:39 PAGE 3   
+C51 COMPILER V9.53.0.0   EFM8BB1_BLDC_PORT                                                 01/20/2020 15:34:31 PAGE 3   
 
                   Y0 = MCP_get_16bit_register(MCP_REG_PRESENT_MOTOR_SPEED);
                   tune_cnt = 0;
@@ -193,7 +193,7 @@ line level    source
                   nKp = ROUND_DIV((((U32)tune_disp)<<16), KA);
                   // Ki = Kp/(2.2*Pu) = 4*d/(a*3.14*3.2*2.2*Pu);
                   KA = KA*Pu;
-C51 COMPILER V9.53.0.0   EFM8BB1_BLDC_PORT                                                 01/20/2020 14:03:39 PAGE 4   
+C51 COMPILER V9.53.0.0   EFM8BB1_BLDC_PORT                                                 01/20/2020 15:34:31 PAGE 4   
 
                   nKi = ROUND_DIV((((U32)tune_disp)<<16), KA);
               

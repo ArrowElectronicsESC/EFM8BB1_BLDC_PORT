@@ -1,4 +1,4 @@
-C51 COMPILER V9.53.0.0   INTERRUPTS                                                        01/20/2020 13:39:18 PAGE 1   
+C51 COMPILER V9.53.0.0   INTERRUPTS                                                        01/20/2020 15:45:02 PAGE 1   
 
 
 C51 COMPILER V9.53.0.0, COMPILATION OF MODULE INTERRUPTS
@@ -38,188 +38,54 @@ line level    source
   18          // ADC0CN0::ADINT (Conversion Complete Interrupt Flag)
   19          //
   20          //-----------------------------------------------------------------------------
-  21          SI_INTERRUPT (ADC0EOC_ISR, ADC0EOC_IRQn)
-  22          {
-  23   1      //      static uint32_t accumulator = 0;     // Accumulator for averaging
-  24   1      //      static uint16_t measurements = 2048;// Measurement counter
-  25   1      //      uint32_t result = 0;
-  26   1      //      uint32_t mV;// Measured voltage in mV
-  27   1      //
-  28   1      //      ADC0CN0_ADINT = 0;// Clear ADC0 conv. complete flag
-  29   1      //
-  30   1      //      accumulator += ADC0;
-  31   1      //      measurements--;
-  32   1      //
-  33   1      //      if(measurements == 0)
-  34   1      //      {
-  35   1      //              measurements = 2048;
-  36   1      //              result = accumulator / 2048;
-  37   1      //              accumulator = 0;
-  38   1      //
-  39   1      //              // The 10-bit ADC value is averaged across 2048 measurements.
-  40   1      //              // The measured voltage applied to P1.7 is then:
-  41   1      //              //
-  42   1      //              //                           Vref (mV)
-  43   1      //              //   measurement (mV) =   --------------- * result (bits)
-  44   1      //              //                       (2^10)-1 (bits)
-  45   1      //
-C51 COMPILER V9.53.0.0   INTERRUPTS                                                        01/20/2020 13:39:18 PAGE 2   
+  21          //SI_INTERRUPT (ADC0EOC_ISR, ADC0EOC_IRQn)
+  22          //{
+  23          //
+  24          //}
+  25          
+  26          
+  27          //-----------------------------------------------------------------------------
+  28          // TIMER3_ISR
+  29          //-----------------------------------------------------------------------------
+  30          //
+  31          // TIMER3 ISR Content goes here. Remember to clear flag bits:
+  32          // TMR3CN0::TF3H (Timer # High Byte Overflow Flag)
+  33          // TMR3CN0::TF3L (Timer # Low Byte Overflow Flag)
+  34          //
+  35          //-----------------------------------------------------------------------------
+  36          SI_INTERRUPT (TIMER3_ISR, TIMER3_IRQn)
+  37          {
+  38   1      
+  39   1      }
+  40          
+  41          //-----------------------------------------------------------------------------
+  42          // TIMER1_ISR
+  43          //-----------------------------------------------------------------------------
+  44          //
+  45          // TIMER1 ISR Content goes here. Remember to clear flag bits:
+C51 COMPILER V9.53.0.0   INTERRUPTS                                                        01/20/2020 15:45:02 PAGE 2   
 
-  46   1      //              mV = (result * 3300) / 1023;
-  47   1      //
-  48   1      //              RETARGET_PRINTF ("\nP0.7 voltage: %ld mV\n", mV);
-  49   1      //      }
-  50   1      }
-  51          
-  52          //-----------------------------------------------------------------------------
-  53          // PCA0_ISR
-  54          //-----------------------------------------------------------------------------
-  55          //
-  56          // PCA0 ISR Content goes here. Remember to clear flag bits:
-  57          // PCA0CN0::PCA0CN0_CCF0 (PCA Module 0 Capture/Compare Flag)
-  58          // PCA0CN0::CCF1 (PCA Module 1 Capture/Compare Flag)
-  59          // PCA0CN0::CCF2 (PCA Module 2 Capture/Compare Flag)
-  60          // PCA0CN0::CF (PCA Counter/Timer Overflow Flag)
-  61          // PCA0PWM::COVF (Cycle Overflow Flag)
-  62          //
-  63          //-----------------------------------------------------------------------------
-  64          SI_INTERRUPT (PCA0_ISR, PCA0_IRQn)
-  65          {
-  66   1              static UU16 xpca_count;
-  67   1              U16 user_timer;
-  68   1              static UU16 new_duty;
-  69   1              static UU16 new_cpblank_duty;
-  70   1              static U8 new_polarity;
-  71   1      
-  72   1              if ( (PCA0PWM & 0x60) == 0x60 )
-  73   1              {
-  74   2                      // PCA Cycle counter overflow interrupt - this is enabled because
-  75   2                      // user needs to update duty cycle of both the motor PWM and
-  76   2                      // the blanking PWM signal
-  77   2      
-  78   2                      PCA0PWM = (PWM_RESOLUTION - 8) | 0x80;
-  79   2                      // protect from high priority interrupt service
-  80   2                      IE_EA = 0;
-  81   2                      PCA0POL = new_polarity;
-  82   2                      PCA0CN0_CCF0 = 0;
-  83   2                      MOTPWM_CCF = 0;
-  84   2                      // This clIE_EArs the ECOM bit-causing PWM output to go to inactive state
-  85   2                      PCA0CPL0 = new_cpblank_duty.U8[LSB];
-  86   2                      // This sets the ECOM bit
-  87   2                      PCA0CPH0 = new_cpblank_duty.U8[MSB];
-  88   2                      // This clIE_EArs the ECOM bit-causing PWM output to go to inactive state
-  89   2                      MOTPWM_PCA0CPL = new_duty.U8[LSB];
-  90   2                      MOTPWM_PCA0CPH = new_duty.U8[MSB];
-  91   2                      PCA0PWM = (PWM_RESOLUTION - 8);
-  92   2                      // CEX1, match flag is set
-  93   2                      if (MOTPWM_CCF)
-  94   2                      {
-  95   3                              xpca_count.U8[LSB] = PCA0L;
-  96   3                              xpca_count.U8[MSB] = PCA0H;
-  97   3                              // Additional hIE_EAdroom due to delays in execution
-  98   3                              // in case we miss the match event (toggling CEXn), we ensure that
-  99   3                              // postponed(+32) event occur. Otherwise, it could make 1(one) 100%
- 100   3                              // or 0% pwm cycle once in a while. This is happening at very low
- 101   3                              // or very high duty cycle when the period between pca cycle overflow
- 102   3                              // and match event is very short.
- 103   3                              xpca_count.U16 += 32;
- 104   3                              MOTPWM_PCA0CPL = xpca_count.U8[LSB];
- 105   3                              MOTPWM_PCA0CPH = xpca_count.U8[MSB];
- 106   3                      }
- 107   2                      // CEX0, match flag is set
- 108   2                      if (PCA0CN0_CCF0)
-C51 COMPILER V9.53.0.0   INTERRUPTS                                                        01/20/2020 13:39:18 PAGE 3   
-
- 109   2                      {
- 110   3                              xpca_count.U8[LSB] = PCA0L;
- 111   3                              xpca_count.U8[MSB] = PCA0H;
- 112   3                              // Additional hIE_EAdroom due to delays in execution
- 113   3                              // in case we miss the match event (toggling CEXn), we ensure that
- 114   3                              // postponed(+32) event occur. Otherwise, it could make 1(one) 100%
- 115   3                              // or 0% pwm cycle once in a while. This is happening at very low
- 116   3                              // or very high duty cycle when the period between pca cycle overflow
- 117   3                              // and match event is very short.
- 118   3                              xpca_count.U16 += 32;
- 119   3                              PCA0CPL0 = xpca_count.U8[LSB];
- 120   3                              PCA0CPH0 = xpca_count.U8[MSB];
- 121   3                      }
- 122   2                      IE_EA = 1;
- 123   2                      // for application level information.
- 124   2                      SLW_pwm_updated = 1;
- 125   2              }
- 126   1      
- 127   1              if (PCA0CN0_CF)
- 128   1              {
- 129   2                      // Disable global interrupts to ensure coherence
- 130   2                      // in upper 16-bits of timer by higher priority interrupt.
- 131   2                      IE_EA = 0;
- 132   2                      PCA0CN0_CF = 0;
- 133   2                      user_timer++;
- 134   2                      IE_EA = 1;
- 135   2      
- 136   2                      if( 0 == ((U8)user_timer & pid_calc_interval) )
- 137   2                      {
- 138   3                              pid_flag = 1;
- 139   3                      }
- 140   2              }
- 141   1      }
- 142          
- 143          //-----------------------------------------------------------------------------
- 144          // CMP1_ISR
- 145          //-----------------------------------------------------------------------------
- 146          //
- 147          // CMP1 ISR Content goes here. Remember to clear flag bits:
- 148          // CMP1CN0::CPFIF (Comparator Falling-Edge Flag)
- 149          // CMP1CN0::CPRIF (Comparator Rising-Edge Flag)
- 150          //
- 151          //-----------------------------------------------------------------------------
- 152          SI_INTERRUPT (CMP1_ISR, CMP1_IRQn)
- 153          {
- 154   1      
- 155   1      }
- 156          
- 157          //-----------------------------------------------------------------------------
- 158          // TIMER3_ISR
- 159          //-----------------------------------------------------------------------------
- 160          //
- 161          // TIMER3 ISR Content goes here. Remember to clear flag bits:
- 162          // TMR3CN0::TF3H (Timer # High Byte Overflow Flag)
- 163          // TMR3CN0::TF3L (Timer # Low Byte Overflow Flag)
- 164          //
- 165          //-----------------------------------------------------------------------------
- 166          SI_INTERRUPT (TIMER3_ISR, TIMER3_IRQn)
- 167          {
- 168   1      
- 169   1      }
- 170          
- 171          //-----------------------------------------------------------------------------
-C51 COMPILER V9.53.0.0   INTERRUPTS                                                        01/20/2020 13:39:18 PAGE 4   
-
- 172          // TIMER1_ISR
- 173          //-----------------------------------------------------------------------------
- 174          //
- 175          // TIMER1 ISR Content goes here. Remember to clear flag bits:
- 176          // TCON::TF1 (Timer 1 Overflow Flag)
- 177          //
- 178          //-----------------------------------------------------------------------------
- 179          SI_INTERRUPT (TIMER1_ISR, TIMER1_IRQn)
- 180          {
- 181   1      //-----------------------------------------------------------------------------
- 182   1      // Timer1_ISR - Not invoked
- 183   1      //-----------------------------------------------------------------------------
- 184   1      }
- 185          
- 186          
-*** WARNING C316 IN LINE 186 OF C:\Users\A92862\SimplicityStudio\v4_workspace\EFM8BB1_BLDC_PORT\src\Interrupts.c: unterm
-             -inated conditionals
+  46          // TCON::TF1 (Timer 1 Overflow Flag)
+  47          //
+  48          //-----------------------------------------------------------------------------
+  49          SI_INTERRUPT (TIMER1_ISR, TIMER1_IRQn)
+  50          {
+  51   1      //-----------------------------------------------------------------------------
+  52   1      // Timer1_ISR - Not invoked
+  53   1      //-----------------------------------------------------------------------------
+  54   1      }
+  55          
+  56          
+*** WARNING C316 IN LINE 56 OF C:\Users\A92862\SimplicityStudio\v4_workspace\EFM8BB1_BLDC_PORT\src\Interrupts.c: untermi
+             -nated conditionals
 
 
 MODULE INFORMATION:   STATIC OVERLAYABLE
-   CODE SIZE        =    161    ----
+   CODE SIZE        =      8    ----
    CONSTANT SIZE    =   ----    ----
    XDATA SIZE       =   ----    ----
    PDATA SIZE       =   ----    ----
-   DATA SIZE        =      7       2
+   DATA SIZE        =   ----    ----
    IDATA SIZE       =   ----    ----
    BIT SIZE         =   ----    ----
    EDATA SIZE       =   ----    ----

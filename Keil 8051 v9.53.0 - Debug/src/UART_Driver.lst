@@ -1,4 +1,4 @@
-C51 COMPILER V9.53.0.0   UART_DRIVER                                                       01/20/2020 13:39:20 PAGE 1   
+C51 COMPILER V9.53.0.0   UART_DRIVER                                                       01/21/2020 10:02:10 PAGE 1   
 
 
 C51 COMPILER V9.53.0.0, COMPILATION OF MODULE UART_DRIVER
@@ -31,45 +31,43 @@ line level    source
 *** WARNING C322 IN LINE 130 OF \Users\A92862\SimplicityStudio\v4_workspace\EFM8BB1_BLDC_PORT\inc\BLDC_RD_Build_Params.h
              -: unknown identifier
   13          
-  14          
-  15          #ifdef BUILD_FOR_UART
-  16          
-  17          
+  14          #ifdef BUILD_FOR_UART
+  15          
+  16          //------------------------------------------------------------------------------
+  17          // Local Constants
   18          //------------------------------------------------------------------------------
-  19          // Local Constants
-  20          //------------------------------------------------------------------------------
-  21          #define TIMER1_INT 0
-  22          
-  23          #if 1
-  24          #define UART_TX_BUFFER_FREE_BYTES \
-  25                       ((UART_tx_buffer_head - UART_tx_buffer_tail) & (UART_BUF_SIZE - 1))
+  19          #define TIMER1_INT 0
+  20          
+  21          #if 1
+  22          #define UART_TX_BUFFER_FREE_BYTES \
+  23                       ((UART_tx_buffer_head - UART_tx_buffer_tail) & (UART_BUF_SIZE - 1))
+  24          
+  25          #define UART_TX_BUFFER_FULL  (1 == (UART_TX_BUFFER_FREE_BYTES))
   26          
-  27          #define UART_TX_BUFFER_FULL  (1 == (UART_TX_BUFFER_FREE_BYTES))
+  27          #define UART_TX_BUFFER_EMPTY (0 == (UART_TX_BUFFER_FREE_BYTES))
   28          
-  29          #define UART_TX_BUFFER_EMPTY (0 == (UART_TX_BUFFER_FREE_BYTES))
-  30          
-  31          #define UART_INC_TXPTR(p) do {  \
-  32              (p)++;  \
-  33              if ((p) == &UART_tx_buffer[UART_BUF_SIZE])    \
-  34                  (p) = &UART_tx_buffer[0];   \
-  35          } while (0)
-  36          
-  37          #define UART_RX_BUFFER_FREE_BYTES \
-  38                       ((UART_rx_buffer_head - UART_rx_buffer_tail) & (UART_BUF_SIZE - 1))
+  29          #define UART_INC_TXPTR(p) do {  \
+  30              (p)++;  \
+  31              if ((p) == &UART_tx_buffer[UART_BUF_SIZE])    \
+  32                  (p) = &UART_tx_buffer[0];   \
+  33          } while (0)
+  34          
+  35          #define UART_RX_BUFFER_FREE_BYTES \
+  36                       ((UART_rx_buffer_head - UART_rx_buffer_tail) & (UART_BUF_SIZE - 1))
+  37          
+  38          #define UART_RX_BUFFER_FULL  (1 == (UART_RX_BUFFER_FREE_BYTES))
   39          
-  40          #define UART_RX_BUFFER_FULL  (1 == (UART_RX_BUFFER_FREE_BYTES))
+  40          #define UART_RX_BUFFER_EMPTY (0 == (UART_RX_BUFFER_FREE_BYTES))
   41          
-  42          #define UART_RX_BUFFER_EMPTY (0 == (UART_RX_BUFFER_FREE_BYTES))
-  43          
-  44          #define UART_INC_RXPTR(p) do {  \
-  45              (p)++;  \
-C51 COMPILER V9.53.0.0   UART_DRIVER                                                       01/20/2020 13:39:20 PAGE 2   
+  42          #define UART_INC_RXPTR(p) do {  \
+  43              (p)++;  \
+  44              if ((p) == &UART_rx_buffer[UART_BUF_SIZE])    \
+  45                  (p) = &UART_rx_buffer[0];   \
+C51 COMPILER V9.53.0.0   UART_DRIVER                                                       01/21/2020 10:02:10 PAGE 2   
 
-  46              if ((p) == &UART_rx_buffer[UART_BUF_SIZE])    \
-  47                  (p) = &UART_rx_buffer[0];   \
-  48          } while (0)
-  49          
-  50          #else
+  46          } while (0)
+  47          
+  48          #else
               
               #define UART_TX_BUFFER_FULL                               \
                  ((UART_tx_buffer_tail == (UART_tx_buffer_head - 1)) || \
@@ -84,193 +82,197 @@ line level    source
               #define UART_RX_BUFFER_EMPTY   (UART_rx_buffer_tail == UART_rx_buffer_head)
               
               #endif
-  65          
-  66          
-  67          //------------------------------------------------------------------------------
-  68          // Local Variables
+  63          
+  64          //------------------------------------------------------------------------------
+  65          // Local functions
+  66          //------------------------------------------------------------------------------
+  67          INTERRUPT_PROTO (UART0_ISR, INTERRUPT_UART0);
+  68          
   69          //------------------------------------------------------------------------------
-  70          
+  70          // Local Variables
   71          //------------------------------------------------------------------------------
-  72          // TX BUFFER
-  73          // UART_Tx_Buffer[] holds data to be send over UART. The next data to be sent
-  74          // over UART is at index UART_tx_buffer_head and next data byte can be queued at
-  75          // index UART_tx_buffer_tail.
-  76          // UART_Tx_Busy is set when data byte is written to UART register and cleared
-  77          // when that byte is transmitted successfully.
-  78          //------------------------------------------------------------------------------
-  79          volatile U8 SEG_IDATA UART_tx_buffer[UART_BUF_SIZE];
-  80          volatile U8 SEG_IDATA *UART_tx_buffer_head;
-  81          volatile U8 SEG_IDATA *UART_tx_buffer_tail;
-  82          volatile bit UART_tx_busy;
-  83          
-  84          
-  85          //------------------------------------------------------------------------------
-  86          // RX BUFFER
-  87          // UART_Rx_Buffer[] holds data received from UART. The next data byte to be read
-  88          // by application is at index UART_rx_buffer_head and next received byte will be
-  89          // stored at index UART_rx_buffer_tail.
-  90          //------------------------------------------------------------------------------
-  91          volatile U8 SEG_IDATA UART_rx_buffer[UART_BUF_SIZE];
-  92          volatile U8 SEG_IDATA *UART_rx_buffer_head;
-  93          volatile U8 SEG_IDATA *UART_rx_buffer_tail;
-  94          
-  95          //------------------------------------------------------------------------------
-  96          // UART_init_buffers
-  97          // void UART_init_buffers (void)
-  98          //
-  99          // Return Value:
- 100          //     None
- 101          //
- 102          // Parameters:
- 103          //     None
- 104          //
- 105          // Description:
- 106          //     This function is called at startup to initialize Tx and Rx buffers such
- 107          //     that both buffers are empty and respective Head and Tail indices are set
- 108          //     to 0. It can also be called by application.
-C51 COMPILER V9.53.0.0   UART_DRIVER                                                       01/20/2020 13:39:20 PAGE 3   
+  72          
+  73          //------------------------------------------------------------------------------
+  74          // TX BUFFER
+  75          // UART_Tx_Buffer[] holds data to be send over UART. The next data to be sent
+  76          // over UART is at index UART_tx_buffer_head and next data byte can be queued at
+  77          // index UART_tx_buffer_tail.
+  78          // UART_Tx_Busy is set when data byte is written to UART register and cleared
+  79          // when that byte is transmitted successfully.
+  80          //------------------------------------------------------------------------------
+  81          volatile U8 SEG_IDATA UART_tx_buffer[UART_BUF_SIZE];
+  82          volatile U8 SEG_IDATA *UART_tx_buffer_head;
+  83          volatile U8 SEG_IDATA *UART_tx_buffer_tail;
+  84          volatile bit UART_tx_busy;
+  85          
+  86          
+  87          //------------------------------------------------------------------------------
+  88          // RX BUFFER
+  89          // UART_Rx_Buffer[] holds data received from UART. The next data byte to be read
+  90          // by application is at index UART_rx_buffer_head and next received byte will be
+  91          // stored at index UART_rx_buffer_tail.
+  92          //------------------------------------------------------------------------------
+  93          volatile U8 SEG_IDATA UART_rx_buffer[UART_BUF_SIZE];
+  94          volatile U8 SEG_IDATA *UART_rx_buffer_head;
+  95          volatile U8 SEG_IDATA *UART_rx_buffer_tail;
+  96          
+  97          //------------------------------------------------------------------------------
+  98          // UART_init_buffers
+  99          // void UART_init_buffers (void)
+ 100          //
+ 101          // Return Value:
+ 102          //     None
+ 103          //
+ 104          // Parameters:
+ 105          //     None
+ 106          //
+ 107          // Description:
+ 108          //     This function is called at startup to initialize Tx and Rx buffers such
+C51 COMPILER V9.53.0.0   UART_DRIVER                                                       01/21/2020 10:02:10 PAGE 3   
 
- 109          //
- 110          // WARNING: Use with care. Any unread data or data-in-wait will be lost.
- 111          //------------------------------------------------------------------------------
- 112          void UART_init_buffers (void)
- 113          {
- 114   1          UART_tx_buffer_head = &UART_tx_buffer[0];
- 115   1          UART_tx_buffer_tail = &UART_tx_buffer[0];
- 116   1          UART_rx_buffer_head = &UART_rx_buffer[0];
- 117   1          UART_rx_buffer_tail = &UART_rx_buffer[0];
- 118   1      }
- 119          
- 120          //------------------------------------------------------------------------------
- 121          // UART_send_byte
- 122          // U8 UART_send_byte (U8)
- 123          //
- 124          // Return Value:
- 125          //     Returns error code of type uart_error_t
- 126          //
- 127          // Parameters:
- 128          //     Data byte to be sent over UART
- 129          //
- 130          // Description:
- 131          //     This function is called by application to send a data byte over UART.
- 132          //     UART driver doesn't impose any restriction on the value of data byte.
- 133          //     The data byte is put in an internal buffer and will only be send when all
- 134          //     previous data bytes are sent. If driver is unable to accept new data byte
- 135          //     then it doesn't block, instead it returns UART_ERROR_TX_BUFFER_FULL. Such
- 136          //     condition should be handled by application.
- 137          //------------------------------------------------------------------------------
- 138          U8 UART_send_byte (U8 value)
- 139          {
- 140   1          //Return error if Tx buffer is full.
- 141   1          if (UART_TX_BUFFER_FULL)
- 142   1          {
- 143   2              return UART_ERROR_TX_BUFFER_FULL;
- 144   2          }
- 145   1      
- 146   1          //Queue new byte at tail of buffer, update tail and count
- 147   1          *UART_tx_buffer_tail = value;
- 148   1      
- 149   1          IE_ES0 = 0;
- 150   1          UART_INC_TXPTR(UART_tx_buffer_tail);
- 151   1          IE_ES0 = 1;
- 152   1      
- 153   1          if (0 == UART_tx_busy)
- 154   1          {
- 155   2              //Since UART is free for transmission, trigger transmission now
- 156   2              SCON0_TI = 1;
- 157   2          }
- 158   1      
- 159   1          return UART_SUCCESS;
- 160   1      }
- 161          
- 162          //------------------------------------------------------------------------------
- 163          // UART_receive_byte
- 164          // U8 UART_receive_byte (U8 data *)
- 165          //
- 166          // Return Value:
- 167          //     Returns error code of type uart_error_t
- 168          //
- 169          // Parameters:
- 170          //     Pointer to the variable where received byte is to be copied
- 171          //
-C51 COMPILER V9.53.0.0   UART_DRIVER                                                       01/20/2020 13:39:20 PAGE 4   
+ 109          //     that both buffers are empty and respective Head and Tail indices are set
+ 110          //     to 0. It can also be called by application.
+ 111          //
+ 112          // WARNING: Use with care. Any unread data or data-in-wait will be lost.
+ 113          //------------------------------------------------------------------------------
+ 114          void UART_init_buffers (void)
+ 115          {
+ 116   1          UART_tx_buffer_head = &UART_tx_buffer[0];
+ 117   1          UART_tx_buffer_tail = &UART_tx_buffer[0];
+ 118   1          UART_rx_buffer_head = &UART_rx_buffer[0];
+ 119   1          UART_rx_buffer_tail = &UART_rx_buffer[0];
+ 120   1      }
+ 121          
+ 122          //------------------------------------------------------------------------------
+ 123          // UART_send_byte
+ 124          // U8 UART_send_byte (U8)
+ 125          //
+ 126          // Return Value:
+ 127          //     Returns error code of type uart_error_t
+ 128          //
+ 129          // Parameters:
+ 130          //     Data byte to be sent over UART
+ 131          //
+ 132          // Description:
+ 133          //     This function is called by application to send a data byte over UART.
+ 134          //     UART driver doesn't impose any restriction on the value of data byte.
+ 135          //     The data byte is put in an internal buffer and will only be send when all
+ 136          //     previous data bytes are sent. If driver is unable to accept new data byte
+ 137          //     then it doesn't block, instead it returns UART_ERROR_TX_BUFFER_FULL. Such
+ 138          //     condition should be handled by application.
+ 139          //------------------------------------------------------------------------------
+ 140          U8 UART_send_byte (U8 value)
+ 141          {
+ 142   1          //Return error if Tx buffer is full.
+ 143   1          if (UART_TX_BUFFER_FULL)
+ 144   1          {
+ 145   2              return UART_ERROR_TX_BUFFER_FULL;
+ 146   2          }
+ 147   1      
+ 148   1          //Queue new byte at tail of buffer, update tail and count
+ 149   1          *UART_tx_buffer_tail = value;
+ 150   1      
+ 151   1          IE_ES0 = 0;
+ 152   1          UART_INC_TXPTR(UART_tx_buffer_tail);
+ 153   1          IE_ES0 = 1;
+ 154   1      
+ 155   1          if (0 == UART_tx_busy)
+ 156   1          {
+ 157   2              //Since UART is free for transmission, trigger transmission now
+ 158   2              SCON0_TI = 1;
+ 159   2          }
+ 160   1      
+ 161   1          return UART_SUCCESS;
+ 162   1      }
+ 163          
+ 164          //------------------------------------------------------------------------------
+ 165          // UART_receive_byte
+ 166          // U8 UART_receive_byte (U8 data *)
+ 167          //
+ 168          // Return Value:
+ 169          //     Returns error code of type uart_error_t
+ 170          //
+ 171          // Parameters:
+C51 COMPILER V9.53.0.0   UART_DRIVER                                                       01/21/2020 10:02:10 PAGE 4   
 
- 172          // Description:
- 173          //     This function is called by application to read a data byte from UART. The
- 174          //     driver receives data from UART independent of application calls and saves
- 175          //     it into internal buffer. This function returns oldest unread data byte
- 176          //     from internal buffer. If buffer doesn't contain any unread byte then it
- 177          //     doesn't block, instead it returns UART_ERROR_RX_BUFFER_EMPTY. In this
- 178          //     case, application has to retry.
- 179          //------------------------------------------------------------------------------
- 180          U8 UART_receive_byte (U8 data *value)
- 181          {
- 182   1          //Return error if Rx buffer is empty.
- 183   1          if (UART_RX_BUFFER_EMPTY)
- 184   1          {
- 185   2              return UART_ERROR_RX_BUFFER_EMPTY;
- 186   2          }
- 187   1      
- 188   1          //Queue new byte at tail of buffer, update tail and count
- 189   1          *value = *UART_rx_buffer_head;
- 190   1      
- 191   1          IE_ES0 = 0;
- 192   1          UART_INC_RXPTR(UART_rx_buffer_head);
- 193   1          IE_ES0 = 1;
- 194   1      
- 195   1          return UART_SUCCESS;
- 196   1      }
- 197          #if 1
- 198          //------------------------------------------------------------------------------
- 199          // UART_get_tx_buffer_free_bytes
- 200          // U8 UART_get_tx_buffer_free_bytes (void)
- 201          //
- 202          // Return Value:
- 203          //     Returns the number of free bytes in UART_tx_buffer[]
- 204          //
- 205          // Parameters:
- 206          //     None
- 207          //
- 208          // Description:
- 209          //     This function can be called by application to know how much space (bytes)
- 210          //     is available in tx buffer. Application can wait until required amount of
- 211          //     bytes is not free.
- 212          //
- 213          //------------------------------------------------------------------------------
- 214          U8 UART_get_tx_buffer_free_bytes (void)
- 215          {
- 216   1          if (UART_tx_buffer_head != UART_tx_buffer_tail)
- 217   1          {
- 218   2              return UART_TX_BUFFER_FREE_BYTES;
- 219   2          }
- 220   1          else
- 221   1          {
- 222   2              return UART_BUF_SIZE;
- 223   2          }
- 224   1      
- 225   1      }
- 226          #endif
- 227          
- 228          
- 229          //-----------------------------------------------------------------------------
- 230          // UART0_ISR
+ 172          //     Pointer to the variable where received byte is to be copied
+ 173          //
+ 174          // Description:
+ 175          //     This function is called by application to read a data byte from UART. The
+ 176          //     driver receives data from UART independent of application calls and saves
+ 177          //     it into internal buffer. This function returns oldest unread data byte
+ 178          //     from internal buffer. If buffer doesn't contain any unread byte then it
+ 179          //     doesn't block, instead it returns UART_ERROR_RX_BUFFER_EMPTY. In this
+ 180          //     case, application has to retry.
+ 181          //------------------------------------------------------------------------------
+ 182          U8 UART_receive_byte (U8 data *value)
+ 183          {
+ 184   1          //Return error if Rx buffer is empty.
+ 185   1          if (UART_RX_BUFFER_EMPTY)
+ 186   1          {
+ 187   2              return UART_ERROR_RX_BUFFER_EMPTY;
+ 188   2          }
+ 189   1      
+ 190   1          //Queue new byte at tail of buffer, update tail and count
+ 191   1          *value = *UART_rx_buffer_head;
+ 192   1      
+ 193   1          IE_ES0 = 0;
+ 194   1          UART_INC_RXPTR(UART_rx_buffer_head);
+ 195   1          IE_ES0 = 1;
+ 196   1      
+ 197   1          return UART_SUCCESS;
+ 198   1      }
+ 199          #if 1
+ 200          //------------------------------------------------------------------------------
+ 201          // UART_get_tx_buffer_free_bytes
+ 202          // U8 UART_get_tx_buffer_free_bytes (void)
+ 203          //
+ 204          // Return Value:
+ 205          //     Returns the number of free bytes in UART_tx_buffer[]
+ 206          //
+ 207          // Parameters:
+ 208          //     None
+ 209          //
+ 210          // Description:
+ 211          //     This function can be called by application to know how much space (bytes)
+ 212          //     is available in tx buffer. Application can wait until required amount of
+ 213          //     bytes is not free.
+ 214          //
+ 215          //------------------------------------------------------------------------------
+ 216          U8 UART_get_tx_buffer_free_bytes (void)
+ 217          {
+ 218   1          if (UART_tx_buffer_head != UART_tx_buffer_tail)
+ 219   1          {
+ 220   2              return UART_TX_BUFFER_FREE_BYTES;
+ 221   2          }
+ 222   1          else
+ 223   1          {
+ 224   2              return UART_BUF_SIZE;
+ 225   2          }
+ 226   1      
+ 227   1      }
+ 228          #endif
+ 229          
+ 230          
  231          //-----------------------------------------------------------------------------
- 232          //
- 233          // UART0 ISR Content goes here. Remember to clear flag bits:
- 234          // SCON0::RI (Receive Interrupt Flag)
-C51 COMPILER V9.53.0.0   UART_DRIVER                                                       01/20/2020 13:39:20 PAGE 5   
+ 232          // UART0_ISR
+ 233          //-----------------------------------------------------------------------------
+ 234          //
+C51 COMPILER V9.53.0.0   UART_DRIVER                                                       01/21/2020 10:02:10 PAGE 5   
 
- 235          // SCON0::TI (Transmit Interrupt Flag)
- 236          //
- 237          //-----------------------------------------------------------------------------
- 238          SI_INTERRUPT (UART0_ISR, UART0_IRQn)
- 239          {
- 240   1              if (SCON0_RI == 1)
- 241   1                  {
- 242   2                      //This bit is not cleared by hardware, so clear it here.
- 243   2                              SCON0_RI = 0;
- 244   2      
- 245   2              #if 0 //To test the behaviour if alternate byte is not read from SBUF0
+ 235          // UART0 ISR Content goes here. Remember to clear flag bits:
+ 236          // SCON0::RI (Receive Interrupt Flag)
+ 237          // SCON0::TI (Transmit Interrupt Flag)
+ 238          //
+ 239          //-----------------------------------------------------------------------------
+ 240          SI_INTERRUPT (UART0_ISR, UART0_IRQn)
+ 241          {
+ 242   1              if (SCON0_RI == 1)
+ 243   1                  {
+ 244   2                      //This bit is not cleared by hardware, so clear it here.
+ 245   2                              SCON0_RI = 0;
+ 246   2      
+ 247   2              #if 0 //To test the behaviour if alternate byte is not read from SBUF0
                               if (0 == temp)
                               {
                                   UART_rx_buffer[UART_rx_buffer_tail] = SBUF0;
@@ -287,44 +289,44 @@ line level    source
                               }
                               temp ^= 1;
                       #else
- 262   2      
- 263   2                      //If UART Rx buffer is full then discard new byte otherwise save it
- 264   2                      if (!UART_RX_BUFFER_FULL)
- 265   2                      {
- 266   3                          *UART_rx_buffer_tail = SBUF0;
- 267   3                          UART_INC_RXPTR(UART_rx_buffer_tail);
- 268   3                      }
- 269   2              #endif
- 270   2      
- 271   2                  }
- 272   1      
- 273   1                  //Last byte was transmitted successfully
- 274   1                  if (SCON0_TI == 1)
- 275   1                  {
- 276   2                      //This bit is not cleared by hardware, so clear it here.
- 277   2                      SCON0_TI = 0;
- 278   2      
- 279   2                      //After transmission of last byte driver is now ready for next (if any?)
- 280   2                      UART_tx_busy = 0;
- 281   2      
- 282   2                      if (UART_tx_buffer_head != UART_tx_buffer_tail)
- 283   2                      {
- 284   3                          //Indicate transmission in progress, get next byte in queue, send it
- 285   3                          //and update head and count
- 286   3      
- 287   3                          UART_tx_busy = 1;
- 288   3                          SBUF0 = *UART_tx_buffer_head;
- 289   3                          UART_INC_TXPTR(UART_tx_buffer_head);
- 290   3                      }
- 291   2                  }
- 292   1      }
- 293          
- 294          
- 295          #else //BUILD_FOR_UART
+ 264   2      
+ 265   2                      //If UART Rx buffer is full then discard new byte otherwise save it
+ 266   2                      if (!UART_RX_BUFFER_FULL)
+ 267   2                      {
+ 268   3                          *UART_rx_buffer_tail = SBUF0;
+ 269   3                          UART_INC_RXPTR(UART_rx_buffer_tail);
+ 270   3                      }
+ 271   2              #endif
+ 272   2      
+ 273   2                  }
+ 274   1      
+ 275   1                  //Last byte was transmitted successfully
+ 276   1                  if (SCON0_TI == 1)
+ 277   1                  {
+ 278   2                      //This bit is not cleared by hardware, so clear it here.
+ 279   2                      SCON0_TI = 0;
+ 280   2      
+ 281   2                      //After transmission of last byte driver is now ready for next (if any?)
+ 282   2                      UART_tx_busy = 0;
+ 283   2      
+ 284   2                      if (UART_tx_buffer_head != UART_tx_buffer_tail)
+ 285   2                      {
+ 286   3                          //Indicate transmission in progress, get next byte in queue, send it
+ 287   3                          //and update head and count
+ 288   3      
+ 289   3                          UART_tx_busy = 1;
+ 290   3                          SBUF0 = *UART_tx_buffer_head;
+ 291   3                          UART_INC_TXPTR(UART_tx_buffer_head);
+ 292   3                      }
+ 293   2                  }
+ 294   1      }
+ 295          
+ 296          
+ 297          #else //BUILD_FOR_UART
+C51 COMPILER V9.53.0.0   UART_DRIVER                                                       01/21/2020 10:02:10 PAGE 6   
+
               
               //------------------------------------------------------------------------------
-C51 COMPILER V9.53.0.0   UART_DRIVER                                                       01/20/2020 13:39:20 PAGE 6   
-
               // API
               //------------------------------------------------------------------------------
               
@@ -386,10 +388,10 @@ line level    source
               
               //------------------------------------------------------------------------------
               // UART_receive_byte
+C51 COMPILER V9.53.0.0   UART_DRIVER                                                       01/21/2020 10:02:10 PAGE 7   
+
               // U8 UART_receive_byte (U8 data *)
               //
-C51 COMPILER V9.53.0.0   UART_DRIVER                                                       01/20/2020 13:39:20 PAGE 7   
-
               // Return Value:
               //     Returns error code of type uart_error_t
               //
@@ -426,12 +428,11 @@ line level    source
               #endif //BUILD_FOR_PROTOCOL
               
               #endif //BUILD_FOR_UART
- 397          
- 398          //-----------------------------------------------------------------------------
- 399          // End Of File
+ 399          
  400          //-----------------------------------------------------------------------------
- 401          
-*** WARNING C316 IN LINE 401 OF C:\Users\A92862\SimplicityStudio\v4_workspace\EFM8BB1_BLDC_PORT\src\UART_Driver.c: unter
+ 401          // End Of File
+ 402          //-----------------------------------------------------------------------------
+*** WARNING C316 IN LINE 402 OF C:\Users\A92862\SimplicityStudio\v4_workspace\EFM8BB1_BLDC_PORT\src\UART_Driver.c: unter
              -minated conditionals
 
 

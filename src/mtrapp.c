@@ -107,6 +107,7 @@ void MTRAPP_task()
                     // SL_MTR_start_motor need CPT0MX_IMEASURE pin which is
                     // same as IMEAS_ADCMX.
                     // wait if adc in progress by ADC_task().
+                	while(!ADC0CN0_ADINT);
                     // disconnect all pins
                     ADC0MX = 0x1F;
                 }
@@ -171,6 +172,7 @@ void MTRAPP_task()
 #endif
             // Re-configure BTN0 because this is shared with LED0 in
             // reference design kit.
+            CONFIG_BTN0();
         }
     }
     // Enable stream data even motor stopped.
@@ -502,5 +504,4 @@ INTERRUPT(PORT_MATCH_ISR, INTERRUPT_PORT_MATCH)
     PWMIN_MAT ^= (1<<PWMIN_BIT);
 }
 #endif
-
 

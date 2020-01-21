@@ -1,4 +1,4 @@
-C51 COMPILER V9.53.0.0   COMP                                                              01/20/2020 13:39:21 PAGE 1   
+C51 COMPILER V9.53.0.0   COMP                                                              01/21/2020 10:02:10 PAGE 1   
 
 
 C51 COMPILER V9.53.0.0, COMPILATION OF MODULE COMP
@@ -63,19 +63,20 @@ line level    source
   43          {
   44   1              CMP1MX = compMux[0];
   45   1      
-C51 COMPILER V9.53.0.0   COMP                                                              01/20/2020 13:39:21 PAGE 2   
+C51 COMPILER V9.53.0.0   COMP                                                              01/21/2020 10:02:10 PAGE 2   
 
   46   1          // enable comparator 0
   47   1          // Hysteresis 0mV
-  48   1      }
-  49          #endif
-  50          
-*** WARNING C316 IN LINE 50 OF C:\Users\A92862\SimplicityStudio\v4_workspace\EFM8BB1_BLDC_PORT\src\comp.c: unterminated 
+  48   1              CMP1CN0 = 0x80;
+  49   1      }
+  50          #endif
+  51          
+*** WARNING C316 IN LINE 51 OF C:\Users\A92862\SimplicityStudio\v4_workspace\EFM8BB1_BLDC_PORT\src\comp.c: unterminated 
              -conditionals
 
 
 MODULE INFORMATION:   STATIC OVERLAYABLE
-   CODE SIZE        =      8    ----
+   CODE SIZE        =     11    ----
    CONSTANT SIZE    =   ----    ----
    XDATA SIZE       =   ----    ----
    PDATA SIZE       =   ----    ----

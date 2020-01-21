@@ -45,6 +45,7 @@ void COMP_initialize_comp(void)
 
     // enable comparator 0
     // Hysteresis 0mV
+	CMP1CN0 = 0x80;
 }
 #endif
 

@@ -1,4 +1,4 @@
-C51 COMPILER V9.53.0.0   ADC                                                               01/20/2020 13:39:20 PAGE 1   
+C51 COMPILER V9.53.0.0   ADC                                                               01/21/2020 10:02:10 PAGE 1   
 
 
 C51 COMPILER V9.53.0.0, COMPILATION OF MODULE ADC
@@ -63,7 +63,7 @@ line level    source
   43          //-----------------------------------------------------------------------------
   44          // ADC_initialize_adc
   45          //-----------------------------------------------------------------------------
-C51 COMPILER V9.53.0.0   ADC                                                               01/20/2020 13:39:20 PAGE 2   
+C51 COMPILER V9.53.0.0   ADC                                                               01/21/2020 10:02:10 PAGE 2   
 
   46          //
   47          // Return Value : None
@@ -128,7 +128,7 @@ line level    source
  106   2              if( adc_index >= NUM_ADC_POINTS)
  107   2              {
  108   3                  adc_index = 0;
-C51 COMPILER V9.53.0.0   ADC                                                               01/20/2020 13:39:20 PAGE 3   
+C51 COMPILER V9.53.0.0   ADC                                                               01/21/2020 10:02:10 PAGE 3   
 
  109   3              }
  110   2              ADC0MX = adc_mux[adc_index];
@@ -136,9 +136,7 @@ line level    source
  112   2              ADC_START();
  113   2          }
  114   1      }
- 115          
- 116          
-*** WARNING C316 IN LINE 116 OF C:\Users\A92862\SimplicityStudio\v4_workspace\EFM8BB1_BLDC_PORT\src\adc.c: unterminated 
+*** WARNING C316 IN LINE 114 OF C:\Users\A92862\SimplicityStudio\v4_workspace\EFM8BB1_BLDC_PORT\src\adc.c: unterminated 
              -conditionals
 
 

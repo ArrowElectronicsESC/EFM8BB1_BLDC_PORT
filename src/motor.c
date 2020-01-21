@@ -266,6 +266,7 @@ static void MTR_process_errors(void);
 //-----------------------------------------------------------------------------
 void SL_MTR_init(void)
 {
+	COMP_initialize_comp();
     PCA0L = 0;
     PCA0H = 0;
     // start PWM
@@ -1292,3 +1293,228 @@ static void MTR_process_errors(void)
     }
 
 }
+
+
+//-----------------------------------------------------------------------------
+// CMP1_ISR
+//-----------------------------------------------------------------------------
+//
+// CMP1 ISR Content goes here. Remember to clear flag bits:
+// CMP1CN0::CPFIF (Comparator Falling-Edge Flag)
+// CMP1CN0::CPRIF (Comparator Rising-Edge Flag)
+//
+//-----------------------------------------------------------------------------
+SI_INTERRUPT (CMP1_ISR, CMP1_IRQn)
+{
+	static UU32 ticks;
+
+	    // below code takes about 25us
+	    MTR_save_zero_crossing_time();
+	    ticks.U32 = zc_time.U32 - prev_zc_time.U32;
+
+	    //Exponential filter
+	    zc_commutate_time.U32 = (zc_commutate_time.U32>>1) +
+	            ((zc_commutate_time.U32+ticks.U32)>>2);
+
+	    // for rpm calculation
+	    time_per_rotate.U32 += zc_commutate_time.U32;
+	    if(--zc_count == 0)
+	    {
+	        zc_total_per_mech_rotation = time_per_rotate.U32;
+	        time_per_rotate.U32 = 0UL;
+	        zc_count = zc_total_count;
+	        speed_updated = 1;
+	    }
+
+	    // time to next commutation.
+	    ticks.U32 = (zc_commutate_time.U32 >> 1);
+	    if (ticks.U32 > (PHASE_ADVANCE+4))
+	    {
+	        ticks.U32 -= PHASE_ADVANCE;
+	    }
+	    else
+	    {
+	        ticks.U32 = 4;
+	    }
+
+	    // expected next commutation time
+	    repeated_timer0 = 0;
+	    timer0_next.U16 = ticks.U16[LSB];
+	    TCON &= ~0x30;
+	#ifdef FEATURE_HYPERDRIVE
+	    if (hyperdrive_speed)
+	    {
+
+	        // additional phase advance = (hrem_time * (hyperdrive_speed/256));
+	        // max(hyperdrive_speed) == 255
+	        hrem_time = (ticks.U16[LSB] >> HYPER_CMT_SHIFT);
+	        ticks.U16[MSB] = (U16)(hrem_time >> 8) * hyperdrive_speed;
+	        ticks.U16[MSB] += ((U16)(hrem_time & 0xff) * hyperdrive_speed) >> 8;
+	        ticks.U16[LSB] += ticks.U16[MSB];
+
+	        timer0_next.U16 = ticks.U16[LSB];
+
+	        //Re-use MSB of ticks
+	        ticks.UU16[MSB].U8[MSB] = 255 - hyperdrive_speed;
+
+	        if (ticks.UU16[MSB].U8[MSB])
+	        {
+	            // hrem_time = (high(ticks.U16[LSB])*(255-hyperdrive_speed))>>8
+	            hrem_time = (U16)ticks.UU16[LSB].U8[MSB] * ticks.UU16[MSB].U8[MSB];
+	            hrem_time += ((U16)ticks.UU16[LSB].U8[LSB] * ticks.UU16[MSB].U8[MSB]) >> 8;
+	            ticks.U16[LSB] = hrem_time;
+
+	        }
+	        else
+	        {
+	            // We should not energize the 3rd terminal immediately
+	            // here as it would trigger a sudden surge in current
+	            // best to go through timer interrupt to have a more
+	            // gradual increase in current
+	            ticks.U16[LSB] = 1;
+
+	        }
+	        // hrem_time = (timer0_next + timer0_next*x) * y; (x < 1.0, y < 1.0)
+	        // x --> additional phase advance factor
+	        hrem_time = timer0_next.U16 - ticks.U16[LSB];
+	        timer0_state = TIMER0_START_HYPERDRIVE;
+
+	        timer0_next.U16 >>= 1;  // Half the remaining time for skipping inductive kick
+	    }
+	    else
+	#endif
+	    {
+	        timer0_state = TIMER0_COMMUTATION;
+	    }
+	    ticks.U16[LSB] = -ticks.U16[LSB];
+
+	    TL0 = ticks.UU16[LSB].U8[LSB];
+	    TH0 = ticks.UU16[LSB].U8[MSB];
+	    TCON_TR0 = 1;
+
+	    //disable comparator interrupt
+	    CMP1MD = 0x00;
+	    CMP1CN0 &= ~0x30;
+
+	#ifdef FEATURE_FG
+	    if ((commutation_index == 0) || (commutation_index == 3))
+	    {
+	        TOGGLE_FG();
+	    }
+	#endif
+
+	    // pre_calculation to minimize overhead in timer 0 commutation time.
+	    MTR_pre_commutation();
+
+	    SET_CPT0_NORMAL_PRIORITY();
+	    // This must be last - otherwise, timer interrupt may be executed prematurely.
+	    SET_TIMER0_HIGH_PRIORITY();
+}
+
+
+//-----------------------------------------------------------------------------
+// TIMER0_ISR
+//-----------------------------------------------------------------------------
+//
+// TIMER0 ISR Content goes here. Remember to clear flag bits:
+// TCON::TF0 (Timer 0 Overflow Flag)
+//
+//-----------------------------------------------------------------------------
+SI_INTERRUPT (TIMER0_ISR, TIMER0_IRQn)
+{
+    static UU16 hyt;
+    TCON_TF0 = 0;
+
+here:
+    // to avoid any overhead, do critical one first.
+    if ( TIMER0_COMMUTATION == timer0_state )
+    {
+        if( 0 == repeated_timer0 )// it takes about 8 us
+        {
+            MTR_commutate();
+
+            // Make filtered pins digital - to enable blanking signal
+            P0MDIN |= FILTERED_ALLPINS_MASK;
+
+            rising_bemf = ~rising_bemf;
+            if(rising_bemf)
+            {
+            	CMP1MX = compMux[open_phase + 6];
+            }
+            else
+            {
+            	CMP1MX = compMux[open_phase];
+            }
+            repeated_timer0 = 0;
+            // 12.5% (7.5deg)
+            timer0_next.U16 = -(timer0_next.U16>>2);
+            TCON &= ~0x30;
+            TL0 = timer0_next.U8[LSB];
+            TH0 = timer0_next.U8[MSB];
+            TCON_TR0 = 1;
+            timer0_state = TIMER0_SKIP_INDUCTIVE_KICK;
+            SET_TIMER0_HIGH_PRIORITY();
+            SET_CPT0_NORMAL_PRIORITY();
+            //disable comparator interrupt
+            CMP1CN0 &= ~0x30;
+            CMP1CN0 &= ~0x30;
+        }
+        else
+        {
+            repeated_timer0--;
+            TCON &= ~0x30;
+            TL0 = timer0_next.U8[LSB];
+            TH0 = timer0_next.U8[MSB];
+            TCON_TR0 = 1;
+        }
+    }
+#ifdef FEATURE_HYPERDRIVE
+    else if ( TIMER0_START_HYPERDRIVE == timer0_state )
+    {
+        // Hyperdrive mode
+        timer0_state = TIMER0_COMMUTATION;
+        TCON &= ~0x30;
+        hyt.U8[LSB] = TL0;
+        hyt.U8[MSB] = TH0;
+        if (hyt.U16 >= hrem_time)
+        {
+            goto here;
+        }
+        hyt.U16 -= hrem_time;
+        TL0 = hyt.U8[LSB];
+        TH0 = hyt.U8[MSB];
+        TR0 = 1;
+        MTR_hyper_commutate();
+    }
+#endif
+    else if ( TIMER0_SKIP_INDUCTIVE_KICK == timer0_state )
+    {
+        // enable comparator interrupt
+        // falling edge detection for ZC
+    	CMP1CN0 &= ~0x30;
+    	CMP1MD = 0x00;
+    	CMP1MD = 0x10;
+
+        // waiting for zero crossing...
+        // comparator interrupt will detect zero-crossing event.
+        repeated_timer0 = 0xFF;
+        TCON &= ~0x30;
+        TL0 = 0;
+        TH0 = 0;
+        TCON_TR0 = 1;
+        timer0_state = TIMER0_ZERO_DETECTING;
+        SET_TIMER0_NORMAL_PRIORITY();
+        SET_CPT0_HIGH_PRIORITY();
+    }
+    else if ( TIMER0_ZERO_DETECTING == timer0_state )
+    {
+        repeated_timer0--;
+        // Could not detect zero crossing long time.
+        // Stall
+        if (repeated_timer0 < 0xF0)
+        {
+            handle_motor_error = 1;
+        }
+    }
+}
+

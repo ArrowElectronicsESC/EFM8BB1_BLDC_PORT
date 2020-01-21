@@ -112,5 +112,3 @@ void ADC_task(void)
         ADC_START();
     }
 }
-
-
