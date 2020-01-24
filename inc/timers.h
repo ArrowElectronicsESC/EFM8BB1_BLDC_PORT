@@ -37,6 +37,8 @@ extern SEG_DATA UU16 timer0_next;
 //-----------------------------------------------------------------------------
 // Function Prototypes
 //-----------------------------------------------------------------------------
+void TMR_init_timer0(void);
+void TMR_init_timer3(void);
 void TMR_delay_timer3(U8 delay_ms);
 
 

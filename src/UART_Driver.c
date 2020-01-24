@@ -65,6 +65,7 @@
 // Local functions
 //------------------------------------------------------------------------------
 INTERRUPT_PROTO (UART0_ISR, INTERRUPT_UART0);
+static void UART_set_baud (void);
 
 //------------------------------------------------------------------------------
 // Local Variables
@@ -93,6 +94,48 @@ volatile bit UART_tx_busy;
 volatile U8 SEG_IDATA UART_rx_buffer[UART_BUF_SIZE];
 volatile U8 SEG_IDATA *UART_rx_buffer_head;
 volatile U8 SEG_IDATA *UART_rx_buffer_tail;
+
+
+//------------------------------------------------------------------------------
+// UART_init
+// void UART_init (void)
+//
+// Return Value:
+//     None
+//
+// Parameters:
+//     None
+//
+// Description:
+//     This function is called by application to initialize UART for 921600 bps.
+//     Once this function is called successfully, application can send data over
+//     UART. It also enables UART for data reception.
+//------------------------------------------------------------------------------
+void UART_init (void)
+{
+    //Clear all configuration and status bits in SCON0.
+    //As per datasheet, bit 6 (reserved) must be set to reset value (1).
+    SCON0 = 0x40;
+
+    //set baud rate to 921600 bps by configuring Timer1 appropriately.
+    UART_set_baud();
+
+    //Initialize Tx and Rx buffers. Discard any data in there.
+    UART_init_buffers();
+
+    //UART is free at startup
+    UART_tx_busy = 0;
+
+    //Configure for 8-bit mode enable data reception.
+    SCON0 |= 0x10;
+
+    //Make UART high priority
+    IP_PS0 = 1;
+
+    //Enable UART0 interrupts
+    IE_ES0 = 1;
+}
+
 
 //------------------------------------------------------------------------------
 // UART_init_buffers
@@ -291,6 +334,63 @@ SI_INTERRUPT (UART0_ISR, UART0_IRQn)
 	            UART_INC_TXPTR(UART_tx_buffer_head);
 	        }
 	    }
+}
+
+
+//------------------------------------------------------------------------------
+// UART_set_baud
+// static void UART_set_baud (void)
+//
+// Return Value:
+//     None
+//
+// Parameters:
+//     None
+//
+// Description:
+//     This is a local function to set baud rate to 921600 bps. This is achieved
+//     by configuring Timer1 as follows:
+//     Mode: 8-bit auto-reload timer
+//     Clock source: System Clock
+//     Reload Value: 0xF3 for 921600 bps
+//
+//     Timer1 interrupt is not enabled.
+//------------------------------------------------------------------------------
+static void UART_set_baud (void)
+{
+    //Set Timer1 to 8-bit auto-reload timer mode
+    TMOD &= 0x0F;
+    TMOD |=  0x20;
+
+    //Set auto-reload value and clock source for Timer1 according to baud rate.
+
+#if (SYSCLK/BAUD_RATE/2/256 < 1)
+      TH1 = -(SYSCLK/BAUD_RATE/2);
+      CKCON0 &= ~0x0B;                  // T1M = 1; SCA1:0 = xx
+      CKCON0 |=  0x08;
+   #elif (SYSCLK/BAUD_RATE/2/256 < 4)
+      TH1 = -(SYSCLK/BAUD_RATE/2/4);
+      CKCON0 &= ~0x0B;                  // T1M = 0; SCA1:0 = 01
+      CKCON0 |=  0x01;
+   #elif (SYSCLK/BAUD_RATE/2/256 < 12)
+      TH1 = -(SYSCLK/BAUD_RATE/2/12);
+      CKCON0 &= ~0x0B;                  // T1M = 0; SCA1:0 = 00
+   #else
+      TH1 = -(SYSCLK/BAUD_RATE/2/48);
+      CKCON0 &= ~0x0B;                  // T1M = 0; SCA1:0 = 10
+      CKCON0 |=  0x02;
+   #endif
+
+    TL1   = TH1;
+
+#if TIMER1_INT
+    PT1 = 1;
+    ET1 = 1;
+#endif
+
+    //Clear flag and start Timer1
+    TCON_TF1   = 0;
+    TCON_TR1   = 1;
 }
 
 

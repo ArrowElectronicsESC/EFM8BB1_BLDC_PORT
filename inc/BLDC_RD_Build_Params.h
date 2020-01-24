@@ -8,8 +8,6 @@
 #ifndef INC_BLDC_RD_BUILD_PARAMS_H_
 #define INC_BLDC_RD_BUILD_PARAMS_H_
 
-#ifndef BLDC_RD_BUILD_PARAMS_H
-#define BLDC_RD_BUILD_PARAMS_H
 
 //------------------------------------------------------------------------------
 // Build-time settings for 8-bit registers
@@ -127,6 +125,7 @@
 #warning "Building without Protocol."
 #endif //BUILD_FOR_PROTOCOL
 
+/*
 #if BLDC_RD_COMMUT_METHOD != _BLDC_RD_COMMUT_METHOD
 
 #if BLDC_RD_COMMUT_METHOD == 0
@@ -140,7 +139,11 @@
 #endif
 
 #endif
-
+*/
 
 
 #endif /* INC_BLDC_RD_BUILD_PARAMS_H_ */
+
+//------------------------------------------------------------------------------
+// End Of File
+//------------------------------------------------------------------------------

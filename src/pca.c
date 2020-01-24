@@ -42,6 +42,68 @@ static UU16 new_cpblank_duty;
 static U8 new_polarity;
 
 //-----------------------------------------------------------------------------
+// initialize_pca
+//-----------------------------------------------------------------------------
+//
+// Return Value : None
+// Parameters   : None
+// PWM-24kHz frequency, 10bit resolution, Edge aligned signal used by default.
+//
+// to check zero crossing time, virtual 32bit timer established.
+// -user_timer(MSB) + PCA0(LSB)
+// CEX0 is used for pwm filtering.
+// CEX1 is for FET driving.
+//-----------------------------------------------------------------------------
+#if (BLDC_RD_PWM_METHOD == H_BRIDGE_HIGH_SIDE_PWM) || \
+    (BLDC_RD_PWM_METHOD == H_BRIDGE_LOW_SIDE_PWM) || \
+    (BLDC_RD_PWM_METHOD == H_BRIDGE_MIXED_MODE_PWM)
+void PCA_initialize_pca(void)
+{
+    // PCA clock = SYS_CLK
+    // Enable interrupt (CF flag)
+    PCA0MD = (0x4<<1) | (0x01<<0);
+
+    // CEX0, CEX1 edge aligned,
+    // CEX0 for Comparator enable, CEX1 for driving motor
+    PCA0CENT = 0x00;
+
+    // 8-11 bit and PWM enable
+    PCA0CPM0 |= (0x01<<1) | 0x08;   // Enable MATCH enable
+    MOTPWM_PCA0CPM |= (0x01<<1) | 0x08;   // Enable MATCH enable
+
+    // Setup number of bits for PWM
+    PCA0PWM = PWM_RESOLUTION - 8;
+
+    // PCAnPOL=0, value(PCA0CP) is proportional to low period. - Active low
+    // PCAnPOL=1, value(PCA0CP) is proportional to high period. - Active high
+    // With POL=0, when PCA0CP = 0, duty is 0%, always high
+    //             when PCA0CP = all 1, duty is 100%, always low
+    // pwm filter(force comparator not to trigger) signal : active low
+
+    // CEX0 - comparator enable) - normal polarity
+    // CEX1 - driving pwm signal, assume the initial duty is less
+    //        than PWM_FILTER_LOWHYS.
+    PCA0POL = LOW_DUTY_POLARITY;
+
+    // Initial duty cycle, auto reload register should be initialized.
+    // Enable comparator always...
+    // ARSEL = 1, access auto-reload register
+    PCA0PWM |= 0x80;
+    PCA0CPL0 = (U8)0;
+    PCA0CPH0 = (0>>8);
+
+    MOTPWM_PCA0CPL = (U8)INITIAL_PCA_DUTY;
+    MOTPWM_PCA0CPH = (INITIAL_PCA_DUTY>>8);
+    // ARSEL = 0, access capture/compare registers directly
+    PCA0PWM &= ~0x80;
+
+    // enable overflow interrupt.
+    EIE1 |= (0x01<<4);
+    user_timer = 0;
+}
+#endif
+
+//-----------------------------------------------------------------------------
 // PCA_set_initial_polarity
 //-----------------------------------------------------------------------------
 //

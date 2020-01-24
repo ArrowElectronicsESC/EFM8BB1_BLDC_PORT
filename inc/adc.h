@@ -8,8 +8,6 @@
 #ifndef INC_ADC_H_
 #define INC_ADC_H_
 
-#define FEATURE_MEAS_VMDC
-#define FEATURE_MEAS_POT
 //-----------------------------------------------------------------------------
 // Global Constants
 //-----------------------------------------------------------------------------

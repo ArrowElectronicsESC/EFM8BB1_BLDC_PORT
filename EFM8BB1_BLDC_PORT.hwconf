@@ -9,16 +9,22 @@
     <property object="CLOCK_0" propertyId="ABPeripheral.included" value="true"/>
     <property object="CLOCK_0" propertyId="clock.clockselect.clocksourcedivider" value="SYSCLK / 1"/>
     <property object="CLOCK_0" propertyId="clock.clockselect.sysclk" value="24.500 MHz"/>
-    <property object="CMP_1" propertyId="ABPeripheral.included" value="true"/>
+    <property object="CMP_0" propertyId="ABPeripheral.included" value="true"/>
+    <property object="CMP_0" propertyId="cmp.enable.enablecomparator" value="Enabled"/>
+    <property object="CMP_0" propertyId="cmp.interrupts.enablefallingedgeinterrupt" value="Enabled"/>
+    <property object="CMP_0" propertyId="cmp.interrupts.enablerisingedgeinterrupt" value="Enabled"/>
+    <property object="CMP_0" propertyId="cmp.mode.selectcomparatormode" value="Mode 0 (fastest response, highest power)"/>
     <property object="CMP_1" propertyId="cmp.enable.enablecomparator" value="Enabled"/>
     <property object="CMP_1" propertyId="cmp.interrupts.enablefallingedgeinterrupt" value="Enabled"/>
     <property object="CMP_1" propertyId="cmp.interrupts.enablerisingedgeinterrupt" value="Enabled"/>
     <property object="CMP_1" propertyId="cmp.mode.selectcomparatormode" value="Mode 0 (fastest response, highest power)"/>
+    <property object="CROSSBAR0" propertyId="xbar0.pca0.cex" value="CEX0 and CEX1"/>
     <property object="CROSSBAR0" propertyId="xbar0.uart0.data" value="Enabled"/>
     <property object="DefaultMode" propertyId="mode.diagramLocation" value="100, 100"/>
     <property object="INTERRUPT_0" propertyId="ABPeripheral.included" value="true"/>
     <property object="INTERRUPT_0" propertyId="interrupt.extendedinterruptenable1.enableadc0conversioncompleteinterrupt" value="Enabled"/>
-    <property object="INTERRUPT_0" propertyId="interrupt.extendedinterruptenable1.enablecomparator1cp1interrupt" value="Enabled"/>
+    <property object="INTERRUPT_0" propertyId="interrupt.extendedinterruptenable1.enablecomparator0cp0interrupt" value="Enabled"/>
+    <property object="INTERRUPT_0" propertyId="interrupt.extendedinterruptenable1.enableportmatchinterrupts" value="Enabled"/>
     <property object="INTERRUPT_0" propertyId="interrupt.extendedinterruptenable1.enableprogrammablecounterarraypca0interrupt" value="Enabled"/>
     <property object="INTERRUPT_0" propertyId="interrupt.extendedinterruptenable1.enabletimer3interrupt" value="Enabled"/>
     <property object="INTERRUPT_0" propertyId="interrupt.interruptenable.enableallinterrupts" value="Enabled"/>
@@ -29,6 +35,8 @@
     <property object="P0.0" propertyId="ports.settings.outputmode" value="Push-pull"/>
     <property object="P0.0" propertyId="ports.settings.skip" value="Skipped"/>
     <property object="P0.1" propertyId="ports.settings.skip" value="Skipped"/>
+    <property object="P0.2" propertyId="ports.settings.label" value="BTN0_START/STOP"/>
+    <property object="P0.2" propertyId="ports.settings.maskvalue" value="Compared"/>
     <property object="P0.2" propertyId="ports.settings.skip" value="Skipped"/>
     <property object="P0.3" propertyId="ports.settings.skip" value="Skipped"/>
     <property object="P0.4" propertyId="ports.settings.iomode" value="Digital Push-Pull Output"/>
@@ -45,12 +53,12 @@
     <property object="P1.0" propertyId="ports.settings.iomode" value="Analog I/O"/>
     <property object="P1.0" propertyId="ports.settings.label" value="ADC"/>
     <property object="P1.0" propertyId="ports.settings.skip" value="Skipped"/>
-    <property object="P1.1" propertyId="ports.settings.label" value="BTN_DIR"/>
+    <property object="P1.1" propertyId="ports.settings.label" value="BTN1_DIR"/>
+    <property object="P1.1" propertyId="ports.settings.maskvalue" value="Compared"/>
     <property object="P1.1" propertyId="ports.settings.skip" value="Skipped"/>
     <property object="P1.2" propertyId="ports.settings.iomode" value="Digital Push-Pull Output"/>
     <property object="P1.2" propertyId="ports.settings.label" value="PWM0B GD0/EN"/>
     <property object="P1.2" propertyId="ports.settings.outputmode" value="Push-pull"/>
-    <property object="P1.2" propertyId="ports.settings.skip" value="Skipped"/>
     <property object="P1.3" propertyId="ports.settings.iomode" value="Digital Push-Pull Output"/>
     <property object="P1.3" propertyId="ports.settings.label" value="PWM0A"/>
     <property object="P1.3" propertyId="ports.settings.outputmode" value="Push-pull"/>
@@ -58,7 +66,6 @@
     <property object="P1.4" propertyId="ports.settings.iomode" value="Digital Push-Pull Output"/>
     <property object="P1.4" propertyId="ports.settings.label" value="PWM1B GD1/EN"/>
     <property object="P1.4" propertyId="ports.settings.outputmode" value="Push-pull"/>
-    <property object="P1.4" propertyId="ports.settings.skip" value="Skipped"/>
     <property object="P1.5" propertyId="ports.settings.iomode" value="Digital Push-Pull Output"/>
     <property object="P1.5" propertyId="ports.settings.label" value="PWM1A"/>
     <property object="P1.5" propertyId="ports.settings.outputmode" value="Push-pull"/>
@@ -71,7 +78,6 @@
     <property object="P1.7" propertyId="ports.settings.label" value="PWM2A"/>
     <property object="P1.7" propertyId="ports.settings.outputmode" value="Push-pull"/>
     <property object="P1.7" propertyId="ports.settings.skip" value="Skipped"/>
-    <property object="P2.1" propertyId="ports.settings.label" value="BTN_START/STOP"/>
     <property object="PBCFG_0" propertyId="pbcfg.settings.enablecrossbar" value="Enabled"/>
     <property object="PCACH_0" propertyId="ABPeripheral.included" value="true"/>
     <property object="PCACH_0" propertyId="pcach.pcachannel.capturecompareflaginterrupt" value="Enabled"/>

@@ -41,11 +41,11 @@
     (BLDC_RD_PWM_METHOD == H_BRIDGE_MIXED_MODE_PWM)
 void COMP_initialize_comp(void)
 {
-	CMP1MX = compMux[0];
+	CMP0MX = compMux[0];
 
     // enable comparator 0
     // Hysteresis 0mV
-	CMP1CN0 = 0x80;
+	CMP0CN0 = 0x80;
 }
 #endif
 

@@ -74,6 +74,30 @@ SEG_DATA U8         adc_flags;
 //-----------------------------------------------------------------------------
 void ADC_initialize_adc(void)
 {
+	// ADC Ref : Internal 1.65V
+	REF0CN = (0x03<<3);
+
+	// 64 accumulation(16bit effectively) and right justified,shifted right
+	// by 2bit. The adc result has 14bit resolution.
+	ADC0AC = 0x95;
+
+	// SAR clock = 24.5/(1+ADSC) = 4.9MHz
+	// ADSC = 4, ADTM = 0, adc0 gain = 0.5
+	ADC0CF = 0x20;
+
+	// ADCMBE = 1,  Common mode buffer enable;
+	ADC0CN1 = 0x01;
+
+	// Burst mode track time = 7 HFO CLK: ADC0TK = 66 - 7 = 59
+	ADC0TK = 59;
+
+	// ADPWR = 8 SYSCLK
+	ADC0PWR = 1;
+
+	// Enable ADC, Start of conversion mode = AD0BUSY
+	// Enable Burst mode (ADCMBE=1)
+	ADC0CN0 = 0xC0;
+
     // initiate 1st conversion of adc.
     ADC_CLEAR_FLAG();
     adc_index = 0;

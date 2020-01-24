@@ -1,4 +1,4 @@
-C51 COMPILER V9.53.0.0   COMP                                                              01/21/2020 10:02:10 PAGE 1   
+C51 COMPILER V9.53.0.0   COMP                                                              01/24/2020 09:29:53 PAGE 1   
 
 
 C51 COMPILER V9.53.0.0, COMPILATION OF MODULE COMP
@@ -30,8 +30,6 @@ line level    source
   12          // Includes
   13          //-----------------------------------------------------------------------------
   14          #include "bldcdk.h"
-*** WARNING C322 IN LINE 130 OF \Users\A92862\SimplicityStudio\v4_workspace\EFM8BB1_BLDC_PORT\inc\BLDC_RD_Build_Params.h
-             -: unknown identifier
   15          
   16          //-----------------------------------------------------------------------------
   17          // Global Constants
@@ -61,18 +59,16 @@ line level    source
   41              (BLDC_RD_PWM_METHOD == H_BRIDGE_MIXED_MODE_PWM)
   42          void COMP_initialize_comp(void)
   43          {
-  44   1              CMP1MX = compMux[0];
+  44   1              CMP0MX = compMux[0];
   45   1      
-C51 COMPILER V9.53.0.0   COMP                                                              01/21/2020 10:02:10 PAGE 2   
-
   46   1          // enable comparator 0
   47   1          // Hysteresis 0mV
-  48   1              CMP1CN0 = 0x80;
+C51 COMPILER V9.53.0.0   COMP                                                              01/24/2020 09:29:53 PAGE 2   
+
+  48   1              CMP0CN0 = 0x80;
   49   1      }
   50          #endif
   51          
-*** WARNING C316 IN LINE 51 OF C:\Users\A92862\SimplicityStudio\v4_workspace\EFM8BB1_BLDC_PORT\src\comp.c: unterminated 
-             -conditionals
 
 
 MODULE INFORMATION:   STATIC OVERLAYABLE
@@ -90,4 +86,4 @@ MODULE INFORMATION:   STATIC OVERLAYABLE
 END OF MODULE INFORMATION.
 
 
-C51 COMPILATION COMPLETE.  2 WARNING(S),  0 ERROR(S)
+C51 COMPILATION COMPLETE.  0 WARNING(S),  0 ERROR(S)

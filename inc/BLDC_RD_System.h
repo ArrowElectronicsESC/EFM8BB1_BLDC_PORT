@@ -52,7 +52,7 @@
 #define FEATURE_MEAS_VMDC
 #define FEATURE_MEAS_POT
 //#define FEATURE_HYPERDRIVE
-#define FEATURE_LED0
+//#define FEATURE_LED0
 #define FEATURE_RPM_STALL_DETECTION
 //#define FEATURE_PID_TUNE_FUNCTION
 
@@ -90,9 +90,9 @@
 // Button define
 //-----------------------------------------------------------------------------
 // BTN1 is used to start the motor running in the reference design kit.
-SI_SBIT (BTN1, SFR_P1, 1);	// Define BTN1
+SI_SBIT(BTN1, SFR_P1, 1);	// Define BTN1
 
-SI_SBIT (BTN0, SFR_P2, 1);	// Define BTN0
+SI_SBIT(BTN0, SFR_P0, 2);	// Define BTN0
 
 #define FG_PORT         P2
 #define FG_PIN          0
@@ -497,7 +497,10 @@ SI_SBIT (BTN0, SFR_P2, 1);	// Define BTN0
 
 
 #ifdef FEATURE_BTN0
-#define IS_BTN0_PRESSED()   (BTN0 == 0)
+//#define IS_BTN0_PRESSED()   (0)
+#define BTN0_PRESSED (0)
+#define BTN0_RELEASED (1)
+#define IS_BTN0_PRESSED()	(BTN0 == 0)
 #else
 #define CONFIG_BTN0()
 #define IS_BTN0_PRESSED()   (0)
@@ -581,3 +584,7 @@ typedef enum _PxMDIN_init {
 
 
 #endif /* INC_BLDC_RD_SYSTEM_H_ */
+
+//------------------------------------------------------------------------------
+// End Of File
+//------------------------------------------------------------------------------

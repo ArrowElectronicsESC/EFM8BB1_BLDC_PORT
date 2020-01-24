@@ -1,4 +1,4 @@
-C51 COMPILER V9.53.0.0   EFM8BB1_BLDC_PORT                                                 01/20/2020 15:34:31 PAGE 1   
+C51 COMPILER V9.53.0.0   EFM8BB1_BLDC_PORT                                                 01/24/2020 09:48:16 PAGE 1   
 
 
 C51 COMPILER V9.53.0.0, COMPILATION OF MODULE EFM8BB1_BLDC_PORT
@@ -28,60 +28,116 @@ line level    source
   10          //-----------------------------------------------------------------------------
   11          
   12          #include "bldcdk.h"
-*** WARNING C322 IN LINE 130 OF \Users\A92862\SimplicityStudio\v4_workspace\EFM8BB1_BLDC_PORT\inc\BLDC_RD_Build_Params.h
-             -: unknown identifier
   13          
   14          //-----------------------------------------------------------------------------
   15          // Function Prototypes
   16          //-----------------------------------------------------------------------------
   17          static U8 APP_tune_callback(U16 pwm, U16 disp);
   18          static bit APP_reset(void);
-  19          
-  20          //-----------------------------------------------------------------------------
-  21          // SiLabs_Startup() Routine
-  22          // ----------------------------------------------------------------------------
-  23          // This function is called immediately after reset, before the initialization
-  24          // code is run in SILABS_STARTUP.A51 (which runs before main() ). This is a
-  25          // useful place to disable the watchdog timer, which is enable by default
-  26          // and may trigger before main() in some instances.
-  27          //-----------------------------------------------------------------------------
-  28          void SiLabs_Startup (void)
-  29          {
-  30   1          WDTCN = 0xDE;           // Disable watchdog timer
-  31   1          WDTCN = 0xAD;
-  32   1      }
-  33           
-  34          //-----------------------------------------------------------------------------
-  35          // main() Routine
-  36          //-----------------------------------------------------------------------------
-  37          
-  38          void main(void)
-  39          {
-  40   1              enter_DefaultMode_from_RESET();
-  41   1      
-  42   1              MCP_tune_callback = &APP_tune_callback;
-  43   1              MCP_reset_callback = &APP_reset;
-  44   1              MCP_init();
-  45   1              SL_MTR_init();
-C51 COMPILER V9.53.0.0   EFM8BB1_BLDC_PORT                                                 01/20/2020 15:34:31 PAGE 2   
+  19          void Port_Setup(void);
+  20          
+  21          //-----------------------------------------------------------------------------
+  22          // SiLabs_Startup() Routine
+  23          // ----------------------------------------------------------------------------
+  24          // This function is called immediately after reset, before the initialization
+  25          // code is run in SILABS_STARTUP.A51 (which runs before main() ). This is a
+  26          // useful place to disable the watchdog timer, which is enable by default
+  27          // and may trigger before main() in some instances.
+  28          //-----------------------------------------------------------------------------
+  29          void SiLabs_Startup (void)
+  30          {
+  31   1          WDTCN = 0xDE;           // Disable watchdog timer
+  32   1          WDTCN = 0xAD;
+  33   1      }
+  34           
+  35          //-----------------------------------------------------------------------------
+  36          // main() Routine
+  37          //-----------------------------------------------------------------------------
+  38          
+  39          void main(void)
+  40          {
+  41   1              enter_DefaultMode_from_RESET();
+  42   1      
+  43   1              Port_Setup();
+  44   1              UART_init();
+  45   1              ADC_initialize_adc();
+  46   1              MCP_tune_callback = &APP_tune_callback;
+  47   1              MCP_reset_callback = &APP_reset;
+C51 COMPILER V9.53.0.0   EFM8BB1_BLDC_PORT                                                 01/24/2020 09:48:16 PAGE 2   
 
-  46   1              MTRAPP_init();
-  47   1      
-  48   1      
-  49   1              while (1)
-  50   1              {
-  51   2                      ADC_task();
-  52   2                      btn_process();
-  53   2                      MTRAPP_task();
-  54   2                      MCP_task();
-  55   2              }
-  56   1      }
-  57          
-  58          
-  59          //------------------------------------------------------------------------------
-  60          // This call-back will be called by MCP_Task() when TUNE command is executed
-  61          //------------------------------------------------------------------------------
-  62          #ifdef FEATURE_PID_TUNE_FUNCTION
+  48   1              MCP_init();
+  49   1              SL_MTR_init();
+  50   1              MTRAPP_init();
+  51   1      
+  52   1      
+  53   1              while (1)
+  54   1              {
+  55   2                      ADC_task();
+  56   2                      btn_process();
+  57   2                      MTRAPP_task();
+  58   2                      MCP_task();
+  59   2              }
+  60   1      }
+  61          
+  62          
+  63          //-----------------------------------------------------------------------------
+  64          // Port_Setup
+  65          //-----------------------------------------------------------------------------
+  66          //
+  67          // Return Value : None
+  68          // Parameters   : None
+  69          //
+  70          // P0.1~P0.2 => Input, Hall sensor or BEMF
+  71          // P0.3 => Input, VMY
+  72          // P0.4, P0.5 => UART
+  73          // P0.6 => Input, Current measurement, ADC
+  74          // P0.7 => Input, VDMC, ADC
+  75          // P1.0 ==> POT, ADC or PWM input
+  76          // P1.1 => Output for Led or SW101 (DIRECTION BUTTON)
+  77          // P1.2~P1.7 => Output, PWM for motor driving
+  78          // P2.0 => C2D and LED
+  79          // P2.1 => Input SWITCH(START/STOP) SW102
+  80          //-----------------------------------------------------------------------------
+  81          void Port_Setup(void)
+  82          {
+  83   1          P0 = 0xFF;
+  84   1          P1 = 0xFF;
+  85   1          P2 = 0xFF;
+  86   1      
+  87   1          // P0.6(I_MEAS), P0.7(VMDC) analog
+  88   1          // We leave P0.0-P0.3 digital but connected to comparator mux
+  89   1          // so that we can use PWM to filter the pin by driving it low when required
+  90   1          // P0.0~P0.2 : VMA, VMB, VMC, P0.3:VMY - refer to AN
+  91   1      
+  92   1          P0MDIN = PxMDIN_INIT_VAL & 0xFF;
+  93   1          P1MDIN = (PxMDIN_INIT_VAL>>8) & 0xFF;
+  94   1      
+  95   1          // P0.4 UART TX : push pull
+  96   1          P0MDOUT |= 0x10;
+  97   1      
+  98   1          // push pull for motor gate drive pins
+  99   1          P1MDOUT |= MOTDRV_ALL_MASK;
+ 100   1      
+ 101   1          // skip all except UART and one of filtered terminal pins which will
+ 102   1          // detect ZC during startup.
+ 103   1          P0SKIP = DEFAULT_P0SKIP & (~FILTERED_A_MASK);
+ 104   1          P1SKIP = DEFAULT_P1SKIP;
+ 105   1      
+ 106   1          // Enable Xbar, UART and CEX0,1, DISABLE weak pull-up
+ 107   1          // VMA,VMB, VMC, VMY must not have any pull up resister.
+ 108   1          // refer to AN
+ 109   1          XBR0 = 1;
+ 110   1          XBR1 = 0x02;
+C51 COMPILER V9.53.0.0   EFM8BB1_BLDC_PORT                                                 01/24/2020 09:48:16 PAGE 3   
+
+ 111   1          XBR2 |= 0xC0;
+ 112   1      
+ 113   1      }
+ 114          
+ 115          //------------------------------------------------------------------------------
+ 116          // This call-back will be called by MCP_Task() when TUNE command is executed
+ 117          //------------------------------------------------------------------------------
+ 118          #ifdef FEATURE_PID_TUNE_FUNCTION
               U16 SEG_XDATA C0;
               U16 SEG_XDATA tune_disp;
               U8 SEG_XDATA tune_cnt = 0;
@@ -128,8 +184,6 @@ line level    source
               
                   // start pid tuning.
                   // save initial speed.
-C51 COMPILER V9.53.0.0   EFM8BB1_BLDC_PORT                                                 01/20/2020 15:34:31 PAGE 3   
-
                   Y0 = MCP_get_16bit_register(MCP_REG_PRESENT_MOTOR_SPEED);
                   tune_cnt = 0;
                   dec = 1;
@@ -139,6 +193,8 @@ line level    source
                   // decrease duty cycle firstly.
                   SLR_pwm_duty = C0 - tune_disp;
                   PCA_change_duty_cycle(SLR_pwm_duty);
+C51 COMPILER V9.53.0.0   EFM8BB1_BLDC_PORT                                                 01/24/2020 09:48:16 PAGE 4   
+
                   while(tune_cnt < TEST_CNT)
                   {
                       PT_WAIT_UNTIL(&mcp_tune, ((U8)SL_MTR_time() & DEFAULT_PID_INTERVAL) == 0);
@@ -193,8 +249,6 @@ line level    source
                   nKp = ROUND_DIV((((U32)tune_disp)<<16), KA);
                   // Ki = Kp/(2.2*Pu) = 4*d/(a*3.14*3.2*2.2*Pu);
                   KA = KA*Pu;
-C51 COMPILER V9.53.0.0   EFM8BB1_BLDC_PORT                                                 01/20/2020 15:34:31 PAGE 4   
-
                   nKi = ROUND_DIV((((U32)tune_disp)<<16), KA);
               
                   MCP_set_16bit_register(MCP_REG_PROPORTIONAL_GAIN,nKp, 0);
@@ -204,42 +258,42 @@ line level    source
                   tune_in_progress = 0;
                   PT_END(&mcp_tune);
                   return 2;
+C51 COMPILER V9.53.0.0   EFM8BB1_BLDC_PORT                                                 01/24/2020 09:48:16 PAGE 5   
+
               }
               
               #else
- 184          static U8 APP_tune_callback(U16 pwm, U16 disp)
- 185          {
- 186   1          //Done
- 187   1          disp = pwm;
- 188   1          return 0;
- 189   1      }
- 190          #endif
- 191          
- 192          //-----------------------------------------------------------------------------
- 193          // APP_reset
- 194          //-----------------------------------------------------------------------------
- 195          //
- 196          // Return Value : 0
- 197          // Parameters   : None
- 198          // Description: This function called when PC send 'RST\n' cmd
- 199          //
- 200          //-----------------------------------------------------------------------------
- 201          static bit APP_reset(void)
- 202          {
- 203   1          SL_MTR_stop_motor();
- 204   1          return 0;
- 205   1      }
- 206          
- 207          
- 208          //-----------------------------------------------------------------------------
- 209          // End Of File
- 210          //-----------------------------------------------------------------------------
-*** WARNING C316 IN LINE 210 OF C:\Users\A92862\SimplicityStudio\v4_workspace\EFM8BB1_BLDC_PORT\src\EFM8BB1_BLDC_PORT.c:
-             - unterminated conditionals
+ 240          static U8 APP_tune_callback(U16 pwm, U16 disp)
+ 241          {
+ 242   1          //Done
+ 243   1          disp = pwm;
+ 244   1          return 0;
+ 245   1      }
+ 246          #endif
+ 247          
+ 248          //-----------------------------------------------------------------------------
+ 249          // APP_reset
+ 250          //-----------------------------------------------------------------------------
+ 251          //
+ 252          // Return Value : 0
+ 253          // Parameters   : None
+ 254          // Description: This function called when PC send 'RST\n' cmd
+ 255          //
+ 256          //-----------------------------------------------------------------------------
+ 257          static bit APP_reset(void)
+ 258          {
+ 259   1          SL_MTR_stop_motor();
+ 260   1          return 0;
+ 261   1      }
+ 262          
+ 263          
+ 264          //-----------------------------------------------------------------------------
+ 265          // End Of File
+ 266          //-----------------------------------------------------------------------------
 
 
 MODULE INFORMATION:   STATIC OVERLAYABLE
-   CODE SIZE        =     59    ----
+   CODE SIZE        =    105    ----
    CONSTANT SIZE    =   ----    ----
    XDATA SIZE       =   ----    ----
    PDATA SIZE       =   ----    ----
@@ -253,4 +307,4 @@ MODULE INFORMATION:   STATIC OVERLAYABLE
 END OF MODULE INFORMATION.
 
 
-C51 COMPILATION COMPLETE.  2 WARNING(S),  0 ERROR(S)
+C51 COMPILATION COMPLETE.  0 WARNING(S),  0 ERROR(S)

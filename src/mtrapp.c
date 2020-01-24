@@ -172,7 +172,7 @@ void MTRAPP_task()
 #endif
             // Re-configure BTN0 because this is shared with LED0 in
             // reference design kit.
-            CONFIG_BTN0();
+            //CONFIG_BTN0();
         }
     }
     // Enable stream data even motor stopped.
@@ -228,6 +228,7 @@ void MTRAPP_read_direction(void)
     }
     else if( !IS_BTN0_PRESSED() && (wait_release == 0))
     {
+    	EIE1 |= EIE1_EMAT__ENABLED;
         SLW_user_direction = ~SLW_user_direction;
         MCP_set_8bit_register(MCP_REG_TARGET_MOTOR_DIRECTION, \
                 (U8)SLW_user_direction, 0);

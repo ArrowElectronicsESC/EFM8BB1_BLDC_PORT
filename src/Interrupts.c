@@ -10,47 +10,18 @@
 #include <SI_EFM8BB1_Register_Enums.h>
 #include "bldcdk.h"
 
-//-----------------------------------------------------------------------------
-// ADC0EOC_ISR
-//-----------------------------------------------------------------------------
-//
-// ADC0EOC ISR Content goes here. Remember to clear flag bits:
-// ADC0CN0::ADINT (Conversion Complete Interrupt Flag)
-//
-//-----------------------------------------------------------------------------
-//SI_INTERRUPT (ADC0EOC_ISR, ADC0EOC_IRQn)
-//{
-//
-//}
-
+//SI_SBIT(BTN0, SFR_P0, 2);
+//#define BTN0_PRESSED (0)
 
 //-----------------------------------------------------------------------------
-// TIMER3_ISR
+// PMATCH_ISR
 //-----------------------------------------------------------------------------
 //
-// TIMER3 ISR Content goes here. Remember to clear flag bits:
-// TMR3CN0::TF3H (Timer # High Byte Overflow Flag)
-// TMR3CN0::TF3L (Timer # Low Byte Overflow Flag)
+// PMATCH ISR Content goes here. Remember to clear flag bits:
 //
 //-----------------------------------------------------------------------------
-SI_INTERRUPT (TIMER3_ISR, TIMER3_IRQn)
+SI_INTERRUPT(PMATCH_ISR, PMATCH_IRQn)
 {
-
+	// Disable PMATCH interrupt until BTN0 is released.
+	EIE1 &= ~EIE1_EMAT__BMASK;
 }
-
-//-----------------------------------------------------------------------------
-// TIMER1_ISR
-//-----------------------------------------------------------------------------
-//
-// TIMER1 ISR Content goes here. Remember to clear flag bits:
-// TCON::TF1 (Timer 1 Overflow Flag)
-//
-//-----------------------------------------------------------------------------
-SI_INTERRUPT (TIMER1_ISR, TIMER1_IRQn)
-{
-//-----------------------------------------------------------------------------
-// Timer1_ISR - Not invoked
-//-----------------------------------------------------------------------------
-}
-
-

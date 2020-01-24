@@ -266,6 +266,9 @@ static void MTR_process_errors(void);
 //-----------------------------------------------------------------------------
 void SL_MTR_init(void)
 {
+	PCA_initialize_pca();
+    TMR_init_timer3();
+    TMR_init_timer0();
 	COMP_initialize_comp();
     PCA0L = 0;
     PCA0H = 0;
@@ -417,7 +420,7 @@ void SL_MTR_stop_motor(void)
     TMR3CN0 &= ~0x84;
 
     // keep tracking one phase of bemf
-    CMP1MX = (CPMUX_Y << 4) | CPMUX_A;
+    CMP0MX = (CPMUX_Y << 4) | CPMUX_A;
 
     SLR_motor_state = MOTOR_STOPPED;
     SLR_motor_current_rpm = 0;
@@ -444,9 +447,9 @@ void MTR_check_motor_spinning(void)
     bit rising_zc_done, cptout;
 
 
-    CMP1CN0 = 0x8F;      // 20mV Hysteresis
+    CMP0CN0 = 0x8F;      // 20mV Hysteresis
     // clear flags
-    CMP1CN0 &= ~0x30;
+    CMP0CN0 &= ~0x30;
     // set P0.0~P0.3 to pure analog pins because we need to bemf to determine
     // current motor rotation using comparator.
     P0MDIN &= ~FILTERED_ALLPINS_MASK;
@@ -459,14 +462,14 @@ void MTR_check_motor_spinning(void)
         t2 = (U8)SL_MTR_time();
         gap = t2 - t1;
         // rising zc found ?
-        if( (0 == rising_zc_done) && (CMP1CN0 & 0x20) )
+        if( (0 == rising_zc_done) && (CMP0CN0 & 0x20) )
         {
             t1 = t2;
             rising_zc_done = 1;
-            CMP1CN0 &= ~0x30;
+            CMP0CN0 &= ~0x30;
         }
         // falling zc found ?
-        else if( (1 == rising_zc_done) && (CMP1CN0 & 0x10) )
+        else if( (1 == rising_zc_done) && (CMP0CN0 & 0x10) )
         {
             goto check_direction;
         }
@@ -482,7 +485,7 @@ check_direction:
     // just considering comparator response time.
     t1 = 0;
     while(--t1);
-    cptout = ((CMP1CN0 & 0x40) == 0x40);
+    cptout = ((CMP0CN0 & 0x40) == 0x40);
     if( cptout == motor_direction)
     {
         motor_spinning = 1;
@@ -492,7 +495,7 @@ check_direction:
         motor_spinning = 0;
     }
 exit_check_spinning:
-    CMP1CN0 = 0x80;      // 0mV Hysteresis
+    CMP0CN0 = 0x80;      // 0mV Hysteresis
     P0MDIN |= FILTERED_ALLPINS_MASK;     // set P0.0~P0.3 to digital pins
 }
 
@@ -689,7 +692,7 @@ void MTR_start_spinning(void)
         TMR3CN0 = 0x04;
         //prev_acc_time = acc_time;
         tmp = 0;
-        CMP1CN0 &= ~0x30;
+        CMP0CN0 &= ~0x30;
         while(tmp < REPEATED_NUM_OF_TIMER_FOR_STARTUP)
         {
             if( TMR3CN0 & 0x80 )
@@ -697,9 +700,9 @@ void MTR_start_spinning(void)
                 TMR3CN0 &= ~0x80;
                 tmp++;
             }
-            if((CMP1CN0 & 0x10) == 0x10)
+            if((CMP0CN0 & 0x10) == 0x10)
             {
-                CMP1CN0 &= ~0x10;
+                CMP0CN0 &= ~0x10;
                 MTR_ATOMIC_ACCESS_START();
                 SLR_minimum_duty.U8[LSB] = PCA0L;
                 SLR_minimum_duty.U8[MSB] = PCA0H;
@@ -760,7 +763,7 @@ void MTR_do_quickstart(void)
     // 1ms is more than enough for comparator settling time.
     TMR_delay_timer3(1);
     // clear comparator flags
-    CMP1CN0 &= ~0x30;
+    CMP0CN0 &= ~0x30;
 
     // wait max 32 ms loop.
     TMR3RL = 0;
@@ -774,7 +777,7 @@ void MTR_do_quickstart(void)
     is_1st_crossing = 1;
     while( !(TMR3CN0 & 0x80) )
     {
-        if (CMP1CN0 & 0x30)
+        if (CMP0CN0 & 0x30)
         {
             // This is the first event
             if ( is_1st_crossing )
@@ -800,7 +803,7 @@ void MTR_do_quickstart(void)
 
 
             // BEMF Falling, comparator output Falling edge
-            if (CMP1CN0 & 0x10)
+            if (CMP0CN0 & 0x10)
             {
                 // CW
                 if( 0 == motor_direction)
@@ -817,7 +820,7 @@ void MTR_do_quickstart(void)
                 rising_bemf = 0;
             }
             // BEMF rising, comparator output rising edge
-            else if(CMP1CN0 & 0x20)
+            else if(CMP0CN0 & 0x20)
             {
                 // CW
                 if( 0 == motor_direction)
@@ -834,7 +837,7 @@ void MTR_do_quickstart(void)
                 rising_bemf = 1;
             }
             // clear flags
-            CMP1CN0 &= ~0x30;
+            CMP0CN0 &= ~0x30;
 
             if( is_1st_crossing )
             {
@@ -892,7 +895,7 @@ void MTR_do_quickstart(void)
     zc_count = zc_total_count;
 
     // just in case, disable comparator interrupt
-    CMP1CN0 &= ~0x30;
+    CMP0CN0 &= ~0x30;
     CMP0MD &= ~0x30;
 
     SET_TIMER0_HIGH_PRIORITY();
@@ -1296,15 +1299,15 @@ static void MTR_process_errors(void)
 
 
 //-----------------------------------------------------------------------------
-// CMP1_ISR
+// CMP0_ISR
 //-----------------------------------------------------------------------------
 //
-// CMP1 ISR Content goes here. Remember to clear flag bits:
-// CMP1CN0::CPFIF (Comparator Falling-Edge Flag)
-// CMP1CN0::CPRIF (Comparator Rising-Edge Flag)
+// CMP0 ISR Content goes here. Remember to clear flag bits:
+// CMP0CN0::CPFIF (Comparator Falling-Edge Flag)
+// CMP0CN0::CPRIF (Comparator Rising-Edge Flag)
 //
 //-----------------------------------------------------------------------------
-SI_INTERRUPT (CMP1_ISR, CMP1_IRQn)
+SI_INTERRUPT (CMP0_ISR, CMP0_IRQn)
 {
 	static UU32 ticks;
 
@@ -1393,8 +1396,8 @@ SI_INTERRUPT (CMP1_ISR, CMP1_IRQn)
 	    TCON_TR0 = 1;
 
 	    //disable comparator interrupt
-	    CMP1MD = 0x00;
-	    CMP1CN0 &= ~0x30;
+	    CMP0MD = 0x00;
+	    CMP0CN0 &= ~0x30;
 
 	#ifdef FEATURE_FG
 	    if ((commutation_index == 0) || (commutation_index == 3))
@@ -1425,7 +1428,6 @@ SI_INTERRUPT (TIMER0_ISR, TIMER0_IRQn)
     static UU16 hyt;
     TCON_TF0 = 0;
 
-here:
     // to avoid any overhead, do critical one first.
     if ( TIMER0_COMMUTATION == timer0_state )
     {
@@ -1439,11 +1441,11 @@ here:
             rising_bemf = ~rising_bemf;
             if(rising_bemf)
             {
-            	CMP1MX = compMux[open_phase + 6];
+            	CMP0MX = compMux[open_phase + 6];
             }
             else
             {
-            	CMP1MX = compMux[open_phase];
+            	CMP0MX = compMux[open_phase];
             }
             repeated_timer0 = 0;
             // 12.5% (7.5deg)
@@ -1456,8 +1458,8 @@ here:
             SET_TIMER0_HIGH_PRIORITY();
             SET_CPT0_NORMAL_PRIORITY();
             //disable comparator interrupt
-            CMP1CN0 &= ~0x30;
-            CMP1CN0 &= ~0x30;
+            CMP0CN0 &= ~0x30;
+            CMP0CN0 &= ~0x30;
         }
         else
         {
@@ -1491,9 +1493,9 @@ here:
     {
         // enable comparator interrupt
         // falling edge detection for ZC
-    	CMP1CN0 &= ~0x30;
-    	CMP1MD = 0x00;
-    	CMP1MD = 0x10;
+    	CMP0CN0 &= ~0x30;
+    	CMP0MD = 0x00;
+    	CMP0MD = 0x10;
 
         // waiting for zero crossing...
         // comparator interrupt will detect zero-crossing event.

@@ -1,4 +1,4 @@
-C51 COMPILER V9.53.0.0   MCP_REGISTERS                                                     01/20/2020 15:38:41 PAGE 1   
+C51 COMPILER V9.53.0.0   MCP_REGISTERS                                                     01/24/2020 09:29:52 PAGE 1   
 
 
 C51 COMPILER V9.53.0.0, COMPILATION OF MODULE MCP_REGISTERS
@@ -38,8 +38,6 @@ line level    source
   20          // INCLUDES
   21          //------------------------------------------------------------------------------
   22          #include "bldcdk.h"
-*** WARNING C322 IN LINE 130 OF \Users\A92862\SimplicityStudio\v4_workspace\EFM8BB1_BLDC_PORT\inc\BLDC_RD_Build_Params.h
-             -: unknown identifier
   23          
   24          #define MCP_REG_MEM_TYPE xdata
   25          
@@ -63,10 +61,10 @@ line level    source
   43          #define INDEX_MAXIMUM_OPERATIONAL_SPEED 5
   44          #define INDEX_TARGET_MOTOR_SPEED        6
   45          #define INDEX_TARGET_PWM_DUTY_CYCLE     7
-C51 COMPILER V9.53.0.0   MCP_REGISTERS                                                     01/20/2020 15:38:41 PAGE 2   
-
   46          #define INDEX_ACCELERATION_STEP_SIZE    8
   47          #define INDEX_DECELERATION_STEP_SIZE    9
+C51 COMPILER V9.53.0.0   MCP_REGISTERS                                                     01/24/2020 09:29:52 PAGE 2   
+
   48          #define INDEX_PROPORTIONAL_GAIN         10
   49          #define INDEX_INTEGRAL_GAIN             11
   50          
@@ -128,10 +126,10 @@ line level    source
  106          //
  107          // WARNING: Only 12 registers are defined in this revision of firmware.
  108          //------------------------------------------------------------------------------
-C51 COMPILER V9.53.0.0   MCP_REGISTERS                                                     01/20/2020 15:38:41 PAGE 3   
-
  109          //volatile U32 data MCP_reg16_dirty_bit_map;
  110          volatile U8 data MCP_reg16_dirty_bit_map[4];
+C51 COMPILER V9.53.0.0   MCP_REGISTERS                                                     01/24/2020 09:29:52 PAGE 3   
+
  111          
  112          //------------------------------------------------------------------------------
  113          // MCP_Reg8_Access_Type:
@@ -193,10 +191,10 @@ line level    source
  169          //
  170          // Post Review 1: All 16-bit registers are grouped together into an array and
  171          // are no longer mapped to a fixed memory address (4 dummy registers).
-C51 COMPILER V9.53.0.0   MCP_REGISTERS                                                     01/20/2020 15:38:41 PAGE 4   
-
  172          //------------------------------------------------------------------------------
  173          volatile U16 MCP_REG_MEM_TYPE    MCP_16_bit_registers[16];
+C51 COMPILER V9.53.0.0   MCP_REGISTERS                                                     01/24/2020 09:29:52 PAGE 4   
+
  174          
  175          //------------------------------------------------------------------------------
  176          // Local Functions Prototypes
@@ -258,10 +256,10 @@ line level    source
  232   1          MCP_16_bit_registers[INDEX_PROPORTIONAL_GAIN] =
  233   1                                                         BLDC_RD_PI_PROPORTIONAL_GAIN;
  234   1      
-C51 COMPILER V9.53.0.0   MCP_REGISTERS                                                     01/20/2020 15:38:41 PAGE 5   
-
  235   1          MCP_16_bit_registers[INDEX_INTEGRAL_GAIN] = BLDC_RD_PI_INTEGRAL_GAIN;
  236   1      }
+C51 COMPILER V9.53.0.0   MCP_REGISTERS                                                     01/24/2020 09:29:52 PAGE 5   
+
  237          
  238          //------------------------------------------------------------------------------
  239          // MCP_set_8bit_register:
@@ -323,10 +321,10 @@ line level    source
  295          //     address: A unique ID of an 16-bit MCP register
  296          //     value: Value to be written to register.
  297          //     external_access:
-C51 COMPILER V9.53.0.0   MCP_REGISTERS                                                     01/20/2020 15:38:41 PAGE 6   
-
  298          //         0: Function is called internally by F/W
  299          //         1: Function is called as a result of Write Register Command ('=')
+C51 COMPILER V9.53.0.0   MCP_REGISTERS                                                     01/24/2020 09:29:52 PAGE 6   
+
  300          //
  301          // Description:
  302          //     This function is called by MCP when a Write Register Command for 16-bit
@@ -388,10 +386,10 @@ line level    source
  358          //
  359          // Description:
  360          //     This function is called by ISR to update a register. It assumes that the
-C51 COMPILER V9.53.0.0   MCP_REGISTERS                                                     01/20/2020 15:38:41 PAGE 7   
-
  361          //     address of valid 8-bit register is passed to it. It can write all 8-bit
  362          //     registers. When a register is written (modified), corresponding dirty bit
+C51 COMPILER V9.53.0.0   MCP_REGISTERS                                                     01/24/2020 09:29:52 PAGE 7   
+
  363          //     is also set.
  364          //
  365          //------------------------------------------------------------------------------
@@ -453,10 +451,10 @@ line level    source
  421          //     address: A unique ID of an MCP register
  422          //
  423          // Description:
-C51 COMPILER V9.53.0.0   MCP_REGISTERS                                                     01/20/2020 15:38:41 PAGE 8   
-
  424          //     This function is called by MCP when a Read Register Command is received
  425          //     from controller. It assumes that address validity is checked by caller.
+C51 COMPILER V9.53.0.0   MCP_REGISTERS                                                     01/24/2020 09:29:52 PAGE 8   
+
  426          //------------------------------------------------------------------------------
  427          U8 MCP_get_8bit_register (U8 address)
  428          {
@@ -518,10 +516,10 @@ line level    source
  484          //------------------------------------------------------------------------------
  485          // MCP_get_16bit_register_isr:
  486          // U16 MCP_get_16bit_register_isr (U8 address)
-C51 COMPILER V9.53.0.0   MCP_REGISTERS                                                     01/20/2020 15:38:41 PAGE 9   
-
  487          //
  488          // Return Value:
+C51 COMPILER V9.53.0.0   MCP_REGISTERS                                                     01/24/2020 09:29:52 PAGE 9   
+
  489          //     Contents of addressed register
  490          //
  491          // Parameters:
@@ -583,10 +581,10 @@ line level    source
  547   1          temp16 = (U16)1 << address;
  548   1      
  549   1          if (MCP_REG_PRESENT_MOTOR_SPEED > address)
-C51 COMPILER V9.53.0.0   MCP_REGISTERS                                                     01/20/2020 15:38:41 PAGE 10  
-
  550   1          {
  551   2              if (enable)
+C51 COMPILER V9.53.0.0   MCP_REGISTERS                                                     01/24/2020 09:29:52 PAGE 10  
+
  552   2              {
  553   3                  MCP_reg8_status_update_map |= temp16;
  554   3                  //MCP_reg8_dirty_bit_map     |= ((U16)1 << address);
@@ -648,10 +646,10 @@ line level    source
  610   1          {
  611   2              MCP_reg8_dirty_bit_map &= ~(temp16);
  612   2              return 1;
-C51 COMPILER V9.53.0.0   MCP_REGISTERS                                                     01/20/2020 15:38:41 PAGE 11  
-
  613   2          }
  614   1      
+C51 COMPILER V9.53.0.0   MCP_REGISTERS                                                     01/24/2020 09:29:52 PAGE 11  
+
  615   1          return 0;
  616   1      }
  617          
@@ -713,10 +711,10 @@ line level    source
  673          {
  674   1          if (((MCP_REG_RESERVED_START <= address)
  675   1                             &&
-C51 COMPILER V9.53.0.0   MCP_REGISTERS                                                     01/20/2020 15:38:41 PAGE 12  
-
  676   1              (MCP_REG_RESERVED_END    >= address))
  677   1                             ||
+C51 COMPILER V9.53.0.0   MCP_REGISTERS                                                     01/24/2020 09:29:52 PAGE 12  
+
  678   1              (MCP_REG_UNDEFINED_START <= address))
  679   1          {
  680   2              return 1;
@@ -728,8 +726,6 @@ line level    source
  686          //------------------------------------------------------------------------------
  687          // End Of File
  688          //------------------------------------------------------------------------------
-*** WARNING C316 IN LINE 688 OF C:\Users\A92862\SimplicityStudio\v4_workspace\EFM8BB1_BLDC_PORT\src\MCP_Registers.c: unt
-             -erminated conditionals
 
 
 MODULE INFORMATION:   STATIC OVERLAYABLE
@@ -747,4 +743,4 @@ MODULE INFORMATION:   STATIC OVERLAYABLE
 END OF MODULE INFORMATION.
 
 
-C51 COMPILATION COMPLETE.  2 WARNING(S),  0 ERROR(S)
+C51 COMPILATION COMPLETE.  0 WARNING(S),  0 ERROR(S)
