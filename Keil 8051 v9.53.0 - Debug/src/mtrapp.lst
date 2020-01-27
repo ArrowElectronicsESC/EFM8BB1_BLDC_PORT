@@ -1,4 +1,4 @@
-C51 COMPILER V9.53.0.0   MTRAPP                                                            01/24/2020 09:32:05 PAGE 1   
+C51 COMPILER V9.53.0.0   MTRAPP                                                            01/24/2020 17:07:08 PAGE 1   
 
 
 C51 COMPILER V9.53.0.0, COMPILATION OF MODULE MTRAPP
@@ -63,7 +63,7 @@ line level    source
   45          
   46          //-----------------------------------------------------------------------------
   47          // MTRAPP_init
-C51 COMPILER V9.53.0.0   MTRAPP                                                            01/24/2020 09:32:05 PAGE 2   
+C51 COMPILER V9.53.0.0   MTRAPP                                                            01/24/2020 17:07:08 PAGE 2   
 
   48          //-----------------------------------------------------------------------------
   49          //
@@ -128,7 +128,7 @@ line level    source
  108   5                          // same as IMEAS_ADCMX.
  109   5                          // wait if adc in progress by ADC_task().
  110   5                              while(!ADC0CN0_ADINT);
-C51 COMPILER V9.53.0.0   MTRAPP                                                            01/24/2020 09:32:05 PAGE 3   
+C51 COMPILER V9.53.0.0   MTRAPP                                                            01/24/2020 17:07:08 PAGE 3   
 
  111   5                          // disconnect all pins
  112   5                          ADC0MX = 0x1F;
@@ -193,7 +193,7 @@ line level    source
                           LED0_OFF();
               #endif
  173   3                  // Re-configure BTN0 because this is shared with LED0 in
-C51 COMPILER V9.53.0.0   MTRAPP                                                            01/24/2020 09:32:05 PAGE 4   
+C51 COMPILER V9.53.0.0   MTRAPP                                                            01/24/2020 17:07:08 PAGE 4   
 
  174   3                  // reference design kit.
  175   3                  //CONFIG_BTN0();
@@ -258,7 +258,7 @@ line level    source
  234   2                      (U8)SLW_user_direction, 0);
  235   2              wait_release = 1;
  236   2          }
-C51 COMPILER V9.53.0.0   MTRAPP                                                            01/24/2020 09:32:05 PAGE 5   
+C51 COMPILER V9.53.0.0   MTRAPP                                                            01/24/2020 17:07:08 PAGE 5   
 
  237   1          // read register. 0x02 (0:CW, 1:CCW)
  238   1          SLW_user_direction = MCP_get_8bit_register(MCP_REG_TARGET_MOTOR_DIRECTION);
@@ -323,7 +323,7 @@ line level    source
  297   1          pot_reading = (prev_target_rpm + pot_reading)>>1;
  298   1          prev_target_rpm = pot_reading;
  299   1          if( pot_reading < APP_MOTOR_MIN_RPM )
-C51 COMPILER V9.53.0.0   MTRAPP                                                            01/24/2020 09:32:05 PAGE 6   
+C51 COMPILER V9.53.0.0   MTRAPP                                                            01/24/2020 17:07:08 PAGE 6   
 
  300   1          {
  301   2              pot_reading = APP_MOTOR_MIN_RPM;
@@ -388,7 +388,7 @@ line level    source
               
                   if ( !speed_ctrl_by_pc )
                   {
-C51 COMPILER V9.53.0.0   MTRAPP                                                            01/24/2020 09:32:05 PAGE 7   
+C51 COMPILER V9.53.0.0   MTRAPP                                                            01/24/2020 17:07:08 PAGE 7   
 
                       // Use POT when speed is not controlled by PC
                       SLW_target_pwm_duty = pot_reading;
@@ -453,7 +453,7 @@ line level    source
                           {
                               // Special case of target speed of 1.
                               start_by_pc = 1;
-C51 COMPILER V9.53.0.0   MTRAPP                                                            01/24/2020 09:32:05 PAGE 8   
+C51 COMPILER V9.53.0.0   MTRAPP                                                            01/24/2020 17:07:08 PAGE 8   
 
               
                               // Restore target speed
@@ -518,7 +518,7 @@ line level    source
                   if ( !speed_ctrl_by_pc )
                   {
                       // Use POT when speed is not controlled by PC
-C51 COMPILER V9.53.0.0   MTRAPP                                                            01/24/2020 09:32:05 PAGE 9   
+C51 COMPILER V9.53.0.0   MTRAPP                                                            01/24/2020 17:07:08 PAGE 9   
 
                       SLW_target_pwm_duty = pot_reading;
                       // set register (16bit pwm duty cycle)

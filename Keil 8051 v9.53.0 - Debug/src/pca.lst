@@ -1,4 +1,4 @@
-C51 COMPILER V9.53.0.0   PCA                                                               01/24/2020 09:29:55 PAGE 1   
+C51 COMPILER V9.53.0.0   PCA                                                               01/24/2020 17:07:09 PAGE 1   
 
 
 C51 COMPILER V9.53.0.0, COMPILATION OF MODULE PCA
@@ -63,7 +63,7 @@ line level    source
   45          // initialize_pca
   46          //-----------------------------------------------------------------------------
   47          //
-C51 COMPILER V9.53.0.0   PCA                                                               01/24/2020 09:29:55 PAGE 2   
+C51 COMPILER V9.53.0.0   PCA                                                               01/24/2020 17:07:09 PAGE 2   
 
   48          // Return Value : None
   49          // Parameters   : None
@@ -128,7 +128,7 @@ line level    source
  108          //-----------------------------------------------------------------------------
  109          //
  110          // Return Value : None
-C51 COMPILER V9.53.0.0   PCA                                                               01/24/2020 09:29:55 PAGE 3   
+C51 COMPILER V9.53.0.0   PCA                                                               01/24/2020 17:07:09 PAGE 3   
 
  111          // Parameters   : None
  112          // Description  :
@@ -193,7 +193,7 @@ line level    source
  171          {
  172   1          bit saved_ea;
  173   1          U16 ringing;
-C51 COMPILER V9.53.0.0   PCA                                                               01/24/2020 09:29:55 PAGE 4   
+C51 COMPILER V9.53.0.0   PCA                                                               01/24/2020 17:07:09 PAGE 4   
 
  174   1          static bit enable_during_pwmon = 0;
  175   1          U8 x_new_polarity;
@@ -258,7 +258,7 @@ line level    source
  234   1              static UU16 xpca_count;
  235   1      
  236   1              if ( (PCA0PWM & 0x60) == 0x60 )
-C51 COMPILER V9.53.0.0   PCA                                                               01/24/2020 09:29:55 PAGE 5   
+C51 COMPILER V9.53.0.0   PCA                                                               01/24/2020 17:07:09 PAGE 5   
 
  237   1              {
  238   2                      // PCA Cycle counter overflow interrupt - this is enabled because
@@ -323,7 +323,7 @@ line level    source
  297   2                      user_timer++;
  298   2                      IE_EA = 1;
  299   2      
-C51 COMPILER V9.53.0.0   PCA                                                               01/24/2020 09:29:55 PAGE 6   
+C51 COMPILER V9.53.0.0   PCA                                                               01/24/2020 17:07:09 PAGE 6   
 
  300   2                      if( 0 == ((U8)user_timer & pid_calc_interval) )
  301   2                      {

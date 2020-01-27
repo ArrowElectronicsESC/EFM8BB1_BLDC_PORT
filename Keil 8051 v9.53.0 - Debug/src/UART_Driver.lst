@@ -1,4 +1,4 @@
-C51 COMPILER V9.53.0.0   UART_DRIVER                                                       01/24/2020 09:29:52 PAGE 1   
+C51 COMPILER V9.53.0.0   UART_DRIVER                                                       01/24/2020 17:07:06 PAGE 1   
 
 
 C51 COMPILER V9.53.0.0, COMPILATION OF MODULE UART_DRIVER
@@ -63,7 +63,7 @@ line level    source
   45                  (p) = &UART_rx_buffer[0];   \
   46          } while (0)
   47          
-C51 COMPILER V9.53.0.0   UART_DRIVER                                                       01/24/2020 09:29:52 PAGE 2   
+C51 COMPILER V9.53.0.0   UART_DRIVER                                                       01/24/2020 17:07:06 PAGE 2   
 
   48          #else
               
@@ -128,7 +128,7 @@ line level    source
  108          //
  109          // Description:
  110          //     This function is called by application to initialize UART for 921600 bps.
-C51 COMPILER V9.53.0.0   UART_DRIVER                                                       01/24/2020 09:29:52 PAGE 3   
+C51 COMPILER V9.53.0.0   UART_DRIVER                                                       01/24/2020 17:07:06 PAGE 3   
 
  111          //     Once this function is called successfully, application can send data over
  112          //     UART. It also enables UART for data reception.
@@ -193,7 +193,7 @@ line level    source
  171          //
  172          // Parameters:
  173          //     Data byte to be sent over UART
-C51 COMPILER V9.53.0.0   UART_DRIVER                                                       01/24/2020 09:29:52 PAGE 4   
+C51 COMPILER V9.53.0.0   UART_DRIVER                                                       01/24/2020 17:07:06 PAGE 4   
 
  174          //
  175          // Description:
@@ -258,7 +258,7 @@ line level    source
  234   1          *value = *UART_rx_buffer_head;
  235   1      
  236   1          IE_ES0 = 0;
-C51 COMPILER V9.53.0.0   UART_DRIVER                                                       01/24/2020 09:29:52 PAGE 5   
+C51 COMPILER V9.53.0.0   UART_DRIVER                                                       01/24/2020 17:07:06 PAGE 5   
 
  237   1          UART_INC_RXPTR(UART_rx_buffer_head);
  238   1          IE_ES0 = 1;
@@ -323,7 +323,7 @@ line level    source
                                   {
                                       UART_rx_buffer_tail = 0;
                                   }
-C51 COMPILER V9.53.0.0   UART_DRIVER                                                       01/24/2020 09:29:52 PAGE 6   
+C51 COMPILER V9.53.0.0   UART_DRIVER                                                       01/24/2020 17:07:06 PAGE 6   
 
                               }
                               else
@@ -388,7 +388,7 @@ line level    source
  360          {
  361   1          //Set Timer1 to 8-bit auto-reload timer mode
  362   1          TMOD &= 0x0F;
-C51 COMPILER V9.53.0.0   UART_DRIVER                                                       01/24/2020 09:29:52 PAGE 7   
+C51 COMPILER V9.53.0.0   UART_DRIVER                                                       01/24/2020 17:07:06 PAGE 7   
 
  363   1          TMOD |=  0x20;
  364   1      
@@ -453,7 +453,7 @@ line level    source
               //------------------------------------------------------------------------------
               // UART_init_buffers
               // void UART_init_buffers (void)
-C51 COMPILER V9.53.0.0   UART_DRIVER                                                       01/24/2020 09:29:52 PAGE 8   
+C51 COMPILER V9.53.0.0   UART_DRIVER                                                       01/24/2020 17:07:06 PAGE 8   
 
               //
               // Return Value:
@@ -518,7 +518,7 @@ line level    source
               //     None
               //
               // Description:
-C51 COMPILER V9.53.0.0   UART_DRIVER                                                       01/24/2020 09:29:52 PAGE 9   
+C51 COMPILER V9.53.0.0   UART_DRIVER                                                       01/24/2020 17:07:06 PAGE 9   
 
               //     This is a dummy function.
               //------------------------------------------------------------------------------

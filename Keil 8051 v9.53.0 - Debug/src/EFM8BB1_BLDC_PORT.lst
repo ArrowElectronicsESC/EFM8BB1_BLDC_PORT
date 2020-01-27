@@ -1,4 +1,4 @@
-C51 COMPILER V9.53.0.0   EFM8BB1_BLDC_PORT                                                 01/24/2020 09:48:16 PAGE 1   
+C51 COMPILER V9.53.0.0   EFM8BB1_BLDC_PORT                                                 01/24/2020 17:07:21 PAGE 1   
 
 
 C51 COMPILER V9.53.0.0, COMPILATION OF MODULE EFM8BB1_BLDC_PORT
@@ -63,81 +63,85 @@ line level    source
   45   1              ADC_initialize_adc();
   46   1              MCP_tune_callback = &APP_tune_callback;
   47   1              MCP_reset_callback = &APP_reset;
-C51 COMPILER V9.53.0.0   EFM8BB1_BLDC_PORT                                                 01/24/2020 09:48:16 PAGE 2   
+C51 COMPILER V9.53.0.0   EFM8BB1_BLDC_PORT                                                 01/24/2020 17:07:21 PAGE 2   
 
   48   1              MCP_init();
   49   1              SL_MTR_init();
   50   1              MTRAPP_init();
   51   1      
-  52   1      
-  53   1              while (1)
-  54   1              {
-  55   2                      ADC_task();
-  56   2                      btn_process();
-  57   2                      MTRAPP_task();
-  58   2                      MCP_task();
-  59   2              }
-  60   1      }
+  52   1              while (1)
+  53   1              {
+  54   2                      ADC_task();
+  55   2                      btn_process();
+  56   2                      MTRAPP_task();
+  57   2                      MCP_task();
+  58   2              }
+  59   1      }
+  60          
   61          
-  62          
-  63          //-----------------------------------------------------------------------------
-  64          // Port_Setup
-  65          //-----------------------------------------------------------------------------
-  66          //
-  67          // Return Value : None
-  68          // Parameters   : None
-  69          //
-  70          // P0.1~P0.2 => Input, Hall sensor or BEMF
-  71          // P0.3 => Input, VMY
-  72          // P0.4, P0.5 => UART
-  73          // P0.6 => Input, Current measurement, ADC
-  74          // P0.7 => Input, VDMC, ADC
-  75          // P1.0 ==> POT, ADC or PWM input
-  76          // P1.1 => Output for Led or SW101 (DIRECTION BUTTON)
-  77          // P1.2~P1.7 => Output, PWM for motor driving
-  78          // P2.0 => C2D and LED
-  79          // P2.1 => Input SWITCH(START/STOP) SW102
-  80          //-----------------------------------------------------------------------------
-  81          void Port_Setup(void)
-  82          {
-  83   1          P0 = 0xFF;
-  84   1          P1 = 0xFF;
-  85   1          P2 = 0xFF;
-  86   1      
-  87   1          // P0.6(I_MEAS), P0.7(VMDC) analog
-  88   1          // We leave P0.0-P0.3 digital but connected to comparator mux
-  89   1          // so that we can use PWM to filter the pin by driving it low when required
-  90   1          // P0.0~P0.2 : VMA, VMB, VMC, P0.3:VMY - refer to AN
-  91   1      
-  92   1          P0MDIN = PxMDIN_INIT_VAL & 0xFF;
-  93   1          P1MDIN = (PxMDIN_INIT_VAL>>8) & 0xFF;
-  94   1      
-  95   1          // P0.4 UART TX : push pull
-  96   1          P0MDOUT |= 0x10;
-  97   1      
-  98   1          // push pull for motor gate drive pins
-  99   1          P1MDOUT |= MOTDRV_ALL_MASK;
- 100   1      
- 101   1          // skip all except UART and one of filtered terminal pins which will
- 102   1          // detect ZC during startup.
- 103   1          P0SKIP = DEFAULT_P0SKIP & (~FILTERED_A_MASK);
- 104   1          P1SKIP = DEFAULT_P1SKIP;
- 105   1      
- 106   1          // Enable Xbar, UART and CEX0,1, DISABLE weak pull-up
- 107   1          // VMA,VMB, VMC, VMY must not have any pull up resister.
- 108   1          // refer to AN
- 109   1          XBR0 = 1;
- 110   1          XBR1 = 0x02;
-C51 COMPILER V9.53.0.0   EFM8BB1_BLDC_PORT                                                 01/24/2020 09:48:16 PAGE 3   
+  62          //-----------------------------------------------------------------------------
+  63          // Port_Setup
+  64          //-----------------------------------------------------------------------------
+  65          //
+  66          // Return Value : None
+  67          // Parameters   : None
+  68          //
+  69          // P0.1~P0.2 => Input, Hall sensor or BEMF
+  70          // P0.3 => Input, VMY
+  71          // P0.4, P0.5 => UART
+  72          // P0.6 => Input, Current measurement, ADC
+  73          // P0.7 => Input, VDMC, ADC
+  74          // P1.0 ==> POT, ADC or PWM input
+  75          // P1.1 => Output for Led or SW101 (DIRECTION BUTTON)
+  76          // P1.2~P1.7 => Output, PWM for motor driving
+  77          // P2.0 => C2D and LED
+  78          // P2.1 => Input SWITCH(START/STOP) SW102
+  79          //-----------------------------------------------------------------------------
+  80          void Port_Setup(void)
+  81          {
+  82   1          P0 = 0xFF;
+  83   1          P1 = 0xFF;
+  84   1          P2 = 0xFF;
+  85   1      
+  86   1          // P0.6(I_MEAS), P0.7(VMDC) analog
+  87   1          // We leave P0.0-P0.3 digital but connected to comparator mux
+  88   1          // so that we can use PWM to filter the pin by driving it low when required
+  89   1          // P0.0~P0.2 : VMA, VMB, VMC, P0.3:VMY - refer to AN
+  90   1      
+  91   1          P0MDIN = PxMDIN_INIT_VAL & 0xFF;
+  92   1          P1MDIN = (PxMDIN_INIT_VAL>>8) & 0xFF;
+  93   1      
+  94   1          // P0.4 UART TX : push pull
+  95   1          P0MDOUT |= 0x10;
+  96   1      
+  97   1          // push pull for motor gate drive pins
+  98   1          P1MDOUT |= MOTDRV_ALL_MASK;
+  99   1      
+ 100   1          // Configure buttons.  If FEATURE_BTNx is not defined, the macro does not
+ 101   1              // generate any code.
+ 102   1      //      CONFIG_BTN0();
+ 103   1      //      CONFIG_BTN1();
+ 104   1      
+ 105   1          // skip all except UART and one of filtered terminal pins which will
+ 106   1          // detect ZC during startup.
+ 107   1          P0SKIP = DEFAULT_P0SKIP & (~FILTERED_A_MASK);
+ 108   1          P1SKIP = DEFAULT_P1SKIP;
+ 109   1      
+ 110   1          // Enable Xbar, UART and CEX0,1, DISABLE weak pull-up
+C51 COMPILER V9.53.0.0   EFM8BB1_BLDC_PORT                                                 01/24/2020 17:07:21 PAGE 3   
 
- 111   1          XBR2 |= 0xC0;
- 112   1      
- 113   1      }
- 114          
- 115          //------------------------------------------------------------------------------
- 116          // This call-back will be called by MCP_Task() when TUNE command is executed
- 117          //------------------------------------------------------------------------------
- 118          #ifdef FEATURE_PID_TUNE_FUNCTION
+ 111   1          // VMA,VMB, VMC, VMY must not have any pull up resister.
+ 112   1          // refer to AN
+ 113   1          XBR0 = 1;
+ 114   1          XBR1 = 0x02;
+ 115   1          XBR2 |= 0xC0;
+ 116   1      
+ 117   1      }
+ 118          
+ 119          //------------------------------------------------------------------------------
+ 120          // This call-back will be called by MCP_Task() when TUNE command is executed
+ 121          //------------------------------------------------------------------------------
+ 122          #ifdef FEATURE_PID_TUNE_FUNCTION
               U16 SEG_XDATA C0;
               U16 SEG_XDATA tune_disp;
               U8 SEG_XDATA tune_cnt = 0;
@@ -189,12 +193,12 @@ line level    source
                   dec = 1;
                   half_pu = 0L;
                   max_speed = 0;
+C51 COMPILER V9.53.0.0   EFM8BB1_BLDC_PORT                                                 01/24/2020 17:07:21 PAGE 4   
+
               
                   // decrease duty cycle firstly.
                   SLR_pwm_duty = C0 - tune_disp;
                   PCA_change_duty_cycle(SLR_pwm_duty);
-C51 COMPILER V9.53.0.0   EFM8BB1_BLDC_PORT                                                 01/24/2020 09:48:16 PAGE 4   
-
                   while(tune_cnt < TEST_CNT)
                   {
                       PT_WAIT_UNTIL(&mcp_tune, ((U8)SL_MTR_time() & DEFAULT_PID_INTERVAL) == 0);
@@ -254,42 +258,42 @@ line level    source
                   MCP_set_16bit_register(MCP_REG_PROPORTIONAL_GAIN,nKp, 0);
                   MCP_set_16bit_register(MCP_REG_INTEGRAL_GAIN,nKi, 0);
               
+C51 COMPILER V9.53.0.0   EFM8BB1_BLDC_PORT                                                 01/24/2020 17:07:21 PAGE 5   
+
                   //Done
                   tune_in_progress = 0;
                   PT_END(&mcp_tune);
                   return 2;
-C51 COMPILER V9.53.0.0   EFM8BB1_BLDC_PORT                                                 01/24/2020 09:48:16 PAGE 5   
-
               }
               
               #else
- 240          static U8 APP_tune_callback(U16 pwm, U16 disp)
- 241          {
- 242   1          //Done
- 243   1          disp = pwm;
- 244   1          return 0;
- 245   1      }
- 246          #endif
- 247          
- 248          //-----------------------------------------------------------------------------
- 249          // APP_reset
- 250          //-----------------------------------------------------------------------------
- 251          //
- 252          // Return Value : 0
- 253          // Parameters   : None
- 254          // Description: This function called when PC send 'RST\n' cmd
+ 244          static U8 APP_tune_callback(U16 pwm, U16 disp)
+ 245          {
+ 246   1          //Done
+ 247   1          disp = pwm;
+ 248   1          return 0;
+ 249   1      }
+ 250          #endif
+ 251          
+ 252          //-----------------------------------------------------------------------------
+ 253          // APP_reset
+ 254          //-----------------------------------------------------------------------------
  255          //
- 256          //-----------------------------------------------------------------------------
- 257          static bit APP_reset(void)
- 258          {
- 259   1          SL_MTR_stop_motor();
- 260   1          return 0;
- 261   1      }
- 262          
- 263          
- 264          //-----------------------------------------------------------------------------
- 265          // End Of File
- 266          //-----------------------------------------------------------------------------
+ 256          // Return Value : 0
+ 257          // Parameters   : None
+ 258          // Description: This function called when PC send 'RST\n' cmd
+ 259          //
+ 260          //-----------------------------------------------------------------------------
+ 261          static bit APP_reset(void)
+ 262          {
+ 263   1          SL_MTR_stop_motor();
+ 264   1          return 0;
+ 265   1      }
+ 266          
+ 267          
+ 268          //-----------------------------------------------------------------------------
+ 269          // End Of File
+ 270          //-----------------------------------------------------------------------------
 
 
 MODULE INFORMATION:   STATIC OVERLAYABLE

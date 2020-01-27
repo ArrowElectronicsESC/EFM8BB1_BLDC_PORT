@@ -1,4 +1,4 @@
-C51 COMPILER V9.53.0.0   BTN                                                               01/24/2020 09:29:53 PAGE 1   
+C51 COMPILER V9.53.0.0   BTN                                                               01/24/2020 17:07:07 PAGE 1   
 
 
 C51 COMPILER V9.53.0.0, COMPILATION OF MODULE BTN
@@ -63,7 +63,7 @@ line level    source
   45          //     0: btn1 is not pressed
   46          //     1: btn1 is pressed.
   47          //
-C51 COMPILER V9.53.0.0   BTN                                                               01/24/2020 09:29:53 PAGE 2   
+C51 COMPILER V9.53.0.0   BTN                                                               01/24/2020 17:07:07 PAGE 2   
 
   48          // Parameters:
   49          //     None
@@ -128,7 +128,7 @@ MODULE INFORMATION:   STATIC OVERLAYABLE
    CODE SIZE        =     80    ----
    CONSTANT SIZE    =   ----    ----
    XDATA SIZE       =      2    ----
-C51 COMPILER V9.53.0.0   BTN                                                               01/24/2020 09:29:53 PAGE 3   
+C51 COMPILER V9.53.0.0   BTN                                                               01/24/2020 17:07:07 PAGE 3   
 
    PDATA SIZE       =   ----    ----
    DATA SIZE        =      1    ----

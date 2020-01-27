@@ -49,7 +49,6 @@ void main(void)
 	SL_MTR_init();
 	MTRAPP_init();
 
-
 	while (1)
 	{
 		ADC_task();
@@ -97,6 +96,11 @@ void Port_Setup(void)
 
     // push pull for motor gate drive pins
     P1MDOUT |= MOTDRV_ALL_MASK;
+
+    // Configure buttons.  If FEATURE_BTNx is not defined, the macro does not
+	// generate any code.
+//	CONFIG_BTN0();
+//	CONFIG_BTN1();
 
     // skip all except UART and one of filtered terminal pins which will
     // detect ZC during startup.
