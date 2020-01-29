@@ -1,4 +1,4 @@
-C51 COMPILER V9.53.0.0   MCP_REGISTERS                                                     01/29/2020 12:05:46 PAGE 1   
+C51 COMPILER V9.53.0.0   MCP_REGISTERS                                                     01/29/2020 13:56:04 PAGE 1   
 
 
 C51 COMPILER V9.53.0.0, COMPILATION OF MODULE MCP_REGISTERS
@@ -7,12 +7,11 @@ COMPILER INVOKED BY: c:\SiliconLabs\SimplicityStudio\v4\developer\toolchains\kei
                     -SimplicityStudio\v4_workspace\EFM8BB1_BLDC_PORT\src\MCP_Registers.c OMF2 SMALL DEBUG OBJECTEXTEND ROM(LARGE) WARNINGLEVE
                     -L(2) FLOATFUZZY(3) OPTIMIZE(8,SPEED) INTVECTOR(0X0000) INTPROMOTE INCDIR(C:\Users\A92862\SimplicityStudio\v4_workspace\E
                     -FM8BB1_BLDC_PORT\inc;C:\Users\A92862\SimplicityStudio\v4_workspace\EFM8BB1_BLDC_PORT\inc\config;C:/SiliconLabs/Simplicit
-                    -yStudio/v4/developer/sdks/8051/v4.1.7//kits/common/drivers/efm8_retargetserial;C:/SiliconLabs/SimplicityStudio/v4/develo
-                    -per/sdks/8051/v4.1.7//Lib/efm8_assert;C:/SiliconLabs/SimplicityStudio/v4/developer/sdks/8051/v4.1.7//kits/common/bsp;C:/
-                    -SiliconLabs/SimplicityStudio/v4/developer/sdks/8051/v4.1.7//kits/EFM8BB1_LCK/config;C:/SiliconLabs/SimplicityStudio/v4/d
-                    -eveloper/sdks/8051/v4.1.7//Device/shared/si8051Base;C:/SiliconLabs/SimplicityStudio/v4/developer/sdks/8051/v4.1.7//Devic
-                    -e/EFM8BB1/inc;C:/SiliconLabs/SimplicityStudio/v4/developer/sdks/8051/v4.1.7//Device/EFM8BB1/peripheral_driver/inc) PRINT
-                    -(.\src\MCP_Registers.lst) COND PAGEWIDTH(120) PAGELENGTH(65) OBJECT(.\src\MCP_Registers.OBJ)
+                    -yStudio/v4/developer/sdks/8051/v4.1.7//Lib/efm8_assert;C:/SiliconLabs/SimplicityStudio/v4/developer/sdks/8051/v4.1.7//ki
+                    -ts/common/bsp;C:/SiliconLabs/SimplicityStudio/v4/developer/sdks/8051/v4.1.7//kits/EFM8BB1_LCK/config;C:/SiliconLabs/Simp
+                    -licityStudio/v4/developer/sdks/8051/v4.1.7//Device/shared/si8051Base;C:/SiliconLabs/SimplicityStudio/v4/developer/sdks/8
+                    -051/v4.1.7//Device/EFM8BB1/inc;C:/SiliconLabs/SimplicityStudio/v4/developer/sdks/8051/v4.1.7//Device/EFM8BB1/peripheral_
+                    -driver/inc) PRINT(.\src\MCP_Registers.lst) COND PAGEWIDTH(120) PAGELENGTH(65) OBJECT(.\src\MCP_Registers.OBJ)
 
 line level    source
 
@@ -63,9 +62,9 @@ line level    source
   45          #define INDEX_TARGET_PWM_DUTY_CYCLE     7
   46          #define INDEX_ACCELERATION_STEP_SIZE    8
   47          #define INDEX_DECELERATION_STEP_SIZE    9
-C51 COMPILER V9.53.0.0   MCP_REGISTERS                                                     01/29/2020 12:05:46 PAGE 2   
-
   48          #define INDEX_PROPORTIONAL_GAIN         10
+C51 COMPILER V9.53.0.0   MCP_REGISTERS                                                     01/29/2020 13:56:04 PAGE 2   
+
   49          #define INDEX_INTEGRAL_GAIN             11
   50          
   51          #define MCP_ATOMIC_ACCESS_START() \
@@ -128,9 +127,9 @@ line level    source
  108          //------------------------------------------------------------------------------
  109          //volatile U32 data MCP_reg16_dirty_bit_map;
  110          volatile U8 data MCP_reg16_dirty_bit_map[4];
-C51 COMPILER V9.53.0.0   MCP_REGISTERS                                                     01/29/2020 12:05:46 PAGE 3   
-
  111          
+C51 COMPILER V9.53.0.0   MCP_REGISTERS                                                     01/29/2020 13:56:04 PAGE 3   
+
  112          //------------------------------------------------------------------------------
  113          // MCP_Reg8_Access_Type:
  114          // It is 16-bit read-only register. It is updated only at build time. It is read
@@ -193,9 +192,9 @@ line level    source
  171          // are no longer mapped to a fixed memory address (4 dummy registers).
  172          //------------------------------------------------------------------------------
  173          volatile U16 MCP_REG_MEM_TYPE    MCP_16_bit_registers[16];
-C51 COMPILER V9.53.0.0   MCP_REGISTERS                                                     01/29/2020 12:05:46 PAGE 4   
-
  174          
+C51 COMPILER V9.53.0.0   MCP_REGISTERS                                                     01/29/2020 13:56:04 PAGE 4   
+
  175          //------------------------------------------------------------------------------
  176          // Local Functions Prototypes
  177          //------------------------------------------------------------------------------
@@ -258,9 +257,9 @@ line level    source
  234   1      
  235   1          MCP_16_bit_registers[INDEX_INTEGRAL_GAIN] = BLDC_RD_PI_INTEGRAL_GAIN;
  236   1      }
-C51 COMPILER V9.53.0.0   MCP_REGISTERS                                                     01/29/2020 12:05:46 PAGE 5   
-
  237          
+C51 COMPILER V9.53.0.0   MCP_REGISTERS                                                     01/29/2020 13:56:04 PAGE 5   
+
  238          //------------------------------------------------------------------------------
  239          // MCP_set_8bit_register:
  240          // bit MCP_set_8bit_register (U8 address, U8 value, bit external_access)
@@ -323,9 +322,9 @@ line level    source
  297          //     external_access:
  298          //         0: Function is called internally by F/W
  299          //         1: Function is called as a result of Write Register Command ('=')
-C51 COMPILER V9.53.0.0   MCP_REGISTERS                                                     01/29/2020 12:05:46 PAGE 6   
-
  300          //
+C51 COMPILER V9.53.0.0   MCP_REGISTERS                                                     01/29/2020 13:56:04 PAGE 6   
+
  301          // Description:
  302          //     This function is called by MCP when a Write Register Command for 16-bit
  303          //     register is received from controller. It can also be called internally
@@ -388,9 +387,9 @@ line level    source
  360          //     This function is called by ISR to update a register. It assumes that the
  361          //     address of valid 8-bit register is passed to it. It can write all 8-bit
  362          //     registers. When a register is written (modified), corresponding dirty bit
-C51 COMPILER V9.53.0.0   MCP_REGISTERS                                                     01/29/2020 12:05:46 PAGE 7   
-
  363          //     is also set.
+C51 COMPILER V9.53.0.0   MCP_REGISTERS                                                     01/29/2020 13:56:04 PAGE 7   
+
  364          //
  365          //------------------------------------------------------------------------------
  366          void MCP_set_8bit_register_isr (U8 address, U8 value)
@@ -453,9 +452,9 @@ line level    source
  423          // Description:
  424          //     This function is called by MCP when a Read Register Command is received
  425          //     from controller. It assumes that address validity is checked by caller.
-C51 COMPILER V9.53.0.0   MCP_REGISTERS                                                     01/29/2020 12:05:46 PAGE 8   
-
  426          //------------------------------------------------------------------------------
+C51 COMPILER V9.53.0.0   MCP_REGISTERS                                                     01/29/2020 13:56:04 PAGE 8   
+
  427          U8 MCP_get_8bit_register (U8 address)
  428          {
  429   1          return(MCP_8_bit_registers[address]);
@@ -518,9 +517,9 @@ line level    source
  486          // U16 MCP_get_16bit_register_isr (U8 address)
  487          //
  488          // Return Value:
-C51 COMPILER V9.53.0.0   MCP_REGISTERS                                                     01/29/2020 12:05:46 PAGE 9   
-
  489          //     Contents of addressed register
+C51 COMPILER V9.53.0.0   MCP_REGISTERS                                                     01/29/2020 13:56:04 PAGE 9   
+
  490          //
  491          // Parameters:
  492          //     address: A unique ID of an MCP register
@@ -583,9 +582,9 @@ line level    source
  549   1          if (MCP_REG_PRESENT_MOTOR_SPEED > address)
  550   1          {
  551   2              if (enable)
-C51 COMPILER V9.53.0.0   MCP_REGISTERS                                                     01/29/2020 12:05:46 PAGE 10  
-
  552   2              {
+C51 COMPILER V9.53.0.0   MCP_REGISTERS                                                     01/29/2020 13:56:04 PAGE 10  
+
  553   3                  MCP_reg8_status_update_map |= temp16;
  554   3                  //MCP_reg8_dirty_bit_map     |= ((U16)1 << address);
  555   3              }
@@ -648,9 +647,9 @@ line level    source
  612   2              return 1;
  613   2          }
  614   1      
-C51 COMPILER V9.53.0.0   MCP_REGISTERS                                                     01/29/2020 12:05:46 PAGE 11  
-
  615   1          return 0;
+C51 COMPILER V9.53.0.0   MCP_REGISTERS                                                     01/29/2020 13:56:04 PAGE 11  
+
  616   1      }
  617          
  618          //------------------------------------------------------------------------------
@@ -713,9 +712,9 @@ line level    source
  675   1                             &&
  676   1              (MCP_REG_RESERVED_END    >= address))
  677   1                             ||
-C51 COMPILER V9.53.0.0   MCP_REGISTERS                                                     01/29/2020 12:05:46 PAGE 12  
-
  678   1              (MCP_REG_UNDEFINED_START <= address))
+C51 COMPILER V9.53.0.0   MCP_REGISTERS                                                     01/29/2020 13:56:04 PAGE 12  
+
  679   1          {
  680   2              return 1;
  681   2          }

@@ -1,4 +1,4 @@
-C51 COMPILER V9.53.0.0   MOTOR                                                             01/29/2020 12:05:48 PAGE 1   
+C51 COMPILER V9.53.0.0   MOTOR                                                             01/29/2020 13:56:05 PAGE 1   
 
 
 C51 COMPILER V9.53.0.0, COMPILATION OF MODULE MOTOR
@@ -7,77 +7,82 @@ COMPILER INVOKED BY: c:\SiliconLabs\SimplicityStudio\v4\developer\toolchains\kei
                     -SimplicityStudio\v4_workspace\EFM8BB1_BLDC_PORT\src\motor.c OMF2 SMALL DEBUG OBJECTEXTEND ROM(LARGE) WARNINGLEVEL(2) FLO
                     -ATFUZZY(3) OPTIMIZE(8,SPEED) INTVECTOR(0X0000) INTPROMOTE INCDIR(C:\Users\A92862\SimplicityStudio\v4_workspace\EFM8BB1_B
                     -LDC_PORT\inc;C:\Users\A92862\SimplicityStudio\v4_workspace\EFM8BB1_BLDC_PORT\inc\config;C:/SiliconLabs/SimplicityStudio/
-                    -v4/developer/sdks/8051/v4.1.7//kits/common/drivers/efm8_retargetserial;C:/SiliconLabs/SimplicityStudio/v4/developer/sdks
-                    -/8051/v4.1.7//Lib/efm8_assert;C:/SiliconLabs/SimplicityStudio/v4/developer/sdks/8051/v4.1.7//kits/common/bsp;C:/SiliconL
-                    -abs/SimplicityStudio/v4/developer/sdks/8051/v4.1.7//kits/EFM8BB1_LCK/config;C:/SiliconLabs/SimplicityStudio/v4/developer
-                    -/sdks/8051/v4.1.7//Device/shared/si8051Base;C:/SiliconLabs/SimplicityStudio/v4/developer/sdks/8051/v4.1.7//Device/EFM8BB
-                    -1/inc;C:/SiliconLabs/SimplicityStudio/v4/developer/sdks/8051/v4.1.7//Device/EFM8BB1/peripheral_driver/inc) PRINT(.\src\m
-                    -otor.lst) COND PAGEWIDTH(120) PAGELENGTH(65) OBJECT(.\src\motor.OBJ)
+                    -v4/developer/sdks/8051/v4.1.7//Lib/efm8_assert;C:/SiliconLabs/SimplicityStudio/v4/developer/sdks/8051/v4.1.7//kits/commo
+                    -n/bsp;C:/SiliconLabs/SimplicityStudio/v4/developer/sdks/8051/v4.1.7//kits/EFM8BB1_LCK/config;C:/SiliconLabs/SimplicitySt
+                    -udio/v4/developer/sdks/8051/v4.1.7//Device/shared/si8051Base;C:/SiliconLabs/SimplicityStudio/v4/developer/sdks/8051/v4.1
+                    -.7//Device/EFM8BB1/inc;C:/SiliconLabs/SimplicityStudio/v4/developer/sdks/8051/v4.1.7//Device/EFM8BB1/peripheral_driver/i
+                    -nc) PRINT(.\src\motor.lst) COND PAGEWIDTH(120) PAGELENGTH(65) OBJECT(.\src\motor.OBJ)
 
 line level    source
 
-   1          /*
-   2           * motor.c
-   3           *
-   4           *  Created on: Jan 16, 2020
-   5           *      Author: a92862
-   6           */
-   7          
-   8          
-   9          #include "bldcdk.h"
-  10          
-  11          
+   1          //-----------------------------------------------------------------------------
+   2          // motor.c
+   3          //-----------------------------------------------------------------------------
+   4          // Copyright 2013, Silicon Laboratories, Inc.
+   5          // http://www.silabs.com
+   6          //
+   7          // Created on: Apr 18, 2013
+   8          //     Author: sgghang
+   9          //
+  10          // Adapted on: Jan 16, 2020
+  11          // Author: a92862
   12          //-----------------------------------------------------------------------------
-  13          // Global Constants
-  14          //-----------------------------------------------------------------------------
-  15          #define MTR_ATOMIC_ACCESS_START() \
-  16          do                                \
-  17          {                                 \
-  18              saved_ea = IE_EA;                \
-  19              IE_EA = 0;                       \
-  20          } while (0)
-  21          
-  22          #define MTR_ATOMIC_ACCESS_END()   \
-  23          do                                \
-  24          {                                 \
-  25              IE_EA = saved_ea;                \
+  13          
+  14          
+  15          #include "bldcdk.h"
+  16          
+  17          
+  18          //-----------------------------------------------------------------------------
+  19          // Global Constants
+  20          //-----------------------------------------------------------------------------
+  21          #define MTR_ATOMIC_ACCESS_START() \
+  22          do                                \
+  23          {                                 \
+  24              saved_ea = IE_EA;                \
+  25              IE_EA = 0;                       \
   26          } while (0)
   27          
-  28          //-----------------------------------------------------------------------------
-  29          // Global Variables
-  30          //-----------------------------------------------------------------------------
-  31          // Table for blind starting. Additional values are calculated in the function to
-  32          // save code space.
-  33          // Please refer to AN794 for more details derived.
-  34          // IMPORTANT.  Please update _LAST_INIT_START_DELAY in BLDC_RD_System.h if
-  35          //             start_delay[2] is modified
-  36          const U16 code start_delay[NO_OF_STARTUP_DELAY] = {50000, 30902, 23863};
-  37          
-  38          // sequence of open phase : C, A, B, C, A, B ==> CW
-  39          // comparator mux : CMP0MX = CMX0N[7:4]:CMX0P[3:0]
-  40          // Zero crossing : Falling edge of comparator output.
-  41          // Falling bemf : CP0N = VMY(P0.3) CP0P=VMA,VMB, VMC (P0.0~P0.2)
-  42          // Rising bemf  : CP0N = VMA,VMB,VMC(P0.0~P0.2) CP0P=VMY(P0.3)
-  43          // comMux[0~5] is for Falling bemf
-  44          // comMux[6~11] is for Rising bemf
-  45          const U8 code compMux[12] = {
-  46              (CPMUX_Y << 4) | CPMUX_C,
-  47              (CPMUX_Y << 4) | CPMUX_A,
-C51 COMPILER V9.53.0.0   MOTOR                                                             01/29/2020 12:05:48 PAGE 2   
+  28          #define MTR_ATOMIC_ACCESS_END()   \
+  29          do                                \
+  30          {                                 \
+  31              IE_EA = saved_ea;                \
+  32          } while (0)
+  33          
+  34          //-----------------------------------------------------------------------------
+  35          // Global Variables
+  36          //-----------------------------------------------------------------------------
+  37          // Table for blind starting. Additional values are calculated in the function to
+  38          // save code space.
+  39          // Please refer to AN794 for more details derived.
+  40          // IMPORTANT.  Please update _LAST_INIT_START_DELAY in BLDC_RD_System.h if
+  41          //             start_delay[2] is modified
+  42          const U16 code start_delay[NO_OF_STARTUP_DELAY] = {50000, 30902, 23863};
+  43          
+  44          // sequence of open phase : C, A, B, C, A, B ==> CW
+  45          // comparator mux : CMP0MX = CMX0N[7:4]:CMX0P[3:0]
+  46          // Zero crossing : Falling edge of comparator output.
+  47          // Falling bemf : CP0N = VMY(P0.3) CP0P=VMA,VMB, VMC (P0.0~P0.2)
+  48          // Rising bemf  : CP0N = VMA,VMB,VMC(P0.0~P0.2) CP0P=VMY(P0.3)
+C51 COMPILER V9.53.0.0   MOTOR                                                             01/29/2020 13:56:05 PAGE 2   
 
-  48              (CPMUX_Y << 4) | CPMUX_B,
-  49              (CPMUX_Y << 4) | CPMUX_C,
-  50              (CPMUX_Y << 4) | CPMUX_A,
-  51              (CPMUX_Y << 4) | CPMUX_B,
-  52              (CPMUX_C << 4)| CPMUX_Y,
-  53              (CPMUX_A << 4)| CPMUX_Y,
-  54              (CPMUX_B << 4)| CPMUX_Y,
-  55              (CPMUX_C << 4)| CPMUX_Y,
-  56              (CPMUX_A << 4)| CPMUX_Y,
-  57              (CPMUX_B << 4)| CPMUX_Y
-  58          };
-  59          
-  60          #if BLDC_RD_PWM_METHOD == H_BRIDGE_HIGH_SIDE_PWM
+  49          // comMux[0~5] is for Falling bemf
+  50          // comMux[6~11] is for Rising bemf
+  51          const U8 code compMux[12] = {
+  52              (CPMUX_Y << 4) | CPMUX_C,
+  53              (CPMUX_Y << 4) | CPMUX_A,
+  54              (CPMUX_Y << 4) | CPMUX_B,
+  55              (CPMUX_Y << 4) | CPMUX_C,
+  56              (CPMUX_Y << 4) | CPMUX_A,
+  57              (CPMUX_Y << 4) | CPMUX_B,
+  58              (CPMUX_C << 4)| CPMUX_Y,
+  59              (CPMUX_A << 4)| CPMUX_Y,
+  60              (CPMUX_B << 4)| CPMUX_Y,
+  61              (CPMUX_C << 4)| CPMUX_Y,
+  62              (CPMUX_A << 4)| CPMUX_Y,
+  63              (CPMUX_B << 4)| CPMUX_Y
+  64          };
+  65          
+  66          #if BLDC_RD_PWM_METHOD == H_BRIDGE_HIGH_SIDE_PWM
               // high side pwm scheme with Si8230
               // 1111 0111 : P1.3(PWM),P1.4(L): Phase A->B energized, C open
               // 0111 1111 : P1.4(L),P1.7(PWM): Phase C->B energized, A open
@@ -102,53 +107,53 @@ line level    source
                   ~MOTDRV_AL_MASK, ~MOTDRV_CL_MASK, ~MOTDRV_CL_MASK
               };
               #elif BLDC_RD_PWM_METHOD == H_BRIDGE_MIXED_MODE_PWM
-  85          // mixed mode pwm scheme with Si8230
-  86          // Falling BEMF (rising_bemf = 1 at setup time):
-  87          // 1110 1111 : P1.3(H),P1.4(PWM): Phase A->B energized, C open
-  88          // 1110 1111 : P1.4(PWM),P1.7(H): Phase C->B energized, A open
-  89          // 1111 1011 : P1.2(PWM),P1.7(H): Phase C->A energized, B open
-  90          // 1111 1011 : P1.2(PWM),P1.5(H): Phase B->A energized, C open
-  91          // 1011 1111 : P1.5(H),P1.6(PWM): Phase B->C energized, A open
-  92          // 1011 1111 : P1.3(H),P1.6(PWM): Phase A->C energized, B open
-  93          
-  94          // Rising BEMF (rising_bemf = 0 at setup time):
-  95          // 1111 0111 : P1.3(PWM),P1.4(L): Phase A->B energized, C open
-  96          // 0111 1111 : P1.4(L),P1.7(PWM): Phase C->B energized, A open
-  97          // 0111 1111 : P1.2(L),P1.7(PWM): Phase C->A energized, B open
-  98          // 1101 1111 : P1.2(L),P1.5(PWM): Phase B->A energized, C open
-  99          // 1101 1111 : P1.5(PWM),P1.6(L): Phase B->C energized, A open
- 100          // 1111 0111 : P1.3(PWM),P1.6(L): Phase A->C energized, B open
- 101          
- 102          // First index is the rising_bemf flag
- 103          const U8 code skipPattern[2][6] = {
- 104                  {
- 105                      ~MOTDRV_AH_MASK, ~MOTDRV_CH_MASK, ~MOTDRV_CH_MASK,
- 106                      ~MOTDRV_BH_MASK, ~MOTDRV_BH_MASK, ~MOTDRV_AH_MASK
- 107                  },
- 108                  {
- 109                      ~MOTDRV_BL_MASK, ~MOTDRV_BL_MASK, ~MOTDRV_AL_MASK,
- 110                      ~MOTDRV_AL_MASK, ~MOTDRV_CL_MASK, ~MOTDRV_CL_MASK
-C51 COMPILER V9.53.0.0   MOTOR                                                             01/29/2020 12:05:48 PAGE 3   
+  91          // mixed mode pwm scheme with Si8230
+  92          // Falling BEMF (rising_bemf = 1 at setup time):
+  93          // 1110 1111 : P1.3(H),P1.4(PWM): Phase A->B energized, C open
+  94          // 1110 1111 : P1.4(PWM),P1.7(H): Phase C->B energized, A open
+  95          // 1111 1011 : P1.2(PWM),P1.7(H): Phase C->A energized, B open
+  96          // 1111 1011 : P1.2(PWM),P1.5(H): Phase B->A energized, C open
+  97          // 1011 1111 : P1.5(H),P1.6(PWM): Phase B->C energized, A open
+  98          // 1011 1111 : P1.3(H),P1.6(PWM): Phase A->C energized, B open
+  99          
+ 100          // Rising BEMF (rising_bemf = 0 at setup time):
+ 101          // 1111 0111 : P1.3(PWM),P1.4(L): Phase A->B energized, C open
+ 102          // 0111 1111 : P1.4(L),P1.7(PWM): Phase C->B energized, A open
+ 103          // 0111 1111 : P1.2(L),P1.7(PWM): Phase C->A energized, B open
+ 104          // 1101 1111 : P1.2(L),P1.5(PWM): Phase B->A energized, C open
+ 105          // 1101 1111 : P1.5(PWM),P1.6(L): Phase B->C energized, A open
+ 106          // 1111 0111 : P1.3(PWM),P1.6(L): Phase A->C energized, B open
+ 107          
+ 108          // First index is the rising_bemf flag
+ 109          const U8 code skipPattern[2][6] = {
+ 110                  {
+ 111                      ~MOTDRV_AH_MASK, ~MOTDRV_CH_MASK, ~MOTDRV_CH_MASK,
+C51 COMPILER V9.53.0.0   MOTOR                                                             01/29/2020 13:56:05 PAGE 3   
 
- 111                  },
- 112          };
- 113          #endif
- 114          
- 115          const U8 code freeterminal[6] = {
- 116              FILTERED_C_MASK, FILTERED_A_MASK, FILTERED_B_MASK,
- 117              FILTERED_C_MASK, FILTERED_A_MASK, FILTERED_B_MASK
+ 112                      ~MOTDRV_BH_MASK, ~MOTDRV_BH_MASK, ~MOTDRV_AH_MASK
+ 113                  },
+ 114                  {
+ 115                      ~MOTDRV_BL_MASK, ~MOTDRV_BL_MASK, ~MOTDRV_AL_MASK,
+ 116                      ~MOTDRV_AL_MASK, ~MOTDRV_CL_MASK, ~MOTDRV_CL_MASK
+ 117                  },
  118          };
- 119          const U8 code active_gpio[6] = {
- 120              MOTDRV_HILO_ON(A, B),
- 121              MOTDRV_HILO_ON(C, B),
- 122              MOTDRV_HILO_ON(C, A),
- 123              MOTDRV_HILO_ON(B, A),
- 124              MOTDRV_HILO_ON(B, C),
- 125              MOTDRV_HILO_ON(A, C)
- 126          };
- 127          
- 128          
- 129          #ifdef FEATURE_HYPERDRIVE
+ 119          #endif
+ 120          
+ 121          const U8 code freeterminal[6] = {
+ 122              FILTERED_C_MASK, FILTERED_A_MASK, FILTERED_B_MASK,
+ 123              FILTERED_C_MASK, FILTERED_A_MASK, FILTERED_B_MASK
+ 124          };
+ 125          const U8 code active_gpio[6] = {
+ 126              MOTDRV_HILO_ON(A, B),
+ 127              MOTDRV_HILO_ON(C, B),
+ 128              MOTDRV_HILO_ON(C, A),
+ 129              MOTDRV_HILO_ON(B, A),
+ 130              MOTDRV_HILO_ON(B, C),
+ 131              MOTDRV_HILO_ON(A, C)
+ 132          };
+ 133          
+ 134          
+ 135          #ifdef FEATURE_HYPERDRIVE
               // First 6 [0-5] are for falling BEMF, and last 6 [6-11] are for rising BEMF
               const U8 code hyperactive_gpio[12] = {
                   MOTDRV_HILOLO_ON(A, B, C),
@@ -166,408 +171,408 @@ line level    source
                   MOTDRV_HILOHI_ON(A, C, B)
               };
               #endif
- 147          
- 148          SEG_IDATA U8      SLR_motor_state = MOTOR_STOPPED;
- 149          // expected next commutation index value
- 150          SEG_DATA  U8      commutation_index;
- 151          
- 152          // prepare skip register value in advance so at the end we need just
- 153          // assignment code in order to minimize overhead.
- 154          SEG_XDATA U8      pre_p0skip;
- 155          SEG_XDATA U8      pre_p1skip;
- 156          SEG_XDATA U8      pre_port1;
+ 153          
+ 154          SEG_IDATA U8      SLR_motor_state = MOTOR_STOPPED;
+ 155          // expected next commutation index value
+ 156          SEG_DATA  U8      commutation_index;
  157          
- 158          // prev_zc_time, zc_time are time stamp of 32bit virtual timer to calculate
- 159          // period of commutation.
- 160          // prev_zc_time is used in startup function to find out initial commutation
- 161          // time.
- 162          SEG_DATA UU32     prev_zc_time;
- 163          SEG_DATA UU32     zc_time;
- 164          SEG_DATA UU32     zc_commutate_time;
- 165          SEG_XDATA U32 zc_total_per_mech_rotation;
- 166          
- 167          // measuring commutation time (one electrical rotate)
- 168          SEG_DATA UU32 time_per_rotate;
- 169          // for fast phase reference.
- 170          SEG_DATA U8       open_phase;
- 171          
- 172          // timer for hyperdrive mode
- 173          #ifdef FEATURE_HYPERDRIVE
-C51 COMPILER V9.53.0.0   MOTOR                                                             01/29/2020 12:05:48 PAGE 4   
+ 158          // prepare skip register value in advance so at the end we need just
+ 159          // assignment code in order to minimize overhead.
+ 160          SEG_XDATA U8      pre_p0skip;
+ 161          SEG_XDATA U8      pre_p1skip;
+ 162          SEG_XDATA U8      pre_port1;
+ 163          
+ 164          // prev_zc_time, zc_time are time stamp of 32bit virtual timer to calculate
+ 165          // period of commutation.
+ 166          // prev_zc_time is used in startup function to find out initial commutation
+ 167          // time.
+ 168          SEG_DATA UU32     prev_zc_time;
+ 169          SEG_DATA UU32     zc_time;
+ 170          SEG_DATA UU32     zc_commutate_time;
+ 171          SEG_XDATA U32 zc_total_per_mech_rotation;
+ 172          
+ 173          // measuring commutation time (one electrical rotate)
+ 174          SEG_DATA UU32 time_per_rotate;
+C51 COMPILER V9.53.0.0   MOTOR                                                             01/29/2020 13:56:05 PAGE 4   
 
+ 175          // for fast phase reference.
+ 176          SEG_DATA U8       open_phase;
+ 177          
+ 178          // timer for hyperdrive mode
+ 179          #ifdef FEATURE_HYPERDRIVE
               SEG_DATA U8       hyperdrive_speed;
               SEG_XDATA UU16    xhyp_speed;
               SEG_XDATA U16     hrem_time;
               #endif
- 178          
- 179          // calculated current motor running rpm
- 180          SEG_XDATA U16     SLR_motor_current_rpm;
- 181          #if BLDC_RD_RPM_OR_PWM == RPM_PARAMETER
- 182          // user requested (BY POT, PWM input or PC) target motor rpm.
- 183          SEG_DATA U16      SLW_target_rpm;
- 184          #endif
- 185          
- 186          // user requested (BY POT, PWM input or PC) target motor pwm.
- 187          SEG_XDATA U16     SLW_target_pwm_duty;
- 188          // current pwm duty cycle
- 189          SEG_DATA U16      SLR_pwm_duty;
- 190          // interval for pi calculation or POT(or PWM input) adc.
- 191          // unit : 65536*(1/24.5M) = about 2.7ms.
- 192          // value should be (2^n - 1), for fast process in interrupt routine.
- 193          SEG_XDATA U8      pid_calc_interval;
- 194          SEG_DATA U8       zc_count;
- 195          #if BLDC_RD_RPM_OR_PWM == PWM_PARAMETER
+ 184          
+ 185          // calculated current motor running rpm
+ 186          SEG_XDATA U16     SLR_motor_current_rpm;
+ 187          #if BLDC_RD_RPM_OR_PWM == RPM_PARAMETER
+ 188          // user requested (BY POT, PWM input or PC) target motor rpm.
+ 189          SEG_DATA U16      SLW_target_rpm;
+ 190          #endif
+ 191          
+ 192          // user requested (BY POT, PWM input or PC) target motor pwm.
+ 193          SEG_XDATA U16     SLW_target_pwm_duty;
+ 194          // current pwm duty cycle
+ 195          SEG_DATA U16      SLR_pwm_duty;
+ 196          // interval for pi calculation or POT(or PWM input) adc.
+ 197          // unit : 65536*(1/24.5M) = about 2.7ms.
+ 198          // value should be (2^n - 1), for fast process in interrupt routine.
+ 199          SEG_XDATA U8      pid_calc_interval;
+ 200          SEG_DATA U8       zc_count;
+ 201          #if BLDC_RD_RPM_OR_PWM == PWM_PARAMETER
               SEG_XDATA U16     SLW_acceleration_step_size;
               SEG_XDATA U16     SLW_deceleration_step_size;
               #endif
- 199          // BLDC motor numbe of poles. (must be even number)
- 200          SEG_XDATA U8      num_poles;
- 201          SEG_XDATA U8      zc_total_count;
- 202          // time stamp when over current or stall happens.
- 203          SEG_XDATA U16     error_event_time;
- 204          // minimum duty cycle for startup and running.
- 205          UU16 SLR_minimum_duty;
- 206          U16  SLR_minimum_rpm;
- 207          
- 208          bit speed_updated;             // every electrical rotation will set this bit.
- 209          bit SLW_user_direction;        // CW = 0, default. to avoid motor direction
- 210          bit pid_flag = 0;              // time for pid calculation
- 211          bit SLW_rpm_updated;           // status for application level.
- 212          bit SLW_pwm_updated;           // status for application level.
- 213          bit SLR_motor_stalled;
- 214          bit last_motor_stalled;
- 215          bit handle_motor_error;
- 216          static bit rising_bemf;
- 217          static bit motor_spinning;
- 218          static bit motor_direction;    // CW = 0, default
- 219          #ifdef FEATURE_PID_TUNE_FUNCTION
+ 205          // BLDC motor numbe of poles. (must be even number)
+ 206          SEG_XDATA U8      num_poles;
+ 207          SEG_XDATA U8      zc_total_count;
+ 208          // time stamp when over current or stall happens.
+ 209          SEG_XDATA U16     error_event_time;
+ 210          // minimum duty cycle for startup and running.
+ 211          UU16 SLR_minimum_duty;
+ 212          U16  SLR_minimum_rpm;
+ 213          
+ 214          bit speed_updated;             // every electrical rotation will set this bit.
+ 215          bit SLW_user_direction;        // CW = 0, default. to avoid motor direction
+ 216          bit pid_flag = 0;              // time for pid calculation
+ 217          bit SLW_rpm_updated;           // status for application level.
+ 218          bit SLW_pwm_updated;           // status for application level.
+ 219          bit SLR_motor_stalled;
+ 220          bit last_motor_stalled;
+ 221          bit handle_motor_error;
+ 222          static bit rising_bemf;
+ 223          static bit motor_spinning;
+ 224          static bit motor_direction;    // CW = 0, default
+ 225          #ifdef FEATURE_PID_TUNE_FUNCTION
               extern bit tune_in_progress;
               #endif
- 222          
- 223          // OP amp bias voltage to be subtracted after measuring phase current.
- 224          static SEG_XDATA U16    opamp_offset;
- 225          SEG_XDATA U16 SLR_motor_current;
- 226          
- 227          // Additional motor current to accumulate to perform further averaging
- 228          // Number of additional accumulation to improve result
- 229          #define CURRENT_SHIFT_ACC   (4)
- 230          #define CURRENT_ACC         (1 << CURRENT_SHIFT_ACC)
- 231          static SEG_XDATA U32    accum_motor_current;
- 232          static SEG_XDATA U8     accum_motor_current_count;
- 233          static SEG_XDATA U8     average_motor_current_adc;
- 234          
- 235          // number of oc debounce at register. 0x05
- 236          SEG_XDATA U8 SLW_oc_debounce;
-C51 COMPILER V9.53.0.0   MOTOR                                                             01/29/2020 12:05:48 PAGE 5   
+ 228          
+ 229          // OP amp bias voltage to be subtracted after measuring phase current.
+ 230          static SEG_XDATA U16    opamp_offset;
+ 231          SEG_XDATA U16 SLR_motor_current;
+ 232          
+ 233          // Additional motor current to accumulate to perform further averaging
+ 234          // Number of additional accumulation to improve result
+ 235          #define CURRENT_SHIFT_ACC   (4)
+ 236          #define CURRENT_ACC         (1 << CURRENT_SHIFT_ACC)
+ 237          static SEG_XDATA U32    accum_motor_current;
+C51 COMPILER V9.53.0.0   MOTOR                                                             01/29/2020 13:56:05 PAGE 5   
 
- 237          // reg. 0x04. over current threshold.
- 238          SEG_XDATA U8 SLW_current_limit;
- 239          
- 240          // To monitor stall condition by delta_V, Delta_I
- 241          static SEG_XDATA U16    prev_rpm;
- 242          static SEG_XDATA U16    prev_I;
- 243          static SEG_XDATA U8     stall_check_count;
- 244          
- 245          #ifdef FEATURE_MEAS_VMDC
- 246          SEG_XDATA U16 SLR_motor_voltage;
- 247          #endif
- 248          
- 249          SEG_XDATA U16 SLW_motor_max_rpm;
+ 238          static SEG_XDATA U8     accum_motor_current_count;
+ 239          static SEG_XDATA U8     average_motor_current_adc;
+ 240          
+ 241          // number of oc debounce at register. 0x05
+ 242          SEG_XDATA U8 SLW_oc_debounce;
+ 243          // reg. 0x04. over current threshold.
+ 244          SEG_XDATA U8 SLW_current_limit;
+ 245          
+ 246          // To monitor stall condition by delta_V, Delta_I
+ 247          static SEG_XDATA U16    prev_rpm;
+ 248          static SEG_XDATA U16    prev_I;
+ 249          static SEG_XDATA U8     stall_check_count;
  250          
- 251          
- 252          static void MTR_process_adc(void);
- 253          static void MTR_process_errors(void);
+ 251          #ifdef FEATURE_MEAS_VMDC
+ 252          SEG_XDATA U16 SLR_motor_voltage;
+ 253          #endif
  254          
- 255          //-----------------------------------------------------------------------------
- 256          // Function Prototypes
- 257          //-----------------------------------------------------------------------------
- 258          
- 259          //-----------------------------------------------------------------------------
- 260          // SL_MTR_init
+ 255          SEG_XDATA U16 SLW_motor_max_rpm;
+ 256          
+ 257          
+ 258          static void MTR_process_adc(void);
+ 259          static void MTR_process_errors(void);
+ 260          
  261          //-----------------------------------------------------------------------------
- 262          //
- 263          // Return Value : None
- 264          // Parameters   : None
- 265          //
- 266          //-----------------------------------------------------------------------------
- 267          void SL_MTR_init(void)
- 268          {
- 269   1              PCA_initialize_pca();
- 270   1          TMR_init_timer3();
- 271   1          TMR_init_timer0();
- 272   1              COMP_initialize_comp();
- 273   1          PCA0L = 0;
- 274   1          PCA0H = 0;
- 275   1          // start PWM
- 276   1          PCA_enable_pwm();
- 277   1          PCA0CN0_CR = 1;
- 278   1          TMR2CN0_TR2 = 1;
- 279   1          pid_calc_interval = DEFAULT_PID_INTERVAL;
- 280   1          motor_spinning = 0;
- 281   1          // To avoid garbage value, SLR_minimum_duty will be calculated in smart way.
- 282   1          // However, if user stopped motor by reset_pin and started it immediately,
- 283   1          // there is no chance to calculate SLR_minimum_duty because code will
- 284   1          // skip the MTR_start_spinning().
- 285   1          SLR_minimum_duty.U16 = (MAX_USER_PWM_VALUE>>2);
- 286   1          handle_motor_error = 0;
- 287   1          SLW_user_direction = motor_direction = 0;
- 288   1          SLR_motor_state = MOTOR_STOPPED;
- 289   1          SLR_motor_current_rpm = 0;
- 290   1          // updated and calculated SLR_minimum_rpm at SL_MTR_change_num_poles()
- 291   1          //num_poles = BLDC_RD_NUM_POLES;
- 292   1          //SLR_minimum_rpm = (U16)((60UL*1.2*2*SYSCLK)/(65536*2*6*SPEED_UNIT))/num_poles;
- 293   1      #ifndef BUILD_FOR_PROTOCOL
+ 262          // Function Prototypes
+ 263          //-----------------------------------------------------------------------------
+ 264          
+ 265          //-----------------------------------------------------------------------------
+ 266          // SL_MTR_init
+ 267          //-----------------------------------------------------------------------------
+ 268          //
+ 269          // Return Value : None
+ 270          // Parameters   : None
+ 271          //
+ 272          //-----------------------------------------------------------------------------
+ 273          void SL_MTR_init(void)
+ 274          {
+ 275   1              PCA_initialize_pca();
+ 276   1          TMR_init_timer3();
+ 277   1          TMR_init_timer0();
+ 278   1              COMP_initialize_comp();
+ 279   1          PCA0L = 0;
+ 280   1          PCA0H = 0;
+ 281   1          // start PWM
+ 282   1          PCA_enable_pwm();
+ 283   1          PCA0CN0_CR = 1;
+ 284   1          TMR2CN0_TR2 = 1;
+ 285   1          pid_calc_interval = DEFAULT_PID_INTERVAL;
+ 286   1          motor_spinning = 0;
+ 287   1          // To avoid garbage value, SLR_minimum_duty will be calculated in smart way.
+ 288   1          // However, if user stopped motor by reset_pin and started it immediately,
+ 289   1          // there is no chance to calculate SLR_minimum_duty because code will
+ 290   1          // skip the MTR_start_spinning().
+ 291   1          SLR_minimum_duty.U16 = (MAX_USER_PWM_VALUE>>2);
+ 292   1          handle_motor_error = 0;
+ 293   1          SLW_user_direction = motor_direction = 0;
+ 294   1          SLR_motor_state = MOTOR_STOPPED;
+ 295   1          SLR_motor_current_rpm = 0;
+ 296   1          // updated and calculated SLR_minimum_rpm at SL_MTR_change_num_poles()
+ 297   1          //num_poles = BLDC_RD_NUM_POLES;
+ 298   1          //SLR_minimum_rpm = (U16)((60UL*1.2*2*SYSCLK)/(65536*2*6*SPEED_UNIT))/num_poles;
+ 299   1      #ifndef BUILD_FOR_PROTOCOL
                   SLW_oc_debounce = MOTOR_OC_MAX_DEBOUNCE;
+C51 COMPILER V9.53.0.0   MOTOR                                                             01/29/2020 13:56:05 PAGE 6   
+
                   SLW_current_limit = MOTOR_OC;
                   SLW_motor_max_rpm = MOTOR_MAX_RPM;
               #endif
- 298   1      
- 299   1      }
-C51 COMPILER V9.53.0.0   MOTOR                                                             01/29/2020 12:05:48 PAGE 6   
-
- 300          
- 301          
- 302          //-----------------------------------------------------------------------------
- 303          // SL_MTR_motor
- 304          //-----------------------------------------------------------------------------
- 305          //
- 306          // Return Value : None
- 307          // Parameters   : None
- 308          //
- 309          // Description  :
- 310          //      This function should be called regularly at application level.
+ 304   1      
+ 305   1      }
+ 306          
+ 307          
+ 308          //-----------------------------------------------------------------------------
+ 309          // SL_MTR_motor
+ 310          //-----------------------------------------------------------------------------
  311          //
- 312          //-----------------------------------------------------------------------------
- 313          void SL_MTR_motor(void)
- 314          {
- 315   1          MTR_process_errors();
- 316   1          MTR_process_adc();
- 317   1          if( MOTOR_STOPPED == SLR_motor_state)
- 318   1          {
- 319   2              // Initialize variables while in stopped state
- 320   2              accum_motor_current_count = CURRENT_ACC;
- 321   2              accum_motor_current = 0;
- 322   2              average_motor_current_adc = 0;
- 323   2              SLR_motor_current = 0;
- 324   2          }
- 325   1          else if( MOTOR_RUNNING == SLR_motor_state)
- 326   1          {
- 327   2              MTR_calculate_motor_rpm();
- 328   2      
- 329   2      #ifndef FEATURE_PID_TUNE_FUNCTION
- 330   2              MTR_calculate_pid();
- 331   2      #endif
- 332   2              // SL_MTR_stop_motor() will change state
- 333   2          }
- 334   1      
- 335   1          // Clear the adc_flags for current and vmotor
- 336   1          adc_flags &= ~( (0x01<<ADC_MUX_CURRENT)
- 337   1      #ifdef FEATURE_MEAS_VMDC
- 338   1                  | (0x01 << ADC_MUX_VMOTOR)
- 339   1      #endif
- 340   1              );
- 341   1      }
- 342          
- 343          //-----------------------------------------------------------------------------
- 344          // SL_MTR_start_motor
- 345          //-----------------------------------------------------------------------------
- 346          //
- 347          // Return Value : None
- 348          // Parameters   : None
- 349          //
- 350          // Description  :
- 351          //      Application level would call this to start motor.
- 352          //      If motor is not in state MOTOR_STOPPED, it will just return.
- 353          //      It will check motor spinning status for fast startup and if there is
- 354          //      enough BEMF found, it skips the blind spinning stage.
- 355          //      After staring motor, SLR_motor_state would be MOTOR_RUNNING.
- 356          //-----------------------------------------------------------------------------
- 357          void SL_MTR_start_motor(void)
- 358          {
- 359   1          if ((MOTOR_STOPPED != SLR_motor_state) || SLR_motor_stalled )
- 360   1          {
- 361   2              return;
- 362   2          }
-C51 COMPILER V9.53.0.0   MOTOR                                                             01/29/2020 12:05:48 PAGE 7   
+ 312          // Return Value : None
+ 313          // Parameters   : None
+ 314          //
+ 315          // Description  :
+ 316          //      This function should be called regularly at application level.
+ 317          //
+ 318          //-----------------------------------------------------------------------------
+ 319          void SL_MTR_motor(void)
+ 320          {
+ 321   1          MTR_process_errors();
+ 322   1          MTR_process_adc();
+ 323   1          if( MOTOR_STOPPED == SLR_motor_state)
+ 324   1          {
+ 325   2              // Initialize variables while in stopped state
+ 326   2              accum_motor_current_count = CURRENT_ACC;
+ 327   2              accum_motor_current = 0;
+ 328   2              average_motor_current_adc = 0;
+ 329   2              SLR_motor_current = 0;
+ 330   2          }
+ 331   1          else if( MOTOR_RUNNING == SLR_motor_state)
+ 332   1          {
+ 333   2              MTR_calculate_motor_rpm();
+ 334   2      
+ 335   2      #ifndef FEATURE_PID_TUNE_FUNCTION
+ 336   2              MTR_calculate_pid();
+ 337   2      #endif
+ 338   2              // SL_MTR_stop_motor() will change state
+ 339   2          }
+ 340   1      
+ 341   1          // Clear the adc_flags for current and vmotor
+ 342   1          adc_flags &= ~( (0x01<<ADC_MUX_CURRENT)
+ 343   1      #ifdef FEATURE_MEAS_VMDC
+ 344   1                  | (0x01 << ADC_MUX_VMOTOR)
+ 345   1      #endif
+ 346   1              );
+ 347   1      }
+ 348          
+ 349          //-----------------------------------------------------------------------------
+ 350          // SL_MTR_start_motor
+ 351          //-----------------------------------------------------------------------------
+ 352          //
+ 353          // Return Value : None
+ 354          // Parameters   : None
+ 355          //
+ 356          // Description  :
+ 357          //      Application level would call this to start motor.
+ 358          //      If motor is not in state MOTOR_STOPPED, it will just return.
+ 359          //      It will check motor spinning status for fast startup and if there is
+ 360          //      enough BEMF found, it skips the blind spinning stage.
+ 361          //      After staring motor, SLR_motor_state would be MOTOR_RUNNING.
+ 362          //-----------------------------------------------------------------------------
+ 363          void SL_MTR_start_motor(void)
+C51 COMPILER V9.53.0.0   MOTOR                                                             01/29/2020 13:56:05 PAGE 7   
 
- 363   1          // respect user selected direction
- 364   1          MTR_set_direction(SLW_user_direction);
- 365   1          MTR_check_motor_spinning();
- 366   1          if(!motor_spinning)
- 367   1          {
- 368   2              MTR_start_spinning();
- 369   2          }
- 370   1          MTR_do_quickstart();
- 371   1      
- 372   1          // Initial stall condition has been checked in the MTR_do_quickstart().
- 373   1          // Initial startup - take a longer time to check for potential stall
- 374   1          stall_check_count = 255;
- 375   1          last_motor_stalled = 0;
- 376   1          handle_motor_error = 0;
+ 364          {
+ 365   1          if ((MOTOR_STOPPED != SLR_motor_state) || SLR_motor_stalled )
+ 366   1          {
+ 367   2              return;
+ 368   2          }
+ 369   1          // respect user selected direction
+ 370   1          MTR_set_direction(SLW_user_direction);
+ 371   1          MTR_check_motor_spinning();
+ 372   1          if(!motor_spinning)
+ 373   1          {
+ 374   2              MTR_start_spinning();
+ 375   2          }
+ 376   1          MTR_do_quickstart();
  377   1      
- 378   1          // change status to running mode
- 379   1          SLR_motor_state = MOTOR_RUNNING;
- 380   1      }
- 381          
- 382          
- 383          //-----------------------------------------------------------------------------
- 384          // SL_MTR_stop_motor
- 385          //-----------------------------------------------------------------------------
- 386          //
- 387          // Return Value : None
- 388          // Parameters   : None
- 389          //
- 390          // Description  :
- 391          //  Stop running motor and de-energize phases only when SLR_motor_state is
- 392          //  MOTOR_RUNNING, otherwise it will just return.
- 393          //  After stopping motor, disable FG signal(TP308) and prepare comparator
- 394          //  to detect BEMF for fast restart.
- 395          //  Following variables will be
- 396          //  SLR_motor_state = MOTOR_STOPPED.
- 397          //  SLR_motor_current_rpm = 0
- 398          //  SLR_rpm_updated = 1
- 399          //-----------------------------------------------------------------------------
- 400          void SL_MTR_stop_motor(void)
- 401          {
- 402   1          bit saved_ea;
- 403   1      
- 404   1          // disable timer0 interrupt
- 405   1          IE_ET0 = 0;
- 406   1          // disable CPT0 interrupt
- 407   1          EIE1 &= ~0x20;
- 408   1          if(MOTOR_RUNNING != SLR_motor_state)
- 409   1          {
- 410   2              return;
- 411   2          }
- 412   1          // PCA, timer2 will be running continuously.
- 413   1          // default pin status.
- 414   1          // keep P1.0, P1.1 latch status
- 415   1          MTR_ATOMIC_ACCESS_START();
- 416   1          P1 = ((P1 & ~MOTDRV_ALL_MASK) | MOTDRV_ALL_OFF) | ~MOTDRV_ALL_MASK;
- 417   1          P1SKIP |= MOTDRV_ALL_MASK;
- 418   1          MTR_ATOMIC_ACCESS_END();
- 419   1          // stop timer 3 and clear flag
- 420   1          TMR3CN0 &= ~0x84;
- 421   1      
- 422   1          // keep tracking one phase of bemf
- 423   1          CMP0MX = (CPMUX_Y << 4) | CPMUX_A;
- 424   1      
- 425   1          SLR_motor_state = MOTOR_STOPPED;
-C51 COMPILER V9.53.0.0   MOTOR                                                             01/29/2020 12:05:48 PAGE 8   
+ 378   1          // Initial stall condition has been checked in the MTR_do_quickstart().
+ 379   1          // Initial startup - take a longer time to check for potential stall
+ 380   1          stall_check_count = 255;
+ 381   1          last_motor_stalled = 0;
+ 382   1          handle_motor_error = 0;
+ 383   1      
+ 384   1          // change status to running mode
+ 385   1          SLR_motor_state = MOTOR_RUNNING;
+ 386   1      }
+ 387          
+ 388          
+ 389          //-----------------------------------------------------------------------------
+ 390          // SL_MTR_stop_motor
+ 391          //-----------------------------------------------------------------------------
+ 392          //
+ 393          // Return Value : None
+ 394          // Parameters   : None
+ 395          //
+ 396          // Description  :
+ 397          //  Stop running motor and de-energize phases only when SLR_motor_state is
+ 398          //  MOTOR_RUNNING, otherwise it will just return.
+ 399          //  After stopping motor, disable FG signal(TP308) and prepare comparator
+ 400          //  to detect BEMF for fast restart.
+ 401          //  Following variables will be
+ 402          //  SLR_motor_state = MOTOR_STOPPED.
+ 403          //  SLR_motor_current_rpm = 0
+ 404          //  SLR_rpm_updated = 1
+ 405          //-----------------------------------------------------------------------------
+ 406          void SL_MTR_stop_motor(void)
+ 407          {
+ 408   1          bit saved_ea;
+ 409   1      
+ 410   1          // disable timer0 interrupt
+ 411   1          IE_ET0 = 0;
+ 412   1          // disable CPT0 interrupt
+ 413   1          EIE1 &= ~0x20;
+ 414   1          if(MOTOR_RUNNING != SLR_motor_state)
+ 415   1          {
+ 416   2              return;
+ 417   2          }
+ 418   1          // PCA, timer2 will be running continuously.
+ 419   1          // default pin status.
+ 420   1          // keep P1.0, P1.1 latch status
+ 421   1          MTR_ATOMIC_ACCESS_START();
+ 422   1          P1 = ((P1 & ~MOTDRV_ALL_MASK) | MOTDRV_ALL_OFF) | ~MOTDRV_ALL_MASK;
+ 423   1          P1SKIP |= MOTDRV_ALL_MASK;
+ 424   1          MTR_ATOMIC_ACCESS_END();
+ 425   1          // stop timer 3 and clear flag
+ 426   1          TMR3CN0 &= ~0x84;
+C51 COMPILER V9.53.0.0   MOTOR                                                             01/29/2020 13:56:05 PAGE 8   
 
- 426   1          SLR_motor_current_rpm = 0;
- 427   1          SLW_rpm_updated = 1;                // for apps level status.
- 428   1          SLR_pwm_duty = SLR_minimum_duty.U16;
- 429   1          PCA_change_duty_cycle(SLR_pwm_duty);
- 430   1      }
- 431          
- 432          //-----------------------------------------------------------------------------
- 433          // MTR_check_motor_spinning
- 434          //-----------------------------------------------------------------------------
- 435          //
- 436          // Return Value : None
- 437          // Parameters   : None
- 438          //
- 439          // Description:
- 440          //  Check motor running and direction status before alignment.
- 441          //  This should be called just before MTR_start_spinning & MTR_do_quickstart.
- 442          //-----------------------------------------------------------------------------
- 443          void MTR_check_motor_spinning(void)
- 444          {
- 445   1          U8 t1, t2;       // t1: old, t2: new
- 446   1          U8 gap;
- 447   1          bit rising_zc_done, cptout;
- 448   1      
- 449   1      
- 450   1          CMP0CN0 = 0x8F;      // 20mV Hysteresis
- 451   1          // clear flags
- 452   1          CMP0CN0 &= ~0x30;
- 453   1          // set P0.0~P0.3 to pure analog pins because we need to bemf to determine
- 454   1          // current motor rotation using comparator.
- 455   1          P0MDIN &= ~FILTERED_ALLPINS_MASK;
- 456   1          t1 = (U8)SL_MTR_time();
- 457   1          t2 = t1;
- 458   1          motor_spinning = 0;
- 459   1          rising_zc_done = 0;
- 460   1          do
- 461   1          {
- 462   2              t2 = (U8)SL_MTR_time();
- 463   2              gap = t2 - t1;
- 464   2              // rising zc found ?
- 465   2              if( (0 == rising_zc_done) && (CMP0CN0 & 0x20) )
- 466   2              {
- 467   3                  t1 = t2;
- 468   3                  rising_zc_done = 1;
- 469   3                  CMP0CN0 &= ~0x30;
- 470   3              }
- 471   2              // falling zc found ?
- 472   2              else if( (1 == rising_zc_done) && (CMP0CN0 & 0x10) )
- 473   2              {
- 474   3                  goto check_direction;
- 475   3              }
- 476   2          } while(gap < VALID_TIME_FOR_QUICK_START);
- 477   1          // No BEMF or too low.
- 478   1          goto exit_check_spinning;
- 479   1      
- 480   1      check_direction:
- 481   1          // CP0- = C, CP0+ = B
- 482   1          // B>C ==> 1(CCW), B<C ==> 0(CW)
- 483   1          CMP0MX = (CPMUX_C << 4) | (CPMUX_B);
- 484   1          // cmp = (B>C)?1:0; B>C ==>CCW(1), B<C ==>CW(0)
- 485   1          // just considering comparator response time.
- 486   1          t1 = 0;
- 487   1          while(--t1);
- 488   1          cptout = ((CMP0CN0 & 0x40) == 0x40);
-C51 COMPILER V9.53.0.0   MOTOR                                                             01/29/2020 12:05:48 PAGE 9   
+ 427   1      
+ 428   1          // keep tracking one phase of bemf
+ 429   1          CMP0MX = (CPMUX_Y << 4) | CPMUX_A;
+ 430   1      
+ 431   1          SLR_motor_state = MOTOR_STOPPED;
+ 432   1          SLR_motor_current_rpm = 0;
+ 433   1          SLW_rpm_updated = 1;                // for apps level status.
+ 434   1          SLR_pwm_duty = SLR_minimum_duty.U16;
+ 435   1          PCA_change_duty_cycle(SLR_pwm_duty);
+ 436   1      }
+ 437          
+ 438          //-----------------------------------------------------------------------------
+ 439          // MTR_check_motor_spinning
+ 440          //-----------------------------------------------------------------------------
+ 441          //
+ 442          // Return Value : None
+ 443          // Parameters   : None
+ 444          //
+ 445          // Description:
+ 446          //  Check motor running and direction status before alignment.
+ 447          //  This should be called just before MTR_start_spinning & MTR_do_quickstart.
+ 448          //-----------------------------------------------------------------------------
+ 449          void MTR_check_motor_spinning(void)
+ 450          {
+ 451   1          U8 t1, t2;       // t1: old, t2: new
+ 452   1          U8 gap;
+ 453   1          bit rising_zc_done, cptout;
+ 454   1      
+ 455   1      
+ 456   1          CMP0CN0 = 0x8F;      // 20mV Hysteresis
+ 457   1          // clear flags
+ 458   1          CMP0CN0 &= ~0x30;
+ 459   1          // set P0.0~P0.3 to pure analog pins because we need to bemf to determine
+ 460   1          // current motor rotation using comparator.
+ 461   1          P0MDIN &= ~FILTERED_ALLPINS_MASK;
+ 462   1          t1 = (U8)SL_MTR_time();
+ 463   1          t2 = t1;
+ 464   1          motor_spinning = 0;
+ 465   1          rising_zc_done = 0;
+ 466   1          do
+ 467   1          {
+ 468   2              t2 = (U8)SL_MTR_time();
+ 469   2              gap = t2 - t1;
+ 470   2              // rising zc found ?
+ 471   2              if( (0 == rising_zc_done) && (CMP0CN0 & 0x20) )
+ 472   2              {
+ 473   3                  t1 = t2;
+ 474   3                  rising_zc_done = 1;
+ 475   3                  CMP0CN0 &= ~0x30;
+ 476   3              }
+ 477   2              // falling zc found ?
+ 478   2              else if( (1 == rising_zc_done) && (CMP0CN0 & 0x10) )
+ 479   2              {
+ 480   3                  goto check_direction;
+ 481   3              }
+ 482   2          } while(gap < VALID_TIME_FOR_QUICK_START);
+ 483   1          // No BEMF or too low.
+ 484   1          goto exit_check_spinning;
+ 485   1      
+ 486   1      check_direction:
+ 487   1          // CP0- = C, CP0+ = B
+ 488   1          // B>C ==> 1(CCW), B<C ==> 0(CW)
+ 489   1          CMP0MX = (CPMUX_C << 4) | (CPMUX_B);
+C51 COMPILER V9.53.0.0   MOTOR                                                             01/29/2020 13:56:05 PAGE 9   
 
- 489   1          if( cptout == motor_direction)
- 490   1          {
- 491   2              motor_spinning = 1;
- 492   2          }
- 493   1          else
- 494   1          {
- 495   2              motor_spinning = 0;
- 496   2          }
- 497   1      exit_check_spinning:
- 498   1          CMP0CN0 = 0x80;      // 0mV Hysteresis
- 499   1          P0MDIN |= FILTERED_ALLPINS_MASK;     // set P0.0~P0.3 to digital pins
- 500   1      }
- 501          
- 502          #if (BLDC_RD_PWM_METHOD == H_BRIDGE_HIGH_SIDE_PWM) || \
- 503              (BLDC_RD_PWM_METHOD == H_BRIDGE_LOW_SIDE_PWM) || \
- 504              (BLDC_RD_PWM_METHOD == H_BRIDGE_MIXED_MODE_PWM)
- 505          //-----------------------------------------------------------------------------
- 506          // MTR_pre_commutation
- 507          //-----------------------------------------------------------------------------
- 508          //
- 509          // Return Value : None
- 510          // Parameters   : None
- 511          //
- 512          // To minimize overhead in timer 0 interrupt routine, prepare all skip/port
- 513          // registers before needing.
- 514          //-----------------------------------------------------------------------------
- 515          void MTR_pre_commutation(void)
- 516          {
- 517   1          pre_port1 = active_gpio[commutation_index];
- 518   1      #if BLDC_RD_PWM_METHOD == H_BRIDGE_MIXED_MODE_PWM
- 519   1          pre_p1skip = skipPattern[rising_bemf][commutation_index];
- 520   1      #else
+ 490   1          // cmp = (B>C)?1:0; B>C ==>CCW(1), B<C ==>CW(0)
+ 491   1          // just considering comparator response time.
+ 492   1          t1 = 0;
+ 493   1          while(--t1);
+ 494   1          cptout = ((CMP0CN0 & 0x40) == 0x40);
+ 495   1          if( cptout == motor_direction)
+ 496   1          {
+ 497   2              motor_spinning = 1;
+ 498   2          }
+ 499   1          else
+ 500   1          {
+ 501   2              motor_spinning = 0;
+ 502   2          }
+ 503   1      exit_check_spinning:
+ 504   1          CMP0CN0 = 0x80;      // 0mV Hysteresis
+ 505   1          P0MDIN |= FILTERED_ALLPINS_MASK;     // set P0.0~P0.3 to digital pins
+ 506   1      }
+ 507          
+ 508          #if (BLDC_RD_PWM_METHOD == H_BRIDGE_HIGH_SIDE_PWM) || \
+ 509              (BLDC_RD_PWM_METHOD == H_BRIDGE_LOW_SIDE_PWM) || \
+ 510              (BLDC_RD_PWM_METHOD == H_BRIDGE_MIXED_MODE_PWM)
+ 511          //-----------------------------------------------------------------------------
+ 512          // MTR_pre_commutation
+ 513          //-----------------------------------------------------------------------------
+ 514          //
+ 515          // Return Value : None
+ 516          // Parameters   : None
+ 517          //
+ 518          // To minimize overhead in timer 0 interrupt routine, prepare all skip/port
+ 519          // registers before needing.
+ 520          //-----------------------------------------------------------------------------
+ 521          void MTR_pre_commutation(void)
+ 522          {
+ 523   1          pre_port1 = active_gpio[commutation_index];
+ 524   1      #if BLDC_RD_PWM_METHOD == H_BRIDGE_MIXED_MODE_PWM
+ 525   1          pre_p1skip = skipPattern[rising_bemf][commutation_index];
+ 526   1      #else
                   pre_p1skip = skipPattern[commutation_index];
               #endif
- 523   1          if (rising_bemf)
- 524   1          {
- 525   2              // rising_bemf is the current state - we need to prepare for the new
- 526   2              // state where BEMF is falling
- 527   2      
- 528   2              pre_p0skip = DEFAULT_P0SKIP ^ VIRTUAL_NEUTRAL;
- 529   2          }
- 530   1          else
- 531   1          {
- 532   2              pre_p0skip = DEFAULT_P0SKIP ^ freeterminal[commutation_index];
- 533   2          }
- 534   1      }
- 535          
- 536          #ifdef FEATURE_HYPERDRIVE
+ 529   1          if (rising_bemf)
+ 530   1          {
+ 531   2              // rising_bemf is the current state - we need to prepare for the new
+ 532   2              // state where BEMF is falling
+ 533   2      
+ 534   2              pre_p0skip = DEFAULT_P0SKIP ^ VIRTUAL_NEUTRAL;
+ 535   2          }
+ 536   1          else
+ 537   1          {
+ 538   2              pre_p0skip = DEFAULT_P0SKIP ^ freeterminal[commutation_index];
+ 539   2          }
+ 540   1      }
+ 541          
+ 542          #ifdef FEATURE_HYPERDRIVE
               //-----------------------------------------------------------------------------
               // MTR_hyper_commutate
               //-----------------------------------------------------------------------------
@@ -578,489 +583,489 @@ line level    source
               // This is to commutate to hyper drive mode.
               //-----------------------------------------------------------------------------
               void MTR_hyper_commutate(void)
+C51 COMPILER V9.53.0.0   MOTOR                                                             01/29/2020 13:56:05 PAGE 10  
+
               {
                   if (rising_bemf)
                   {
                       P1 = (P1 & ~MOTDRV_ALL_MASK) | hyperactive_gpio[open_phase+6];
                   }
-C51 COMPILER V9.53.0.0   MOTOR                                                             01/29/2020 12:05:48 PAGE 10  
-
                   else
                   {
                       P1 = (P1 & ~MOTDRV_ALL_MASK) | hyperactive_gpio[open_phase];
                   }
               }
               #endif
- 558          
- 559          //-----------------------------------------------------------------------------
- 560          // MTR_commutate
- 561          //-----------------------------------------------------------------------------
- 562          //
- 563          // Return Value : None
- 564          // Parameters   : None
- 565          //
- 566          // This is to commutate next phase.
- 567          // open_phase is to refer to current open phase in order to make simple life
- 568          // when it need. If use commutation_index, we should refer to motor_direction
- 569          // bit as well to know current open phase.
- 570          //-----------------------------------------------------------------------------
- 571          void MTR_commutate(void)
- 572          {
- 573   1          // don't disable cross bar. if disable it, other peripherals would be
- 574   1          // disabled such as UART.
- 575   1      
- 576   1          pre_port1 |= (P1 & ~MOTDRV_ALL_MASK);
- 577   1          // keep latch of P1.0,P1.1
- 578   1          P1 = pre_port1 | ~MOTDRV_ALL_MASK;
- 579   1          P0SKIP = pre_p0skip;
- 580   1          P1SKIP = pre_p1skip;
- 581   1          // open_phase = commutation_index
- 582   1          open_phase = commutation_index;
- 583   1      
- 584   1          if (0 == motor_direction)
- 585   1          {
- 586   2              commutation_index ++;
- 587   2              if( commutation_index > 5)
- 588   2                  commutation_index = 0;
- 589   2          }
- 590   1          // CCW
- 591   1          else
- 592   1          {
- 593   2              commutation_index--;
- 594   2              if( commutation_index > 5)
- 595   2                  commutation_index = 5;
- 596   2          }
- 597   1      }
- 598          #endif
- 599          
- 600          
- 601          //-----------------------------------------------------------------------------
- 602          // MTR_start_spinning
- 603          //-----------------------------------------------------------------------------
- 604          //
- 605          // Return Value : None
- 606          // Parameters   : None
- 607          //
- 608          // Alignment and blind spinning.
- 609          // At the end, this will de-energize all phases to spin freely.
- 610          // This function has used comparator clear function in PCA.
- 611          // In order to cut current as expected, comparator has to have fastest response.
- 612          // Small delay in response make significant current surge. (a few us delay is
- 613          // pretty significant in 24kHz(42us period) PWM frequency)
- 614          // Please refer to application note for more details.
-C51 COMPILER V9.53.0.0   MOTOR                                                             01/29/2020 12:05:48 PAGE 11  
+ 564          
+ 565          //-----------------------------------------------------------------------------
+ 566          // MTR_commutate
+ 567          //-----------------------------------------------------------------------------
+ 568          //
+ 569          // Return Value : None
+ 570          // Parameters   : None
+ 571          //
+ 572          // This is to commutate next phase.
+ 573          // open_phase is to refer to current open phase in order to make simple life
+ 574          // when it need. If use commutation_index, we should refer to motor_direction
+ 575          // bit as well to know current open phase.
+ 576          //-----------------------------------------------------------------------------
+ 577          void MTR_commutate(void)
+ 578          {
+ 579   1          // don't disable cross bar. if disable it, other peripherals would be
+ 580   1          // disabled such as UART.
+ 581   1      
+ 582   1          pre_port1 |= (P1 & ~MOTDRV_ALL_MASK);
+ 583   1          // keep latch of P1.0,P1.1
+ 584   1          P1 = pre_port1 | ~MOTDRV_ALL_MASK;
+ 585   1          P0SKIP = pre_p0skip;
+ 586   1          P1SKIP = pre_p1skip;
+ 587   1          // open_phase = commutation_index
+ 588   1          open_phase = commutation_index;
+ 589   1      
+ 590   1          if (0 == motor_direction)
+ 591   1          {
+ 592   2              commutation_index ++;
+ 593   2              if( commutation_index > 5)
+ 594   2                  commutation_index = 0;
+ 595   2          }
+ 596   1          // CCW
+ 597   1          else
+ 598   1          {
+ 599   2              commutation_index--;
+ 600   2              if( commutation_index > 5)
+ 601   2                  commutation_index = 5;
+ 602   2          }
+ 603   1      }
+ 604          #endif
+ 605          
+ 606          
+ 607          //-----------------------------------------------------------------------------
+ 608          // MTR_start_spinning
+ 609          //-----------------------------------------------------------------------------
+ 610          //
+ 611          // Return Value : None
+ 612          // Parameters   : None
+ 613          //
+ 614          // Alignment and blind spinning.
+ 615          // At the end, this will de-energize all phases to spin freely.
+C51 COMPILER V9.53.0.0   MOTOR                                                             01/29/2020 13:56:05 PAGE 11  
 
- 615          //-----------------------------------------------------------------------------
- 616          void MTR_start_spinning(void)
- 617          {
- 618   1          U8 idx, tmp;
- 619   1          bit saved_ea;
- 620   1          U32 SEG_XDATA SIG_k_1;    // sum(n=0,...,K-1)
- 621   1          U32 SEG_XDATA SIG_k;      // sum(n=0,...,K)
- 622   1          U16 T_k;                  // T_k
- 623   1      
- 624   1          // set initial polarity before staring.
- 625   1          PCA_set_initial_polarity();
- 626   1      
- 627   1          zc_time.U32 = 0L;
- 628   1          prev_zc_time.U32 = 0L;
+ 616          // This function has used comparator clear function in PCA.
+ 617          // In order to cut current as expected, comparator has to have fastest response.
+ 618          // Small delay in response make significant current surge. (a few us delay is
+ 619          // pretty significant in 24kHz(42us period) PWM frequency)
+ 620          // Please refer to application note for more details.
+ 621          //-----------------------------------------------------------------------------
+ 622          void MTR_start_spinning(void)
+ 623          {
+ 624   1          U8 idx, tmp;
+ 625   1          bit saved_ea;
+ 626   1          U32 SEG_XDATA SIG_k_1;    // sum(n=0,...,K-1)
+ 627   1          U32 SEG_XDATA SIG_k;      // sum(n=0,...,K)
+ 628   1          U16 T_k;                  // T_k
  629   1      
- 630   1          CMP0MD = 0x00;                  // fastest response time of comparator.
- 631   1      
- 632   1          SIG_k = 0L;
- 633   1      
- 634   1          // configure comparator 0 input pins
- 635   1          // If I_MEAS > LDO(1.8V), comparator output is low.
- 636   1          CMP0MX = (CPT0MX_IMEASURE<<4) | CPT0MX_LDO;
+ 630   1          // set initial polarity before staring.
+ 631   1          PCA_set_initial_polarity();
+ 632   1      
+ 633   1          zc_time.U32 = 0L;
+ 634   1          prev_zc_time.U32 = 0L;
+ 635   1      
+ 636   1          CMP0MD = 0x00;                  // fastest response time of comparator.
  637   1      
- 638   1          // settling time
- 639   1          TMR_delay_timer3(1);
- 640   1      
- 641   1          // 50% of duty cycle.
- 642   1          SLR_pwm_duty = (MAX_USER_PWM_VALUE>>1);
- 643   1          PCA_change_duty_cycle(SLR_pwm_duty);
- 644   1      
- 645   1          // start comparator clear function
- 646   1          PCA0CLR = (1<<MOTPWM_CHANNEL);
- 647   1      
- 648   1          // Initial commutation
- 649   1          commutation_index = 0;
- 650   1          rising_bemf = 0;
- 651   1      
- 652   1          // alignment
- 653   1          MTR_ATOMIC_ACCESS_START();
- 654   1          MTR_pre_commutation();
- 655   1          MTR_commutate();
- 656   1          MTR_ATOMIC_ACCESS_END();
- 657   1          tmp = LOCKING_TIME_FOR_ALIGNMENT;
- 658   1          while(--tmp > 0)
- 659   1          {
- 660   2              TMR_delay_timer3(3);
- 661   2          }
- 662   1      
- 663   1          // blind spinning, increase speed linearly. - refer to AN
- 664   1          commutation_index = 0;
- 665   1          idx = 0;
- 666   1          do
- 667   1          {
- 668   2              // commutation
- 669   2              MTR_ATOMIC_ACCESS_START();
- 670   2              MTR_pre_commutation();
- 671   2              MTR_commutate();
- 672   2              MTR_ATOMIC_ACCESS_END();
- 673   2      
- 674   2              if( idx < NO_OF_STARTUP_DELAY)
- 675   2              {
- 676   3                  T_k = start_delay[idx++];
- 677   3              }
-C51 COMPILER V9.53.0.0   MOTOR                                                             01/29/2020 12:05:48 PAGE 12  
+ 638   1          SIG_k = 0L;
+ 639   1      
+ 640   1          // configure comparator 0 input pins
+ 641   1          // If I_MEAS > LDO(1.8V), comparator output is low.
+ 642   1          CMP0MX = (CPT0MX_IMEASURE<<4) | CPT0MX_LDO;
+ 643   1      
+ 644   1          // settling time
+ 645   1          TMR_delay_timer3(1);
+ 646   1      
+ 647   1          // 50% of duty cycle.
+ 648   1          SLR_pwm_duty = (MAX_USER_PWM_VALUE>>1);
+ 649   1          PCA_change_duty_cycle(SLR_pwm_duty);
+ 650   1      
+ 651   1          // start comparator clear function
+ 652   1          PCA0CLR = (1<<MOTPWM_CHANNEL);
+ 653   1      
+ 654   1          // Initial commutation
+ 655   1          commutation_index = 0;
+ 656   1          rising_bemf = 0;
+ 657   1      
+ 658   1          // alignment
+ 659   1          MTR_ATOMIC_ACCESS_START();
+ 660   1          MTR_pre_commutation();
+ 661   1          MTR_commutate();
+ 662   1          MTR_ATOMIC_ACCESS_END();
+ 663   1          tmp = LOCKING_TIME_FOR_ALIGNMENT;
+ 664   1          while(--tmp > 0)
+ 665   1          {
+ 666   2              TMR_delay_timer3(3);
+ 667   2          }
+ 668   1      
+ 669   1          // blind spinning, increase speed linearly. - refer to AN
+ 670   1          commutation_index = 0;
+ 671   1          idx = 0;
+ 672   1          do
+ 673   1          {
+ 674   2              // commutation
+ 675   2              MTR_ATOMIC_ACCESS_START();
+ 676   2              MTR_pre_commutation();
+ 677   2              MTR_commutate();
+ 678   2              MTR_ATOMIC_ACCESS_END();
+C51 COMPILER V9.53.0.0   MOTOR                                                             01/29/2020 13:56:05 PAGE 12  
 
- 678   2              else
- 679   2              {
- 680   3                  // calculate next commutation time. approximately calculated
- 681   3                  // to avoid using sqrt() function.
- 682   3                  // calculate T[k+1]
- 683   3                  T_k = SIG_k_1*T_k/SIG_k;
- 684   3              }
- 685   2              SIG_k_1 = SIG_k;
- 686   2              SIG_k += T_k;
- 687   2      
- 688   2              TMR3RL = -T_k;
- 689   2              TMR3 = TMR3RL;
- 690   2              TMR3CN0 &= ~0x80;
- 691   2              // Start Timer 3
- 692   2              TMR3CN0 = 0x04;
- 693   2              //prev_acc_time = acc_time;
- 694   2              tmp = 0;
- 695   2              CMP0CN0 &= ~0x30;
- 696   2              while(tmp < REPEATED_NUM_OF_TIMER_FOR_STARTUP)
- 697   2              {
- 698   3                  if( TMR3CN0 & 0x80 )
- 699   3                  {
- 700   4                      TMR3CN0 &= ~0x80;
- 701   4                      tmp++;
- 702   4                  }
- 703   3                  if((CMP0CN0 & 0x10) == 0x10)
- 704   3                  {
- 705   4                      CMP0CN0 &= ~0x10;
- 706   4                      MTR_ATOMIC_ACCESS_START();
- 707   4                      SLR_minimum_duty.U8[LSB] = PCA0L;
- 708   4                      SLR_minimum_duty.U8[MSB] = PCA0H;
- 709   4                      MTR_ATOMIC_ACCESS_END();
- 710   4                  }
- 711   3              }
- 712   2              // Stop Timer 3
- 713   2              TMR3CN0 &= ~0x04;
- 714   2              if (T_k < LAST_DELAY_LIMIT)
- 715   2              {
- 716   3                  break;
+ 679   2      
+ 680   2              if( idx < NO_OF_STARTUP_DELAY)
+ 681   2              {
+ 682   3                  T_k = start_delay[idx++];
+ 683   3              }
+ 684   2              else
+ 685   2              {
+ 686   3                  // calculate next commutation time. approximately calculated
+ 687   3                  // to avoid using sqrt() function.
+ 688   3                  // calculate T[k+1]
+ 689   3                  T_k = SIG_k_1*T_k/SIG_k;
+ 690   3              }
+ 691   2              SIG_k_1 = SIG_k;
+ 692   2              SIG_k += T_k;
+ 693   2      
+ 694   2              TMR3RL = -T_k;
+ 695   2              TMR3 = TMR3RL;
+ 696   2              TMR3CN0 &= ~0x80;
+ 697   2              // Start Timer 3
+ 698   2              TMR3CN0 = 0x04;
+ 699   2              //prev_acc_time = acc_time;
+ 700   2              tmp = 0;
+ 701   2              CMP0CN0 &= ~0x30;
+ 702   2              while(tmp < REPEATED_NUM_OF_TIMER_FOR_STARTUP)
+ 703   2              {
+ 704   3                  if( TMR3CN0 & 0x80 )
+ 705   3                  {
+ 706   4                      TMR3CN0 &= ~0x80;
+ 707   4                      tmp++;
+ 708   4                  }
+ 709   3                  if((CMP0CN0 & 0x10) == 0x10)
+ 710   3                  {
+ 711   4                      CMP0CN0 &= ~0x10;
+ 712   4                      MTR_ATOMIC_ACCESS_START();
+ 713   4                      SLR_minimum_duty.U8[LSB] = PCA0L;
+ 714   4                      SLR_minimum_duty.U8[MSB] = PCA0H;
+ 715   4                      MTR_ATOMIC_ACCESS_END();
+ 716   4                  }
  717   3              }
- 718   2          } while(1);
- 719   1      
- 720   1          SLR_minimum_duty.U16 = SLR_minimum_duty.U16<<(16-PWM_RESOLUTION);
- 721   1          SLR_minimum_duty.U16 -= 32768;
- 722   1          if(SLR_minimum_duty.U16 >= 32768)
- 723   1          {
- 724   2              SLR_minimum_duty.U16 = 0x7FFF;
- 725   2          }
- 726   1          SLR_pwm_duty =  SLR_minimum_duty.U16;
- 727   1      
- 728   1          // disable comparator clear function and disconnect all signals.
- 729   1          CMP0MX = 0xFF;              // default ..
- 730   1          PCA0CLR = 0;
- 731   1      
- 732   1          // stop energizing and let motor run freely to detect BEMF
- 733   1          P1 = ((P1 & ~MOTDRV_ALL_MASK) | MOTDRV_ALL_OFF) | ~MOTDRV_ALL_MASK;
- 734   1          P1SKIP |= MOTDRV_ALL_MASK;
- 735   1      }
- 736          
- 737          //-----------------------------------------------------------------------------
- 738          // MTR_do_quickstart
- 739          //-----------------------------------------------------------------------------
- 740          //
-C51 COMPILER V9.53.0.0   MOTOR                                                             01/29/2020 12:05:48 PAGE 13  
+ 718   2              // Stop Timer 3
+ 719   2              TMR3CN0 &= ~0x04;
+ 720   2              if (T_k < LAST_DELAY_LIMIT)
+ 721   2              {
+ 722   3                  break;
+ 723   3              }
+ 724   2          } while(1);
+ 725   1      
+ 726   1          SLR_minimum_duty.U16 = SLR_minimum_duty.U16<<(16-PWM_RESOLUTION);
+ 727   1          SLR_minimum_duty.U16 -= 32768;
+ 728   1          if(SLR_minimum_duty.U16 >= 32768)
+ 729   1          {
+ 730   2              SLR_minimum_duty.U16 = 0x7FFF;
+ 731   2          }
+ 732   1          SLR_pwm_duty =  SLR_minimum_duty.U16;
+ 733   1      
+ 734   1          // disable comparator clear function and disconnect all signals.
+ 735   1          CMP0MX = 0xFF;              // default ..
+ 736   1          PCA0CLR = 0;
+ 737   1      
+ 738   1          // stop energizing and let motor run freely to detect BEMF
+ 739   1          P1 = ((P1 & ~MOTDRV_ALL_MASK) | MOTDRV_ALL_OFF) | ~MOTDRV_ALL_MASK;
+ 740   1          P1SKIP |= MOTDRV_ALL_MASK;
+ 741   1      }
+C51 COMPILER V9.53.0.0   MOTOR                                                             01/29/2020 13:56:05 PAGE 13  
 
- 741          // Return Value : None
- 742          // Parameters   : None
- 743          //
- 744          // Description:
- 745          //      Assumed that motor already running freely with enough bemf.
- 746          //      To Detect rising and falling edge of bemf and calculate next
- 747          //      expected commutation time and appropriate commutation index.
- 748          //-----------------------------------------------------------------------------
- 749          void MTR_do_quickstart(void)
- 750          {
- 751   1          bit saved_ea, is_1st_crossing;
- 752   1          UU32 ticks;
- 753   1      
- 754   1          // -----------------------------------------------------------------------
- 755   1          // start investigating of zero crossing
- 756   1      
- 757   1          // Make filtered pins analog - we do not need the blanking signal
- 758   1          P0MDIN &= ~FILTERED_ALLPINS_MASK;
+ 742          
+ 743          //-----------------------------------------------------------------------------
+ 744          // MTR_do_quickstart
+ 745          //-----------------------------------------------------------------------------
+ 746          //
+ 747          // Return Value : None
+ 748          // Parameters   : None
+ 749          //
+ 750          // Description:
+ 751          //      Assumed that motor already running freely with enough bemf.
+ 752          //      To Detect rising and falling edge of bemf and calculate next
+ 753          //      expected commutation time and appropriate commutation index.
+ 754          //-----------------------------------------------------------------------------
+ 755          void MTR_do_quickstart(void)
+ 756          {
+ 757   1          bit saved_ea, is_1st_crossing;
+ 758   1          UU32 ticks;
  759   1      
- 760   1          // select PHASE A rising and falling edge to determine next expected
- 761   1          // commutation index and time based on selected spin direction.
- 762   1          CMP0MX = (CPMUX_Y << 4) | CPMUX_A;
- 763   1          // 1ms is more than enough for comparator settling time.
- 764   1          TMR_delay_timer3(1);
- 765   1          // clear comparator flags
- 766   1          CMP0CN0 &= ~0x30;
- 767   1      
- 768   1          // wait max 32 ms loop.
- 769   1          TMR3RL = 0;
- 770   1          TMR3 = (U16)0;
- 771   1          // Start Timer 3
- 772   1          TMR3CN0 = 0x04;
+ 760   1          // -----------------------------------------------------------------------
+ 761   1          // start investigating of zero crossing
+ 762   1      
+ 763   1          // Make filtered pins analog - we do not need the blanking signal
+ 764   1          P0MDIN &= ~FILTERED_ALLPINS_MASK;
+ 765   1      
+ 766   1          // select PHASE A rising and falling edge to determine next expected
+ 767   1          // commutation index and time based on selected spin direction.
+ 768   1          CMP0MX = (CPMUX_Y << 4) | CPMUX_A;
+ 769   1          // 1ms is more than enough for comparator settling time.
+ 770   1          TMR_delay_timer3(1);
+ 771   1          // clear comparator flags
+ 772   1          CMP0CN0 &= ~0x30;
  773   1      
- 774   1          // prev_zc_time.U16[LSB] : used to record zero crossing event at startup
- 775   1          // to save ram usage.
- 776   1          prev_zc_time.U16[LSB] = 0;
- 777   1          is_1st_crossing = 1;
- 778   1          while( !(TMR3CN0 & 0x80) )
- 779   1          {
- 780   2              if (CMP0CN0 & 0x30)
- 781   2              {
- 782   3                  // This is the first event
- 783   3                  if ( is_1st_crossing )
- 784   3                  {
- 785   4                      // stop timer 3 and restart to record next event.
- 786   4                      MTR_ATOMIC_ACCESS_START();
- 787   4                      TMR3CN0 &= ~0x04;
- 788   4                      TMR3 = (U16)0;
- 789   4                      TMR3CN0 = 0x04;
- 790   4                      MTR_ATOMIC_ACCESS_END();
- 791   4                  }
- 792   3                  else
- 793   3                  {
- 794   4                      // second event, get the time period.
- 795   4                      MTR_ATOMIC_ACCESS_START();
- 796   4                      TMR3CN0 &= ~0x04;
- 797   4                      prev_zc_time.U16[LSB] = TMR3;
- 798   4                      // to measure offset (overhead)
- 799   4                      TMR3 = 0;
- 800   4                      TMR3CN0 = 0x04;
- 801   4                      MTR_ATOMIC_ACCESS_END();
- 802   4                  }
- 803   3      
-C51 COMPILER V9.53.0.0   MOTOR                                                             01/29/2020 12:05:48 PAGE 14  
+ 774   1          // wait max 32 ms loop.
+ 775   1          TMR3RL = 0;
+ 776   1          TMR3 = (U16)0;
+ 777   1          // Start Timer 3
+ 778   1          TMR3CN0 = 0x04;
+ 779   1      
+ 780   1          // prev_zc_time.U16[LSB] : used to record zero crossing event at startup
+ 781   1          // to save ram usage.
+ 782   1          prev_zc_time.U16[LSB] = 0;
+ 783   1          is_1st_crossing = 1;
+ 784   1          while( !(TMR3CN0 & 0x80) )
+ 785   1          {
+ 786   2              if (CMP0CN0 & 0x30)
+ 787   2              {
+ 788   3                  // This is the first event
+ 789   3                  if ( is_1st_crossing )
+ 790   3                  {
+ 791   4                      // stop timer 3 and restart to record next event.
+ 792   4                      MTR_ATOMIC_ACCESS_START();
+ 793   4                      TMR3CN0 &= ~0x04;
+ 794   4                      TMR3 = (U16)0;
+ 795   4                      TMR3CN0 = 0x04;
+ 796   4                      MTR_ATOMIC_ACCESS_END();
+ 797   4                  }
+ 798   3                  else
+ 799   3                  {
+ 800   4                      // second event, get the time period.
+ 801   4                      MTR_ATOMIC_ACCESS_START();
+ 802   4                      TMR3CN0 &= ~0x04;
+ 803   4                      prev_zc_time.U16[LSB] = TMR3;
+ 804   4                      // to measure offset (overhead)
+C51 COMPILER V9.53.0.0   MOTOR                                                             01/29/2020 13:56:05 PAGE 14  
 
- 804   3      
- 805   3                  // BEMF Falling, comparator output Falling edge
- 806   3                  if (CMP0CN0 & 0x10)
- 807   3                  {
- 808   4                      // CW
- 809   4                      if( 0 == motor_direction)
- 810   4                      {
- 811   5                          open_phase = 1;         // current open phase
- 812   5                          commutation_index = 2;  // next commutation index
- 813   5                      }
- 814   4                      // CCW
- 815   4                      else
+ 805   4                      TMR3 = 0;
+ 806   4                      TMR3CN0 = 0x04;
+ 807   4                      MTR_ATOMIC_ACCESS_END();
+ 808   4                  }
+ 809   3      
+ 810   3      
+ 811   3                  // BEMF Falling, comparator output Falling edge
+ 812   3                  if (CMP0CN0 & 0x10)
+ 813   3                  {
+ 814   4                      // CW
+ 815   4                      if( 0 == motor_direction)
  816   4                      {
- 817   5                          open_phase = 4;         // current open phase
- 818   5                          commutation_index = 3;  // next commutation index
+ 817   5                          open_phase = 1;         // current open phase
+ 818   5                          commutation_index = 2;  // next commutation index
  819   5                      }
- 820   4                      rising_bemf = 0;
- 821   4                  }
- 822   3                  // BEMF rising, comparator output rising edge
- 823   3                  else if(CMP0CN0 & 0x20)
- 824   3                  {
- 825   4                      // CW
- 826   4                      if( 0 == motor_direction)
- 827   4                      {
- 828   5                          open_phase = 4;         // current open phase
- 829   5                          commutation_index = 5;  // next commutation index
- 830   5                      }
- 831   4                      // CCW
- 832   4                      else
+ 820   4                      // CCW
+ 821   4                      else
+ 822   4                      {
+ 823   5                          open_phase = 4;         // current open phase
+ 824   5                          commutation_index = 3;  // next commutation index
+ 825   5                      }
+ 826   4                      rising_bemf = 0;
+ 827   4                  }
+ 828   3                  // BEMF rising, comparator output rising edge
+ 829   3                  else if(CMP0CN0 & 0x20)
+ 830   3                  {
+ 831   4                      // CW
+ 832   4                      if( 0 == motor_direction)
  833   4                      {
- 834   5                          open_phase = 1;         // current open phase
- 835   5                          commutation_index = 0;  // next commutation index
+ 834   5                          open_phase = 4;         // current open phase
+ 835   5                          commutation_index = 5;  // next commutation index
  836   5                      }
- 837   4                      rising_bemf = 1;
- 838   4                  }
- 839   3                  // clear flags
- 840   3                  CMP0CN0 &= ~0x30;
- 841   3      
- 842   3                  if( is_1st_crossing )
- 843   3                  {
- 844   4                      is_1st_crossing = 0;
- 845   4                  }
- 846   3                  else
- 847   3                  {
- 848   4                      break;
- 849   4                  }
- 850   3              }
- 851   2          }
- 852   1          // if motor stalled, do not energize it.
- 853   1          if(TMR3CN0 & 0x80)
- 854   1          {
- 855   2              SLR_motor_stalled = 1;
- 856   2              return;
+ 837   4                      // CCW
+ 838   4                      else
+ 839   4                      {
+ 840   5                          open_phase = 1;         // current open phase
+ 841   5                          commutation_index = 0;  // next commutation index
+ 842   5                      }
+ 843   4                      rising_bemf = 1;
+ 844   4                  }
+ 845   3                  // clear flags
+ 846   3                  CMP0CN0 &= ~0x30;
+ 847   3      
+ 848   3                  if( is_1st_crossing )
+ 849   3                  {
+ 850   4                      is_1st_crossing = 0;
+ 851   4                  }
+ 852   3                  else
+ 853   3                  {
+ 854   4                      break;
+ 855   4                  }
+ 856   3              }
  857   2          }
- 858   1          SLR_motor_stalled = 0;
- 859   1      
- 860   1          // calculate next expected commutation time from current zero-crossing.
- 861   1          // ticks is time from rising to falling zero-crossing time of phase A.
- 862   1          // That is time for 180 deg.
- 863   1          // Desired period for 30 deg is:
- 864   1          // period = prev_zc_time.U16[LSB]*TIMER3_PRESCALER(=12)/6
- 865   1          //ticks.U32 = (U32)TIMER3_PRESCALER * prev_zc_time.U16[LSB] / 6;
- 866   1          // This is for 30deg rotate(zero-crossing to commutation)
-C51 COMPILER V9.53.0.0   MOTOR                                                             01/29/2020 12:05:48 PAGE 15  
+ 858   1          // if motor stalled, do not energize it.
+ 859   1          if(TMR3CN0 & 0x80)
+ 860   1          {
+ 861   2              SLR_motor_stalled = 1;
+ 862   2              return;
+ 863   2          }
+ 864   1          SLR_motor_stalled = 0;
+ 865   1      
+ 866   1          // calculate next expected commutation time from current zero-crossing.
+ 867   1          // ticks is time from rising to falling zero-crossing time of phase A.
+C51 COMPILER V9.53.0.0   MOTOR                                                             01/29/2020 13:56:05 PAGE 15  
 
- 867   1          ticks.U32 = 2UL * prev_zc_time.U16[LSB];
- 868   1      
- 869   1          // zc_commutate_time is a period between zero crossing.
- 870   1          // NOTE : need to initialize zc_commute_time, zc_time, pre_zc_time
- 871   1          // to do exponential filtering in the comparator interrupt routine.
- 872   1          MTR_save_zero_crossing_time();
- 873   1          zc_commutate_time.U32 = 2UL * ticks.U32;
+ 868   1          // That is time for 180 deg.
+ 869   1          // Desired period for 30 deg is:
+ 870   1          // period = prev_zc_time.U16[LSB]*TIMER3_PRESCALER(=12)/6
+ 871   1          //ticks.U32 = (U32)TIMER3_PRESCALER * prev_zc_time.U16[LSB] / 6;
+ 872   1          // This is for 30deg rotate(zero-crossing to commutation)
+ 873   1          ticks.U32 = 2UL * prev_zc_time.U16[LSB];
  874   1      
- 875   1          MTR_ATOMIC_ACCESS_START();
- 876   1          // Stop Timer 3(DIV_12) and compensate overhead
- 877   1          TMR3CN0 &= ~0x04;
- 878   1          ticks.U32 -= ((U32)TIMER3_PRESCALER * TMR3);
- 879   1          repeated_timer0 = 0;
- 880   1          timer0_next.U16 = -ticks.U16[LSB];
- 881   1      
- 882   1          TCON_TR0 = 0;
- 883   1          TL0 = timer0_next.U8[LSB];
- 884   1          TH0 = timer0_next.U8[MSB];
- 885   1          // start timer 0 as soon as possible
- 886   1          TCON_TR0 = 1;
- 887   1          TCON_TF0 = 0;
- 888   1          MTR_ATOMIC_ACCESS_END();
- 889   1      
- 890   1          // zero crossing detected. next event is TIMER0_COMMUTATION.
- 891   1          // Prepare skip register and timer0_state value.
- 892   1          MTR_pre_commutation();
- 893   1          timer0_state = TIMER0_COMMUTATION;
- 894   1          zc_total_count = (num_poles >> 1) * 6;
- 895   1          zc_count = zc_total_count;
- 896   1      
- 897   1          // just in case, disable comparator interrupt
- 898   1          CMP0CN0 &= ~0x30;
- 899   1          CMP0MD &= ~0x30;
- 900   1      
- 901   1          SET_TIMER0_HIGH_PRIORITY();
- 902   1          // enable timer0 interrupt
- 903   1          IE_ET0 = 1;
- 904   1          // enable comparator0 interrupt.
- 905   1          // now comparator interrupt enabled/disabled by CMP0MD.
- 906   1          EIE1 |= 0x20;
- 907   1      
- 908   1          // for initial rpm calculation
- 909   1          // at this moment, atomic access not required (motor not under running)
- 910   1          // for time_per_rotate
- 911   1          // to avoid current surge by big jump in pwm_duty.
- 912   1          SLR_motor_current_rpm = (U32)(60UL*SYSCLK*2/6/SPEED_UNIT)/((U32)num_poles*zc_commutate_time.U32);
- 913   1          speed_updated = 0;
- 914   1          SLW_rpm_updated = 0;
- 915   1          time_per_rotate.U32 = 0UL;
- 916   1          zc_total_per_mech_rotation = 0UL;
- 917   1          // initiate pwm filtering according to rising/falling bemf.
- 918   1          SLW_pwm_updated = 0;
- 919   1          PCA_change_duty_cycle(SLR_pwm_duty);
- 920   1      #if BLDC_RD_RPM_OR_PWM == RPM_PARAMETER
- 921   1          // initialize PID variables.
- 922   1          MTR_pid_init();
- 923   1      #endif
- 924   1      }
- 925          
- 926          //-----------------------------------------------------------------------------
- 927          // MTR_calculate_motor_rpm
- 928          //-----------------------------------------------------------------------------
- 929          //
-C51 COMPILER V9.53.0.0   MOTOR                                                             01/29/2020 12:05:48 PAGE 16  
+ 875   1          // zc_commutate_time is a period between zero crossing.
+ 876   1          // NOTE : need to initialize zc_commute_time, zc_time, pre_zc_time
+ 877   1          // to do exponential filtering in the comparator interrupt routine.
+ 878   1          MTR_save_zero_crossing_time();
+ 879   1          zc_commutate_time.U32 = 2UL * ticks.U32;
+ 880   1      
+ 881   1          MTR_ATOMIC_ACCESS_START();
+ 882   1          // Stop Timer 3(DIV_12) and compensate overhead
+ 883   1          TMR3CN0 &= ~0x04;
+ 884   1          ticks.U32 -= ((U32)TIMER3_PRESCALER * TMR3);
+ 885   1          repeated_timer0 = 0;
+ 886   1          timer0_next.U16 = -ticks.U16[LSB];
+ 887   1      
+ 888   1          TCON_TR0 = 0;
+ 889   1          TL0 = timer0_next.U8[LSB];
+ 890   1          TH0 = timer0_next.U8[MSB];
+ 891   1          // start timer 0 as soon as possible
+ 892   1          TCON_TR0 = 1;
+ 893   1          TCON_TF0 = 0;
+ 894   1          MTR_ATOMIC_ACCESS_END();
+ 895   1      
+ 896   1          // zero crossing detected. next event is TIMER0_COMMUTATION.
+ 897   1          // Prepare skip register and timer0_state value.
+ 898   1          MTR_pre_commutation();
+ 899   1          timer0_state = TIMER0_COMMUTATION;
+ 900   1          zc_total_count = (num_poles >> 1) * 6;
+ 901   1          zc_count = zc_total_count;
+ 902   1      
+ 903   1          // just in case, disable comparator interrupt
+ 904   1          CMP0CN0 &= ~0x30;
+ 905   1          CMP0MD &= ~0x30;
+ 906   1      
+ 907   1          SET_TIMER0_HIGH_PRIORITY();
+ 908   1          // enable timer0 interrupt
+ 909   1          IE_ET0 = 1;
+ 910   1          // enable comparator0 interrupt.
+ 911   1          // now comparator interrupt enabled/disabled by CMP0MD.
+ 912   1          EIE1 |= 0x20;
+ 913   1      
+ 914   1          // for initial rpm calculation
+ 915   1          // at this moment, atomic access not required (motor not under running)
+ 916   1          // for time_per_rotate
+ 917   1          // to avoid current surge by big jump in pwm_duty.
+ 918   1          SLR_motor_current_rpm = (U32)(60UL*SYSCLK*2/6/SPEED_UNIT)/((U32)num_poles*zc_commutate_time.U32);
+ 919   1          speed_updated = 0;
+ 920   1          SLW_rpm_updated = 0;
+ 921   1          time_per_rotate.U32 = 0UL;
+ 922   1          zc_total_per_mech_rotation = 0UL;
+ 923   1          // initiate pwm filtering according to rising/falling bemf.
+ 924   1          SLW_pwm_updated = 0;
+ 925   1          PCA_change_duty_cycle(SLR_pwm_duty);
+ 926   1      #if BLDC_RD_RPM_OR_PWM == RPM_PARAMETER
+ 927   1          // initialize PID variables.
+ 928   1          MTR_pid_init();
+ 929   1      #endif
+ 930   1      }
+C51 COMPILER V9.53.0.0   MOTOR                                                             01/29/2020 13:56:05 PAGE 16  
 
- 930          // Return Value : None
- 931          // Parameters   : None
- 932          //
- 933          // Description:
- 934          //      This function should be called regularly.
- 935          //      Speed would be updated after one mechanical rotation.
- 936          //      This will set the SLW_rpm_updated variable for application level.
- 937          //-----------------------------------------------------------------------------
- 938          void MTR_calculate_motor_rpm(void)
- 939          {
- 940   1          SEG_XDATA U32 t0;
- 941   1          bit saved_ea;
- 942   1      
- 943   1          // -----------------------------------------------------------------------
- 944   1          // calculate current rpm based on at least 1 mechanical rotation
- 945   1          // rpm = 60 / (ttr * PAIR_OF_POLES * 6)
- 946   1          if (speed_updated)
- 947   1          {
- 948   2              speed_updated = 0;
- 949   2              MTR_ATOMIC_ACCESS_START();
- 950   2              t0 = zc_total_per_mech_rotation;
- 951   2              MTR_ATOMIC_ACCESS_END();
- 952   2              SLR_motor_current_rpm = (U16)((SYSCLK*60/SPEED_UNIT)/t0);
- 953   2              // status for application level
- 954   2              SLW_rpm_updated = 1;
- 955   2          }
- 956   1      }
- 957          
- 958          
- 959          //-----------------------------------------------------------------------------
- 960          // MTR_save_zero_crossing_time
- 961          //-----------------------------------------------------------------------------
- 962          //
- 963          // Return Value : None
- 964          // Parameters   : None
- 965          //
- 966          //  This function should be called in the interrupt routine or
- 967          //  It should be protected by MTR_ATOMIC_ACCESS_START() MTR_ATOMIC_ACCESS_END()
- 968          //-----------------------------------------------------------------------------
- 969          void MTR_save_zero_crossing_time(void)
- 970          {
- 971   1          static U8 ovf;
- 972   1      
- 973   1          prev_zc_time.U32 = zc_time.U32;
- 974   1          IE_EA = 0;
- 975   1          zc_time.UU16[LSB].U8[LSB] = PCA0L;
- 976   1          zc_time.UU16[LSB].U8[MSB] = PCA0H;
- 977   1          ovf = PCA0CN0_CF;
- 978   1          zc_time.U16[MSB] = user_timer;
- 979   1          IE_EA = 1;
- 980   1      
- 981   1          if (ovf && ( (zc_time.UU16[LSB].U8[MSB] & 0x80) == 0 ) )
- 982   1          {
- 983   2              zc_time.U16[MSB]++;
- 984   2          }
- 985   1      }
- 986          
- 987          //-----------------------------------------------------------------------------
- 988          // MTR_calculate_pid
- 989          //-----------------------------------------------------------------------------
- 990          //
- 991          // Return Value : None
- 992          // Parameters   : None
-C51 COMPILER V9.53.0.0   MOTOR                                                             01/29/2020 12:05:48 PAGE 17  
+ 931          
+ 932          //-----------------------------------------------------------------------------
+ 933          // MTR_calculate_motor_rpm
+ 934          //-----------------------------------------------------------------------------
+ 935          //
+ 936          // Return Value : None
+ 937          // Parameters   : None
+ 938          //
+ 939          // Description:
+ 940          //      This function should be called regularly.
+ 941          //      Speed would be updated after one mechanical rotation.
+ 942          //      This will set the SLW_rpm_updated variable for application level.
+ 943          //-----------------------------------------------------------------------------
+ 944          void MTR_calculate_motor_rpm(void)
+ 945          {
+ 946   1          SEG_XDATA U32 t0;
+ 947   1          bit saved_ea;
+ 948   1      
+ 949   1          // -----------------------------------------------------------------------
+ 950   1          // calculate current rpm based on at least 1 mechanical rotation
+ 951   1          // rpm = 60 / (ttr * PAIR_OF_POLES * 6)
+ 952   1          if (speed_updated)
+ 953   1          {
+ 954   2              speed_updated = 0;
+ 955   2              MTR_ATOMIC_ACCESS_START();
+ 956   2              t0 = zc_total_per_mech_rotation;
+ 957   2              MTR_ATOMIC_ACCESS_END();
+ 958   2              SLR_motor_current_rpm = (U16)((SYSCLK*60/SPEED_UNIT)/t0);
+ 959   2              // status for application level
+ 960   2              SLW_rpm_updated = 1;
+ 961   2          }
+ 962   1      }
+ 963          
+ 964          
+ 965          //-----------------------------------------------------------------------------
+ 966          // MTR_save_zero_crossing_time
+ 967          //-----------------------------------------------------------------------------
+ 968          //
+ 969          // Return Value : None
+ 970          // Parameters   : None
+ 971          //
+ 972          //  This function should be called in the interrupt routine or
+ 973          //  It should be protected by MTR_ATOMIC_ACCESS_START() MTR_ATOMIC_ACCESS_END()
+ 974          //-----------------------------------------------------------------------------
+ 975          void MTR_save_zero_crossing_time(void)
+ 976          {
+ 977   1          static U8 ovf;
+ 978   1      
+ 979   1          prev_zc_time.U32 = zc_time.U32;
+ 980   1          IE_EA = 0;
+ 981   1          zc_time.UU16[LSB].U8[LSB] = PCA0L;
+ 982   1          zc_time.UU16[LSB].U8[MSB] = PCA0H;
+ 983   1          ovf = PCA0CN0_CF;
+ 984   1          zc_time.U16[MSB] = user_timer;
+ 985   1          IE_EA = 1;
+ 986   1      
+ 987   1          if (ovf && ( (zc_time.UU16[LSB].U8[MSB] & 0x80) == 0 ) )
+ 988   1          {
+ 989   2              zc_time.U16[MSB]++;
+ 990   2          }
+ 991   1      }
+ 992          
+ 993          //-----------------------------------------------------------------------------
+C51 COMPILER V9.53.0.0   MOTOR                                                             01/29/2020 13:56:05 PAGE 17  
 
- 993          //
- 994          // Description:
- 995          //      If BLDC_RD_RPM_OR_PWM is PWM_PARAMETER,
- 996          //      - target speed controlled by SLW_target_pwm_duty variables.
- 997          //      If BLDC_RD_RPM_OR_PWM is RPM_PARAMETER,
- 998          //      - target speed controlled by SLW_target_rpm variables.
- 999          //-----------------------------------------------------------------------------
-1000          void MTR_calculate_pid(void)
-1001          {
-1002   1      #ifdef FEATURE_HYPERDRIVE
+ 994          // MTR_calculate_pid
+ 995          //-----------------------------------------------------------------------------
+ 996          //
+ 997          // Return Value : None
+ 998          // Parameters   : None
+ 999          //
+1000          // Description:
+1001          //      If BLDC_RD_RPM_OR_PWM is PWM_PARAMETER,
+1002          //      - target speed controlled by SLW_target_pwm_duty variables.
+1003          //      If BLDC_RD_RPM_OR_PWM is RPM_PARAMETER,
+1004          //      - target speed controlled by SLW_target_rpm variables.
+1005          //-----------------------------------------------------------------------------
+1006          void MTR_calculate_pid(void)
+1007          {
+1008   1      #ifdef FEATURE_HYPERDRIVE
                   U16 scaled_pwm;
                   U16 xspeed;
               #endif
-1006   1      
-1007   1      #if BLDC_RD_RPM_OR_PWM == RPM_PARAMETER
-1008   1          // MTR_pid_compute_newpwm() should be called regularly. This function
-1009   1          // has PT_YIELD(due to pretty high cpu load to calculate it) and
-1010   1          // will clear pid_flag.
-1011   1          SLR_pwm_duty = MTR_pid_compute_newpwm();
 1012   1      
-1013   1      #elif BLDC_RD_RPM_OR_PWM == PWM_PARAMETER
+1013   1      #if BLDC_RD_RPM_OR_PWM == RPM_PARAMETER
+1014   1          // MTR_pid_compute_newpwm() should be called regularly. This function
+1015   1          // has PT_YIELD(due to pretty high cpu load to calculate it) and
+1016   1          // will clear pid_flag.
+1017   1          SLR_pwm_duty = MTR_pid_compute_newpwm();
+1018   1      
+1019   1      #elif BLDC_RD_RPM_OR_PWM == PWM_PARAMETER
                   U16 pwmnew;
               
                   if(!pid_flag)
@@ -1092,19 +1097,19 @@ line level    source
                   }
                   pid_done = 1;
               #endif
-1045   1      
-1046   1      #ifdef FEATURE_HYPERDRIVE
+1051   1      
+1052   1      #ifdef FEATURE_HYPERDRIVE
               
                   if (pid_done)
                   {
                       // Scale up by 10% - we want to reserve the remainder for hyperdrive mode
+C51 COMPILER V9.53.0.0   MOTOR                                                             01/29/2020 13:56:05 PAGE 18  
+
                       scaled_pwm = ((U32)(PWM_SCALE_FACTOR * 65536.0) * SLR_pwm_duty) >> 16;
                       if (scaled_pwm < SLR_pwm_duty)
                       {
                           // This is to handle overflow across 0xffff-0x0000 boundary
                           scaled_pwm = MAX_USER_PWM_VALUE;
-C51 COMPILER V9.53.0.0   MOTOR                                                             01/29/2020 12:05:48 PAGE 18  
-
                       }
               
                       // Hyperdrive will start working when scaled_pwm is 100%,
@@ -1137,275 +1142,275 @@ line level    source
                   }
                   PCA_change_duty_cycle(scaled_pwm);
               #else
-1087   1          PCA_change_duty_cycle(SLR_pwm_duty);
-1088   1      #endif
-1089   1      }
-1090          
-1091          
-1092          //-----------------------------------------------------------------------------
-1093          // SL_MTR_time
-1094          //-----------------------------------------------------------------------------
-1095          //
-1096          // Return Value : xtime
-1097          //      high 16bit of virtual 32bit timer.
-1098          //      time unit would be 2.7ms.
-1099          // Parameters   : None
-1100          //
-1101          // Description:
-1102          //
-1103          //      Get the high 16 bit of virtual 32bit timer.
-1104          //-----------------------------------------------------------------------------
-1105          U16 SL_MTR_time(void)
-1106          {
-1107   1          bit saved_ea;
-1108   1          U16 xtime;
-1109   1      
-1110   1          MTR_ATOMIC_ACCESS_START();
-1111   1          xtime = user_timer;
-1112   1          MTR_ATOMIC_ACCESS_END();
-1113   1      
-1114   1          return xtime;
-1115   1      }
-1116          
-1117          //-----------------------------------------------------------------------------
-C51 COMPILER V9.53.0.0   MOTOR                                                             01/29/2020 12:05:48 PAGE 19  
+1093   1          PCA_change_duty_cycle(SLR_pwm_duty);
+1094   1      #endif
+1095   1      }
+1096          
+1097          
+1098          //-----------------------------------------------------------------------------
+1099          // SL_MTR_time
+1100          //-----------------------------------------------------------------------------
+1101          //
+1102          // Return Value : xtime
+1103          //      high 16bit of virtual 32bit timer.
+1104          //      time unit would be 2.7ms.
+1105          // Parameters   : None
+1106          //
+1107          // Description:
+1108          //
+1109          //      Get the high 16 bit of virtual 32bit timer.
+1110          //-----------------------------------------------------------------------------
+1111          U16 SL_MTR_time(void)
+1112          {
+1113   1          bit saved_ea;
+1114   1          U16 xtime;
+1115   1      
+1116   1          MTR_ATOMIC_ACCESS_START();
+1117   1          xtime = user_timer;
+1118   1          MTR_ATOMIC_ACCESS_END();
+C51 COMPILER V9.53.0.0   MOTOR                                                             01/29/2020 13:56:05 PAGE 19  
 
-1118          // SL_MTR_change_num_poles
-1119          //-----------------------------------------------------------------------------
-1120          //
-1121          // Return Value : None
-1122          // Parameters   :
-1123          //      (U8) poles : number of poles. It must be even number
-1124          // Description:
-1125          //      This function should be called at least one time to calculate
-1126          //      SLR_minimum_rpm.
-1127          //-----------------------------------------------------------------------------
-1128          void SL_MTR_change_num_poles(U8 poles)
-1129          {
-1130   1          num_poles = poles;
-1131   1          // 1.2 is just head room.
-1132   1          SLR_minimum_rpm = (U16)((60UL*1.2*2*SYSCLK)/(65536*2*6*SPEED_UNIT))/num_poles;
-1133   1      }
-1134          
-1135          //-----------------------------------------------------------------------------
-1136          // MTR_process_adc
-1137          //-----------------------------------------------------------------------------
-1138          //
-1139          // Return Value : None
-1140          // Parameters   : None
-1141          // Description: Process ADC results and perform filtering or offset adjustment
-1142          //
+1119   1      
+1120   1          return xtime;
+1121   1      }
+1122          
+1123          //-----------------------------------------------------------------------------
+1124          // SL_MTR_change_num_poles
+1125          //-----------------------------------------------------------------------------
+1126          //
+1127          // Return Value : None
+1128          // Parameters   :
+1129          //      (U8) poles : number of poles. It must be even number
+1130          // Description:
+1131          //      This function should be called at least one time to calculate
+1132          //      SLR_minimum_rpm.
+1133          //-----------------------------------------------------------------------------
+1134          void SL_MTR_change_num_poles(U8 poles)
+1135          {
+1136   1          num_poles = poles;
+1137   1          // 1.2 is just head room.
+1138   1          SLR_minimum_rpm = (U16)((60UL*1.2*2*SYSCLK)/(65536*2*6*SPEED_UNIT))/num_poles;
+1139   1      }
+1140          
+1141          //-----------------------------------------------------------------------------
+1142          // MTR_process_adc
 1143          //-----------------------------------------------------------------------------
-1144          static void MTR_process_adc(void)
-1145          {
-1146   1          static SEG_XDATA U16 prev_opamp_offset = 0;
-1147   1          UU16 SEG_XDATA tmp;
-1148   1      
-1149   1          if ( adc_flags & (0x01<<ADC_MUX_CURRENT) )
-1150   1          {
-1151   2              // get latest saved phase current in the array
-1152   2              tmp.U16 = adc_result[ADC_MUX_CURRENT];
-1153   2      
-1154   2              // read op amp bias voltage for future current calculation.
-1155   2              if( MOTOR_STOPPED == SLR_motor_state )
-1156   2              {
-1157   3                  opamp_offset = adc_result[ADC_MUX_CURRENT];
-1158   3                  opamp_offset = (prev_opamp_offset>>1) + \
-1159   3                                 ((prev_opamp_offset+opamp_offset)>>2);
-1160   3                  prev_opamp_offset = opamp_offset;
-1161   3              }
-1162   2              else
-1163   2              {
-1164   3                  if( opamp_offset > tmp.U16)
-1165   3                  {
-1166   4                      tmp.U16 = 0;
-1167   4                  }
-1168   3                  else
-1169   3                  {
-1170   4                      tmp.U16 -= opamp_offset;
-1171   4                  }
-1172   3      
-1173   3                  accum_motor_current += tmp.U16;
-1174   3                  if (--accum_motor_current_count == 0)
+1144          //
+1145          // Return Value : None
+1146          // Parameters   : None
+1147          // Description: Process ADC results and perform filtering or offset adjustment
+1148          //
+1149          //-----------------------------------------------------------------------------
+1150          static void MTR_process_adc(void)
+1151          {
+1152   1          static SEG_XDATA U16 prev_opamp_offset = 0;
+1153   1          UU16 SEG_XDATA tmp;
+1154   1      
+1155   1          if ( adc_flags & (0x01<<ADC_MUX_CURRENT) )
+1156   1          {
+1157   2              // get latest saved phase current in the array
+1158   2              tmp.U16 = adc_result[ADC_MUX_CURRENT];
+1159   2      
+1160   2              // read op amp bias voltage for future current calculation.
+1161   2              if( MOTOR_STOPPED == SLR_motor_state )
+1162   2              {
+1163   3                  opamp_offset = adc_result[ADC_MUX_CURRENT];
+1164   3                  opamp_offset = (prev_opamp_offset>>1) + \
+1165   3                                 ((prev_opamp_offset+opamp_offset)>>2);
+1166   3                  prev_opamp_offset = opamp_offset;
+1167   3              }
+1168   2              else
+1169   2              {
+1170   3                  if( opamp_offset > tmp.U16)
+1171   3                  {
+1172   4                      tmp.U16 = 0;
+1173   4                  }
+1174   3                  else
 1175   3                  {
-1176   4                      tmp.U16 = accum_motor_current >> CURRENT_SHIFT_ACC;
-1177   4                      average_motor_current_adc = tmp.U16 >> (ADC_RESOLUTION-8);
-1178   4                      accum_motor_current = 0;
-1179   4                      accum_motor_current_count = CURRENT_ACC;
-1180   4      
-C51 COMPILER V9.53.0.0   MOTOR                                                             01/29/2020 12:05:48 PAGE 20  
+1176   4                      tmp.U16 -= opamp_offset;
+1177   4                  }
+1178   3      
+1179   3                  accum_motor_current += tmp.U16;
+1180   3                  if (--accum_motor_current_count == 0)
+1181   3                  {
+C51 COMPILER V9.53.0.0   MOTOR                                                             01/29/2020 13:56:05 PAGE 20  
 
-1181   4                      //current in 0.01A
-1182   4                      // Only 14bits need for PC side. (2^14 * 0.01A = 163A max value)
-1183   4                      SLR_motor_current = (((U32)tmp.U16 * ROUND_DIV((U32)CURRENT_UNIT * \
-1184   4                              (U32)ADC_REF_VOLTAGE*2UL*(1 << (16-ADC_RESOLUTION)), \
-1185   4                                      (U32)(OP_AMP_GAIN*LOAD_RESISTOR)))>>16) & 0x3fff;
-1186   4                  }
-1187   3              }
-1188   2          }
-1189   1      
-1190   1      #ifdef FEATURE_MEAS_VMDC
-1191   1          if( adc_flags & (0x01<<ADC_MUX_VMOTOR) )
-1192   1          {
-1193   2              // get latest saved value in the array
-1194   2              tmp.U16 = adc_result[ADC_MUX_VMOTOR];
-1195   2      
-1196   2              // unit is 0.01 Volts (10mV)
-1197   2              SLR_motor_voltage = ( (U32)tmp.U16 * ROUND_DIV(VMOTOR_DIVIDER_R1_PLUS_R2 * 2UL \
-1198   2                      * ADC_REF_VOLTAGE * (1 << (16-ADC_RESOLUTION)), \
-1199   2                      10UL*VMOTOR_DIVIDER_R1)) >> 16;
-1200   2          }
-1201   1      #endif
-1202   1      }
-1203          
-1204          //-----------------------------------------------------------------------------
-1205          // MTR_process_adc
-1206          //-----------------------------------------------------------------------------
-1207          //
-1208          // Return Value : None
-1209          // Parameters   : None
-1210          // Description: Handle motor error events and timing
-1211          //
+1182   4                      tmp.U16 = accum_motor_current >> CURRENT_SHIFT_ACC;
+1183   4                      average_motor_current_adc = tmp.U16 >> (ADC_RESOLUTION-8);
+1184   4                      accum_motor_current = 0;
+1185   4                      accum_motor_current_count = CURRENT_ACC;
+1186   4      
+1187   4                      //current in 0.01A
+1188   4                      // Only 14bits need for PC side. (2^14 * 0.01A = 163A max value)
+1189   4                      SLR_motor_current = (((U32)tmp.U16 * ROUND_DIV((U32)CURRENT_UNIT * \
+1190   4                              (U32)ADC_REF_VOLTAGE*2UL*(1 << (16-ADC_RESOLUTION)), \
+1191   4                                      (U32)(OP_AMP_GAIN*LOAD_RESISTOR)))>>16) & 0x3fff;
+1192   4                  }
+1193   3              }
+1194   2          }
+1195   1      
+1196   1      #ifdef FEATURE_MEAS_VMDC
+1197   1          if( adc_flags & (0x01<<ADC_MUX_VMOTOR) )
+1198   1          {
+1199   2              // get latest saved value in the array
+1200   2              tmp.U16 = adc_result[ADC_MUX_VMOTOR];
+1201   2      
+1202   2              // unit is 0.01 Volts (10mV)
+1203   2              SLR_motor_voltage = ( (U32)tmp.U16 * ROUND_DIV(VMOTOR_DIVIDER_R1_PLUS_R2 * 2UL \
+1204   2                      * ADC_REF_VOLTAGE * (1 << (16-ADC_RESOLUTION)), \
+1205   2                      10UL*VMOTOR_DIVIDER_R1)) >> 16;
+1206   2          }
+1207   1      #endif
+1208   1      }
+1209          
+1210          //-----------------------------------------------------------------------------
+1211          // MTR_process_adc
 1212          //-----------------------------------------------------------------------------
-1213          static void MTR_process_errors(void)
-1214          {
-1215   1          static U8 oc_count;
-1216   1          U16 gap;
-1217   1          U16 delta_I;
-1218   1          U16 rpm_changes,i_changes;
-1219   1      
-1220   1          if (SLR_motor_stalled && !last_motor_stalled)
-1221   1          {
-1222   2              last_motor_stalled = 1;
-1223   2              error_event_time = SL_MTR_time();
-1224   2              // signal for error condition
-1225   2              CLR_FG();
-1226   2          }
-1227   1      
-1228   1          if (SLR_motor_stalled)
-1229   1          {
-1230   2              gap = SL_MTR_time() - error_event_time;
-1231   2              if (gap > ERROR_EVENT_EXPIRE_TIME)
-1232   2              {
-1233   3                  last_motor_stalled = 0;
-1234   3                  SLR_motor_stalled = 0;
-1235   3                  SET_FG();
-1236   3              }
-1237   2              return;
-1238   2          }
-1239   1      
-1240   1          if ( adc_flags & (0x01<<ADC_MUX_CURRENT) )
-1241   1          {
-1242   2      #ifdef FEATURE_OVERCURRENT
-1243   2              if( SLW_oc_debounce && SLW_current_limit)
-C51 COMPILER V9.53.0.0   MOTOR                                                             01/29/2020 12:05:48 PAGE 21  
+1213          //
+1214          // Return Value : None
+1215          // Parameters   : None
+1216          // Description: Handle motor error events and timing
+1217          //
+1218          //-----------------------------------------------------------------------------
+1219          static void MTR_process_errors(void)
+1220          {
+1221   1          static U8 oc_count;
+1222   1          U16 gap;
+1223   1          U16 delta_I;
+1224   1          U16 rpm_changes,i_changes;
+1225   1      
+1226   1          if (SLR_motor_stalled && !last_motor_stalled)
+1227   1          {
+1228   2              last_motor_stalled = 1;
+1229   2              error_event_time = SL_MTR_time();
+1230   2              // signal for error condition
+1231   2              CLR_FG();
+1232   2          }
+1233   1      
+1234   1          if (SLR_motor_stalled)
+1235   1          {
+1236   2              gap = SL_MTR_time() - error_event_time;
+1237   2              if (gap > ERROR_EVENT_EXPIRE_TIME)
+1238   2              {
+1239   3                  last_motor_stalled = 0;
+1240   3                  SLR_motor_stalled = 0;
+1241   3                  SET_FG();
+1242   3              }
+1243   2              return;
+1244   2          }
+C51 COMPILER V9.53.0.0   MOTOR                                                             01/29/2020 13:56:05 PAGE 21  
 
-1244   2              {
-1245   3                  if ( (MOTOR_RUNNING == SLR_motor_state) && \
-1246   3                          ( average_motor_current_adc >= SLW_current_limit) )
-1247   3                  {
-1248   4                      oc_count++;
-1249   4                      if (oc_count >= SLW_oc_debounce)
-1250   4                      {
-1251   5                          handle_motor_error = 1;
-1252   5                      }
-1253   4                  }
-1254   3                  else
-1255   3                  {
-1256   4                      oc_count = 0;
-1257   4                  }
-1258   3              }
-1259   2      #endif
-1260   2      
-1261   2      #ifdef FEATURE_RPM_STALL_DETECTION
-1262   2              if(--stall_check_count == 0)
-1263   2              {
-1264   3                  // Just check when I(current) was increased and target speed is
-1265   3                  // higher than current speed because load causes decreasing speed.
-1266   3                  // if (Const + (target_speed+Vnew)/2 - Vold) < (k*dI) then, motor is stalled.
-1267   3                  if( (SLR_motor_current > prev_I) && (SLW_target_rpm > SLR_motor_current_rpm))
-1268   3                  {
-1269   4                      delta_I = SLR_motor_current - prev_I;
-1270   4      #if COMPENSATION_CONSTANT_FACTOR == 0
+1245   1      
+1246   1          if ( adc_flags & (0x01<<ADC_MUX_CURRENT) )
+1247   1          {
+1248   2      #ifdef FEATURE_OVERCURRENT
+1249   2              if( SLW_oc_debounce && SLW_current_limit)
+1250   2              {
+1251   3                  if ( (MOTOR_RUNNING == SLR_motor_state) && \
+1252   3                          ( average_motor_current_adc >= SLW_current_limit) )
+1253   3                  {
+1254   4                      oc_count++;
+1255   4                      if (oc_count >= SLW_oc_debounce)
+1256   4                      {
+1257   5                          handle_motor_error = 1;
+1258   5                      }
+1259   4                  }
+1260   3                  else
+1261   3                  {
+1262   4                      oc_count = 0;
+1263   4                  }
+1264   3              }
+1265   2      #endif
+1266   2      
+1267   2      #ifdef FEATURE_RPM_STALL_DETECTION
+1268   2              if(--stall_check_count == 0)
+1269   2              {
+1270   3                  // Just check when I(current) was increased and target speed is
+1271   3                  // higher than current speed because load causes decreasing speed.
+1272   3                  // if (Const + (target_speed+Vnew)/2 - Vold) < (k*dI) then, motor is stalled.
+1273   3                  if( (SLR_motor_current > prev_I) && (SLW_target_rpm > SLR_motor_current_rpm))
+1274   3                  {
+1275   4                      delta_I = SLR_motor_current - prev_I;
+1276   4      #if COMPENSATION_CONSTANT_FACTOR == 0
                               rpm_changes = ((SLW_target_rpm + SLR_motor_current_rpm)>>1);
               #else
-1273   4                      rpm_changes = ((U32)COMPENSATION_CONSTANT_FACTOR * SLW_motor_max_rpm) >> 16;
-1274   4                      rpm_changes += ((SLW_target_rpm + SLR_motor_current_rpm)>>1);
-1275   4      #endif
-1276   4                      rpm_changes = (rpm_changes - prev_rpm);
-1277   4                      i_changes = ((U32)DELTA_CURRENT_FACTOR_K * SLW_motor_max_rpm * delta_I) >> 16;
-1278   4                      // (C + Vnew - Vold) < k*dI ?
-1279   4                      if( rpm_changes < i_changes)
-1280   4                      {
-1281   5                          handle_motor_error = 1;
-1282   5                      }
-1283   4                  }
-1284   3                  stall_check_count = STALL_CHECK_COUNT;
-1285   3                  prev_rpm = SLR_motor_current_rpm;
-1286   3                  prev_I = SLR_motor_current;
-1287   3              }
-1288   2      #endif
-1289   2          }
-1290   1      
-1291   1          if (handle_motor_error)
-1292   1          {
-1293   2              SL_MTR_stop_motor();
-1294   2              SLR_motor_stalled = 1;
-1295   2              handle_motor_error = 0;
-1296   2          }
-1297   1      
-1298   1      }
-1299          
-1300          
-1301          //-----------------------------------------------------------------------------
-1302          // CMP0_ISR
-1303          //-----------------------------------------------------------------------------
-1304          //
-1305          // CMP0 ISR Content goes here. Remember to clear flag bits:
-1306          // CMP0CN0::CPFIF (Comparator Falling-Edge Flag)
-C51 COMPILER V9.53.0.0   MOTOR                                                             01/29/2020 12:05:48 PAGE 22  
+1279   4                      rpm_changes = ((U32)COMPENSATION_CONSTANT_FACTOR * SLW_motor_max_rpm) >> 16;
+1280   4                      rpm_changes += ((SLW_target_rpm + SLR_motor_current_rpm)>>1);
+1281   4      #endif
+1282   4                      rpm_changes = (rpm_changes - prev_rpm);
+1283   4                      i_changes = ((U32)DELTA_CURRENT_FACTOR_K * SLW_motor_max_rpm * delta_I) >> 16;
+1284   4                      // (C + Vnew - Vold) < k*dI ?
+1285   4                      if( rpm_changes < i_changes)
+1286   4                      {
+1287   5                          handle_motor_error = 1;
+1288   5                      }
+1289   4                  }
+1290   3                  stall_check_count = STALL_CHECK_COUNT;
+1291   3                  prev_rpm = SLR_motor_current_rpm;
+1292   3                  prev_I = SLR_motor_current;
+1293   3              }
+1294   2      #endif
+1295   2          }
+1296   1      
+1297   1          if (handle_motor_error)
+1298   1          {
+1299   2              SL_MTR_stop_motor();
+1300   2              SLR_motor_stalled = 1;
+1301   2              handle_motor_error = 0;
+1302   2          }
+1303   1      
+1304   1      }
+1305          
+1306          
+1307          //-----------------------------------------------------------------------------
+C51 COMPILER V9.53.0.0   MOTOR                                                             01/29/2020 13:56:05 PAGE 22  
 
-1307          // CMP0CN0::CPRIF (Comparator Rising-Edge Flag)
-1308          //
+1308          // CMP0_ISR
 1309          //-----------------------------------------------------------------------------
-1310          SI_INTERRUPT (CMP0_ISR, CMP0_IRQn)
-1311          {
-1312   1              static UU32 ticks;
-1313   1      
-1314   1                  // below code takes about 25us
-1315   1                  MTR_save_zero_crossing_time();
-1316   1                  ticks.U32 = zc_time.U32 - prev_zc_time.U32;
-1317   1      
-1318   1                  //Exponential filter
-1319   1                  zc_commutate_time.U32 = (zc_commutate_time.U32>>1) +
-1320   1                          ((zc_commutate_time.U32+ticks.U32)>>2);
-1321   1      
-1322   1                  // for rpm calculation
-1323   1                  time_per_rotate.U32 += zc_commutate_time.U32;
-1324   1                  if(--zc_count == 0)
-1325   1                  {
-1326   2                      zc_total_per_mech_rotation = time_per_rotate.U32;
-1327   2                      time_per_rotate.U32 = 0UL;
-1328   2                      zc_count = zc_total_count;
-1329   2                      speed_updated = 1;
-1330   2                  }
-1331   1      
-1332   1                  // time to next commutation.
-1333   1                  ticks.U32 = (zc_commutate_time.U32 >> 1);
-1334   1                  if (ticks.U32 > (PHASE_ADVANCE+4))
-1335   1                  {
-1336   2                      ticks.U32 -= PHASE_ADVANCE;
-1337   2                  }
-1338   1                  else
-1339   1                  {
-1340   2                      ticks.U32 = 4;
-1341   2                  }
-1342   1      
-1343   1                  // expected next commutation time
-1344   1                  repeated_timer0 = 0;
-1345   1                  timer0_next.U16 = ticks.U16[LSB];
-1346   1                  TCON &= ~0x30;
-1347   1              #ifdef FEATURE_HYPERDRIVE
+1310          //
+1311          // CMP0 ISR Content goes here. Remember to clear flag bits:
+1312          // CMP0CN0::CPFIF (Comparator Falling-Edge Flag)
+1313          // CMP0CN0::CPRIF (Comparator Rising-Edge Flag)
+1314          //
+1315          //-----------------------------------------------------------------------------
+1316          SI_INTERRUPT (CMP0_ISR, CMP0_IRQn)
+1317          {
+1318   1              static UU32 ticks;
+1319   1      
+1320   1                  // below code takes about 25us
+1321   1                  MTR_save_zero_crossing_time();
+1322   1                  ticks.U32 = zc_time.U32 - prev_zc_time.U32;
+1323   1      
+1324   1                  //Exponential filter
+1325   1                  zc_commutate_time.U32 = (zc_commutate_time.U32>>1) +
+1326   1                          ((zc_commutate_time.U32+ticks.U32)>>2);
+1327   1      
+1328   1                  // for rpm calculation
+1329   1                  time_per_rotate.U32 += zc_commutate_time.U32;
+1330   1                  if(--zc_count == 0)
+1331   1                  {
+1332   2                      zc_total_per_mech_rotation = time_per_rotate.U32;
+1333   2                      time_per_rotate.U32 = 0UL;
+1334   2                      zc_count = zc_total_count;
+1335   2                      speed_updated = 1;
+1336   2                  }
+1337   1      
+1338   1                  // time to next commutation.
+1339   1                  ticks.U32 = (zc_commutate_time.U32 >> 1);
+1340   1                  if (ticks.U32 > (PHASE_ADVANCE+4))
+1341   1                  {
+1342   2                      ticks.U32 -= PHASE_ADVANCE;
+1343   2                  }
+1344   1                  else
+1345   1                  {
+1346   2                      ticks.U32 = 4;
+1347   2                  }
+1348   1      
+1349   1                  // expected next commutation time
+1350   1                  repeated_timer0 = 0;
+1351   1                  timer0_next.U16 = ticks.U16[LSB];
+1352   1                  TCON &= ~0x30;
+1353   1              #ifdef FEATURE_HYPERDRIVE
                           if (hyperdrive_speed)
                           {
               
@@ -1423,13 +1428,13 @@ line level    source
               
                               if (ticks.UU16[MSB].U8[MSB])
                               {
+C51 COMPILER V9.53.0.0   MOTOR                                                             01/29/2020 13:56:05 PAGE 23  
+
                                   // hrem_time = (high(ticks.U16[LSB])*(255-hyperdrive_speed))>>8
                                   hrem_time = (U16)ticks.UU16[LSB].U8[MSB] * ticks.UU16[MSB].U8[MSB];
                                   hrem_time += ((U16)ticks.UU16[LSB].U8[LSB] * ticks.UU16[MSB].U8[MSB]) >> 8;
                                   ticks.U16[LSB] = hrem_time;
               
-C51 COMPILER V9.53.0.0   MOTOR                                                             01/29/2020 12:05:48 PAGE 23  
-
                               }
                               else
                               {
@@ -1449,93 +1454,93 @@ line level    source
                           }
                           else
                       #endif
-1389   1                  {
-1390   2                      timer0_state = TIMER0_COMMUTATION;
-1391   2                  }
-1392   1                  ticks.U16[LSB] = -ticks.U16[LSB];
-1393   1      
-1394   1                  TL0 = ticks.UU16[LSB].U8[LSB];
-1395   1                  TH0 = ticks.UU16[LSB].U8[MSB];
-1396   1                  TCON_TR0 = 1;
-1397   1      
-1398   1                  //disable comparator interrupt
-1399   1                  CMP0MD = 0x00;
-1400   1                  CMP0CN0 &= ~0x30;
-1401   1      
-1402   1              #ifdef FEATURE_FG
+1395   1                  {
+1396   2                      timer0_state = TIMER0_COMMUTATION;
+1397   2                  }
+1398   1                  ticks.U16[LSB] = -ticks.U16[LSB];
+1399   1      
+1400   1                  TL0 = ticks.UU16[LSB].U8[LSB];
+1401   1                  TH0 = ticks.UU16[LSB].U8[MSB];
+1402   1                  TCON_TR0 = 1;
+1403   1      
+1404   1                  //disable comparator interrupt
+1405   1                  CMP0MD = 0x00;
+1406   1                  CMP0CN0 &= ~0x30;
+1407   1      
+1408   1              #ifdef FEATURE_FG
                           if ((commutation_index == 0) || (commutation_index == 3))
                           {
                               TOGGLE_FG();
                           }
                       #endif
-1408   1      
-1409   1                  // pre_calculation to minimize overhead in timer 0 commutation time.
-1410   1                  MTR_pre_commutation();
-1411   1      
-1412   1                  SET_CPT0_NORMAL_PRIORITY();
-1413   1                  // This must be last - otherwise, timer interrupt may be executed prematurely.
-1414   1                  SET_TIMER0_HIGH_PRIORITY();
-1415   1      }
-1416          
-1417          
-1418          //-----------------------------------------------------------------------------
-1419          // TIMER0_ISR
-1420          //-----------------------------------------------------------------------------
-1421          //
-1422          // TIMER0 ISR Content goes here. Remember to clear flag bits:
-1423          // TCON::TF0 (Timer 0 Overflow Flag)
-1424          //
-1425          //-----------------------------------------------------------------------------
-1426          SI_INTERRUPT (TIMER0_ISR, TIMER0_IRQn)
-1427          {
-1428   1          static UU16 hyt;
-1429   1          TCON_TF0 = 0;
-1430   1      
-1431   1          // to avoid any overhead, do critical one first.
-1432   1          if ( TIMER0_COMMUTATION == timer0_state )
-C51 COMPILER V9.53.0.0   MOTOR                                                             01/29/2020 12:05:48 PAGE 24  
+1414   1      
+1415   1                  // pre_calculation to minimize overhead in timer 0 commutation time.
+1416   1                  MTR_pre_commutation();
+1417   1      
+1418   1                  SET_CPT0_NORMAL_PRIORITY();
+1419   1                  // This must be last - otherwise, timer interrupt may be executed prematurely.
+1420   1                  SET_TIMER0_HIGH_PRIORITY();
+1421   1      }
+1422          
+1423          
+1424          //-----------------------------------------------------------------------------
+1425          // TIMER0_ISR
+1426          //-----------------------------------------------------------------------------
+1427          //
+1428          // TIMER0 ISR Content goes here. Remember to clear flag bits:
+1429          // TCON::TF0 (Timer 0 Overflow Flag)
+1430          //
+1431          //-----------------------------------------------------------------------------
+1432          SI_INTERRUPT (TIMER0_ISR, TIMER0_IRQn)
+1433          {
+C51 COMPILER V9.53.0.0   MOTOR                                                             01/29/2020 13:56:05 PAGE 24  
 
-1433   1          {
-1434   2              if( 0 == repeated_timer0 )// it takes about 8 us
-1435   2              {
-1436   3                  MTR_commutate();
-1437   3      
-1438   3                  // Make filtered pins digital - to enable blanking signal
-1439   3                  P0MDIN |= FILTERED_ALLPINS_MASK;
-1440   3      
-1441   3                  rising_bemf = ~rising_bemf;
-1442   3                  if(rising_bemf)
-1443   3                  {
-1444   4                      CMP0MX = compMux[open_phase + 6];
-1445   4                  }
-1446   3                  else
-1447   3                  {
-1448   4                      CMP0MX = compMux[open_phase];
-1449   4                  }
-1450   3                  repeated_timer0 = 0;
-1451   3                  // 12.5% (7.5deg)
-1452   3                  timer0_next.U16 = -(timer0_next.U16>>2);
-1453   3                  TCON &= ~0x30;
-1454   3                  TL0 = timer0_next.U8[LSB];
-1455   3                  TH0 = timer0_next.U8[MSB];
-1456   3                  TCON_TR0 = 1;
-1457   3                  timer0_state = TIMER0_SKIP_INDUCTIVE_KICK;
-1458   3                  SET_TIMER0_HIGH_PRIORITY();
-1459   3                  SET_CPT0_NORMAL_PRIORITY();
-1460   3                  //disable comparator interrupt
-1461   3                  CMP0CN0 &= ~0x30;
-1462   3                  CMP0CN0 &= ~0x30;
-1463   3              }
-1464   2              else
-1465   2              {
-1466   3                  repeated_timer0--;
-1467   3                  TCON &= ~0x30;
-1468   3                  TL0 = timer0_next.U8[LSB];
-1469   3                  TH0 = timer0_next.U8[MSB];
-1470   3                  TCON_TR0 = 1;
-1471   3              }
-1472   2          }
-1473   1      #ifdef FEATURE_HYPERDRIVE
+1434   1          static UU16 hyt;
+1435   1          TCON_TF0 = 0;
+1436   1      
+1437   1          // to avoid any overhead, do critical one first.
+1438   1          if ( TIMER0_COMMUTATION == timer0_state )
+1439   1          {
+1440   2              if( 0 == repeated_timer0 )// it takes about 8 us
+1441   2              {
+1442   3                  MTR_commutate();
+1443   3      
+1444   3                  // Make filtered pins digital - to enable blanking signal
+1445   3                  P0MDIN |= FILTERED_ALLPINS_MASK;
+1446   3      
+1447   3                  rising_bemf = ~rising_bemf;
+1448   3                  if(rising_bemf)
+1449   3                  {
+1450   4                      CMP0MX = compMux[open_phase + 6];
+1451   4                  }
+1452   3                  else
+1453   3                  {
+1454   4                      CMP0MX = compMux[open_phase];
+1455   4                  }
+1456   3                  repeated_timer0 = 0;
+1457   3                  // 12.5% (7.5deg)
+1458   3                  timer0_next.U16 = -(timer0_next.U16>>2);
+1459   3                  TCON &= ~0x30;
+1460   3                  TL0 = timer0_next.U8[LSB];
+1461   3                  TH0 = timer0_next.U8[MSB];
+1462   3                  TCON_TR0 = 1;
+1463   3                  timer0_state = TIMER0_SKIP_INDUCTIVE_KICK;
+1464   3                  SET_TIMER0_HIGH_PRIORITY();
+1465   3                  SET_CPT0_NORMAL_PRIORITY();
+1466   3                  //disable comparator interrupt
+1467   3                  CMP0CN0 &= ~0x30;
+1468   3                  CMP0CN0 &= ~0x30;
+1469   3              }
+1470   2              else
+1471   2              {
+1472   3                  repeated_timer0--;
+1473   3                  TCON &= ~0x30;
+1474   3                  TL0 = timer0_next.U8[LSB];
+1475   3                  TH0 = timer0_next.U8[MSB];
+1476   3                  TCON_TR0 = 1;
+1477   3              }
+1478   2          }
+1479   1      #ifdef FEATURE_HYPERDRIVE
                   else if ( TIMER0_START_HYPERDRIVE == timer0_state )
                   {
                       // Hyperdrive mode
@@ -1553,42 +1558,42 @@ line level    source
                       TR0 = 1;
                       MTR_hyper_commutate();
                   }
-              #endif
-1492   1          else if ( TIMER0_SKIP_INDUCTIVE_KICK == timer0_state )
-1493   1          {
-1494   2              // enable comparator interrupt
-1495   2              // falling edge detection for ZC
-C51 COMPILER V9.53.0.0   MOTOR                                                             01/29/2020 12:05:48 PAGE 25  
+C51 COMPILER V9.53.0.0   MOTOR                                                             01/29/2020 13:56:05 PAGE 25  
 
-1496   2              CMP0CN0 &= ~0x30;
-1497   2              CMP0MD = 0x00;
-1498   2              CMP0MD = 0x10;
-1499   2      
-1500   2              // waiting for zero crossing...
-1501   2              // comparator interrupt will detect zero-crossing event.
-1502   2              repeated_timer0 = 0xFF;
-1503   2              TCON &= ~0x30;
-1504   2              TL0 = 0;
-1505   2              TH0 = 0;
-1506   2              TCON_TR0 = 1;
-1507   2              timer0_state = TIMER0_ZERO_DETECTING;
-1508   2              SET_TIMER0_NORMAL_PRIORITY();
-1509   2              SET_CPT0_HIGH_PRIORITY();
-1510   2          }
-1511   1          else if ( TIMER0_ZERO_DETECTING == timer0_state )
-1512   1          {
-1513   2              repeated_timer0--;
-1514   2              // Could not detect zero crossing long time.
-1515   2              // Stall
-1516   2              if (repeated_timer0 < 0xF0)
-1517   2              {
-1518   3                  handle_motor_error = 1;
-1519   3              }
-1520   2          }
-1521   1      }
-*** WARNING C280 IN LINE 1428 OF C:\Users\A92862\SimplicityStudio\v4_workspace\EFM8BB1_BLDC_PORT\src\motor.c: 'hyt': unr
+              #endif
+1498   1          else if ( TIMER0_SKIP_INDUCTIVE_KICK == timer0_state )
+1499   1          {
+1500   2              // enable comparator interrupt
+1501   2              // falling edge detection for ZC
+1502   2              CMP0CN0 &= ~0x30;
+1503   2              CMP0MD = 0x00;
+1504   2              CMP0MD = 0x10;
+1505   2      
+1506   2              // waiting for zero crossing...
+1507   2              // comparator interrupt will detect zero-crossing event.
+1508   2              repeated_timer0 = 0xFF;
+1509   2              TCON &= ~0x30;
+1510   2              TL0 = 0;
+1511   2              TH0 = 0;
+1512   2              TCON_TR0 = 1;
+1513   2              timer0_state = TIMER0_ZERO_DETECTING;
+1514   2              SET_TIMER0_NORMAL_PRIORITY();
+1515   2              SET_CPT0_HIGH_PRIORITY();
+1516   2          }
+1517   1          else if ( TIMER0_ZERO_DETECTING == timer0_state )
+1518   1          {
+1519   2              repeated_timer0--;
+1520   2              // Could not detect zero crossing long time.
+1521   2              // Stall
+1522   2              if (repeated_timer0 < 0xF0)
+1523   2              {
+1524   3                  handle_motor_error = 1;
+1525   3              }
+1526   2          }
+1527   1      }
+*** WARNING C280 IN LINE 1434 OF C:\Users\A92862\SimplicityStudio\v4_workspace\EFM8BB1_BLDC_PORT\src\motor.c: 'hyt': unr
              -eferenced local variable
-1522          
+1528          
 
 
 MODULE INFORMATION:   STATIC OVERLAYABLE

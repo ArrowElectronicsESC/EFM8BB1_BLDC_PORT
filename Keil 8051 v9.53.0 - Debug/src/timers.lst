@@ -1,4 +1,4 @@
-C51 COMPILER V9.53.0.0   TIMERS                                                            01/29/2020 12:05:49 PAGE 1   
+C51 COMPILER V9.53.0.0   TIMERS                                                            01/29/2020 13:56:07 PAGE 1   
 
 
 C51 COMPILER V9.53.0.0, COMPILATION OF MODULE TIMERS
@@ -7,129 +7,139 @@ COMPILER INVOKED BY: c:\SiliconLabs\SimplicityStudio\v4\developer\toolchains\kei
                     -SimplicityStudio\v4_workspace\EFM8BB1_BLDC_PORT\src\timers.c OMF2 SMALL DEBUG OBJECTEXTEND ROM(LARGE) WARNINGLEVEL(2) FL
                     -OATFUZZY(3) OPTIMIZE(8,SPEED) INTVECTOR(0X0000) INTPROMOTE INCDIR(C:\Users\A92862\SimplicityStudio\v4_workspace\EFM8BB1_
                     -BLDC_PORT\inc;C:\Users\A92862\SimplicityStudio\v4_workspace\EFM8BB1_BLDC_PORT\inc\config;C:/SiliconLabs/SimplicityStudio
-                    -/v4/developer/sdks/8051/v4.1.7//kits/common/drivers/efm8_retargetserial;C:/SiliconLabs/SimplicityStudio/v4/developer/sdk
-                    -s/8051/v4.1.7//Lib/efm8_assert;C:/SiliconLabs/SimplicityStudio/v4/developer/sdks/8051/v4.1.7//kits/common/bsp;C:/Silicon
-                    -Labs/SimplicityStudio/v4/developer/sdks/8051/v4.1.7//kits/EFM8BB1_LCK/config;C:/SiliconLabs/SimplicityStudio/v4/develope
-                    -r/sdks/8051/v4.1.7//Device/shared/si8051Base;C:/SiliconLabs/SimplicityStudio/v4/developer/sdks/8051/v4.1.7//Device/EFM8B
-                    -B1/inc;C:/SiliconLabs/SimplicityStudio/v4/developer/sdks/8051/v4.1.7//Device/EFM8BB1/peripheral_driver/inc) PRINT(.\src\
-                    -timers.lst) COND PAGEWIDTH(120) PAGELENGTH(65) OBJECT(.\src\timers.OBJ)
+                    -/v4/developer/sdks/8051/v4.1.7//Lib/efm8_assert;C:/SiliconLabs/SimplicityStudio/v4/developer/sdks/8051/v4.1.7//kits/comm
+                    -on/bsp;C:/SiliconLabs/SimplicityStudio/v4/developer/sdks/8051/v4.1.7//kits/EFM8BB1_LCK/config;C:/SiliconLabs/SimplicityS
+                    -tudio/v4/developer/sdks/8051/v4.1.7//Device/shared/si8051Base;C:/SiliconLabs/SimplicityStudio/v4/developer/sdks/8051/v4.
+                    -1.7//Device/EFM8BB1/inc;C:/SiliconLabs/SimplicityStudio/v4/developer/sdks/8051/v4.1.7//Device/EFM8BB1/peripheral_driver/
+                    -inc) PRINT(.\src\timers.lst) COND PAGEWIDTH(120) PAGELENGTH(65) OBJECT(.\src\timers.OBJ)
 
 line level    source
 
-   1          /*
-   2           * timers.c
-   3           *
-   4           *  Created on: Jan 16, 2020
-   5           *      Author: a92862
-   6           */
-   7          
-   8          #include "bldcdk.h"
-   9          
-  10          //-----------------------------------------------------------------------------
-  11          // Global Constants
-  12          //-----------------------------------------------------------------------------
-  13          
-  14          //-----------------------------------------------------------------------------
-  15          // Function Prototypes
-  16          //-----------------------------------------------------------------------------
-  17          void TMR_init_timer0(void);
-  18          void TMR_init_timer3(void);
-  19          void TMR_delay_timer3(U8 delay_ms);
+   1          //-----------------------------------------------------------------------------
+   2          // timers.c
+   3          //-----------------------------------------------------------------------------
+   4          // Copyright 2013, Silicon Laboratories, Inc.
+   5          // http://www.silabs.com
+   6          //
+   7          // Created on: Apr 19, 2013
+   8          //     Author: sgghang
+   9          // Adapted on: Jan 16, 2020
+  10          // Author: a92862
+  11          //
+  12          //  Timer 1 : Uart used.
+  13          //  Timer 2 : initiate ADC start, synchronized with PCA counter
+  14          //  Timer 3 : @start_up, general delay
+  15          //
+  16          //
+  17          //-----------------------------------------------------------------------------
+  18          
+  19          #include "bldcdk.h"
   20          
   21          //-----------------------------------------------------------------------------
-  22          // Global Variables
+  22          // Global Constants
   23          //-----------------------------------------------------------------------------
   24          
-  25          SEG_DATA U8 repeated_timer0;
-  26          SEG_DATA U8 timer0_state;
-  27          SEG_DATA UU16 timer0_next;
-  28          
-  29          //-----------------------------------------------------------------------------
-  30          // TMR_init_timer0
-  31          //-----------------------------------------------------------------------------
-  32          //
-  33          // Return Value : None
-  34          // Parameters   : None
-  35          //
-  36          // This function configures the Timer0 as a 16-bit timer with auto-reload.
-  37          //-----------------------------------------------------------------------------
-  38          void TMR_init_timer0(void)
-  39          {
-  40   1          // SYSCLK/1
-  41   1          CKCON0 |= 0x04;           // T0M = 1
-  42   1          TMOD &= ~0x04;           // CT0 = 0;
-  43   1          TMOD |= 0x01;            // 16 bit mode
-  44   1          TL0 = TH0 = 0;
-  45   1          // start Timer0
-  46   1          TCON_TR0 = 0;
-  47   1      }
-C51 COMPILER V9.53.0.0   TIMERS                                                            01/29/2020 12:05:49 PAGE 2   
+  25          //-----------------------------------------------------------------------------
+  26          // Function Prototypes
+  27          //-----------------------------------------------------------------------------
+  28          void TMR_init_timer0(void);
+  29          void TMR_init_timer3(void);
+  30          void TMR_delay_timer3(U8 delay_ms);
+  31          
+  32          //-----------------------------------------------------------------------------
+  33          // Global Variables
+  34          //-----------------------------------------------------------------------------
+  35          
+  36          SEG_DATA U8 repeated_timer0;
+  37          SEG_DATA U8 timer0_state;
+  38          SEG_DATA UU16 timer0_next;
+  39          
+  40          //-----------------------------------------------------------------------------
+  41          // TMR_init_timer0
+  42          //-----------------------------------------------------------------------------
+  43          //
+  44          // Return Value : None
+  45          // Parameters   : None
+  46          //
+  47          // This function configures the Timer0 as a 16-bit timer with auto-reload.
+  48          //-----------------------------------------------------------------------------
+C51 COMPILER V9.53.0.0   TIMERS                                                            01/29/2020 13:56:07 PAGE 2   
 
-  48          
-  49          //-----------------------------------------------------------------------------
-  50          // TMR_init_timer3
-  51          //-----------------------------------------------------------------------------
-  52          //
-  53          // Return Value : None
-  54          // Parameters   : None
-  55          //
-  56          //  This function configures the Timer3 as a 16-bit timer with auto-reload,
-  57          //  SYSCLK/12, 1clk = 0.489us
-  58          //
-  59          //  during running state, this timer 3 is measuring phase current sampling
-  60          //  time to notify to PC.
-  61          //-----------------------------------------------------------------------------
-  62          void TMR_init_timer3(void)
-  63          {
-  64   1          // Timer3 use SYSCLK/12
-  65   1          CKCON0 &= ~0x40;             // T3ML = 0;
-  66   1          CKCON0 &= ~0x80;             // T3MH = 0;
-  67   1          TMR3CN0 &= ~0x01;            // T3XCLK = 0;    SYSCLK/12
-  68   1      
-  69   1          // Timer3 in 16-bit mode
-  70   1          TMR3CN0 &= ~0x08;
-  71   1          // Auto-reload value
-  72   1          TMR3RLH = 0;
-  73   1          TMR3RLL = 0;
-  74   1      }
-  75          
-  76          //-----------------------------------------------------------------------------
-  77          // TMR_delay_timer3(delay_ms)
-  78          //
-  79          // Max 32ms delay
-  80          //
-  81          // Parameters:
-  82          //     delay_ms - number of 1 ms delay.
-  83          //
-  84          // Description:
-  85          //     Polling type delay routine.
-  86          //-----------------------------------------------------------------------------
-  87          void TMR_delay_timer3(U8 delay_ms)
-  88          {
-  89   1          // Stop Timer 3
-  90   1          TMR3CN0 &= ~0x04;
-  91   1      
-  92   1          TMR3RLH = ((-(SYSCLK/TIMER3_PRESCALER/1000)) >> 8) & 0xff;
-  93   1          TMR3RLL = (-(SYSCLK/TIMER3_PRESCALER/1000)) & 0xff;
-  94   1      
-  95   1          TMR3 = TMR3RL;
-  96   1          TMR3CN0 = 0x04;      // Start Timer 3
-  97   1          for (; delay_ms > 0; --delay_ms)
-  98   1          {
-  99   2              while (!(TMR3CN0 & 0x80));   // Wait for overflow
- 100   2              TMR3CN0 &= ~0x80;            // Clear the overflow indicator
- 101   2          }
- 102   1          // Stop Timer 3
- 103   1          TMR3CN0 &= ~0x04;
- 104   1      }
- 105          
- 106          
+  49          void TMR_init_timer0(void)
+  50          {
+  51   1          // SYSCLK/1
+  52   1          CKCON0 |= 0x04;           // T0M = 1
+  53   1          TMOD &= ~0x04;           // CT0 = 0;
+  54   1          TMOD |= 0x01;            // 16 bit mode
+  55   1          TL0 = TH0 = 0;
+  56   1          // start Timer0
+  57   1          TCON_TR0 = 0;
+  58   1      }
+  59          
+  60          //-----------------------------------------------------------------------------
+  61          // TMR_init_timer3
+  62          //-----------------------------------------------------------------------------
+  63          //
+  64          // Return Value : None
+  65          // Parameters   : None
+  66          //
+  67          //  This function configures the Timer3 as a 16-bit timer with auto-reload,
+  68          //  SYSCLK/12, 1clk = 0.489us
+  69          //
+  70          //  during running state, this timer 3 is measuring phase current sampling
+  71          //  time to notify to PC.
+  72          //-----------------------------------------------------------------------------
+  73          void TMR_init_timer3(void)
+  74          {
+  75   1          // Timer3 use SYSCLK/12
+  76   1          CKCON0 &= ~0x40;             // T3ML = 0;
+  77   1          CKCON0 &= ~0x80;             // T3MH = 0;
+  78   1          TMR3CN0 &= ~0x01;            // T3XCLK = 0;    SYSCLK/12
+  79   1      
+  80   1          // Timer3 in 16-bit mode
+  81   1          TMR3CN0 &= ~0x08;
+  82   1          // Auto-reload value
+  83   1          TMR3RLH = 0;
+  84   1          TMR3RLL = 0;
+  85   1      }
+  86          
+  87          //-----------------------------------------------------------------------------
+  88          // TMR_delay_timer3(delay_ms)
+  89          //
+  90          // Max 32ms delay
+  91          //
+  92          // Parameters:
+  93          //     delay_ms - number of 1 ms delay.
+  94          //
+  95          // Description:
+  96          //     Polling type delay routine.
+  97          //-----------------------------------------------------------------------------
+  98          void TMR_delay_timer3(U8 delay_ms)
+  99          {
+ 100   1          // Stop Timer 3
+ 101   1          TMR3CN0 &= ~0x04;
+ 102   1      
+ 103   1          TMR3RLH = ((-(SYSCLK/TIMER3_PRESCALER/1000)) >> 8) & 0xff;
+ 104   1          TMR3RLL = (-(SYSCLK/TIMER3_PRESCALER/1000)) & 0xff;
+ 105   1      
+ 106   1          TMR3 = TMR3RL;
+ 107   1          TMR3CN0 = 0x04;      // Start Timer 3
+ 108   1          for (; delay_ms > 0; --delay_ms)
+ 109   1          {
+ 110   2              while (!(TMR3CN0 & 0x80));   // Wait for overflow
+ 111   2              TMR3CN0 &= ~0x80;            // Clear the overflow indicator
+C51 COMPILER V9.53.0.0   TIMERS                                                            01/29/2020 13:56:07 PAGE 3   
+
+ 112   2          }
+ 113   1          // Stop Timer 3
+ 114   1          TMR3CN0 &= ~0x04;
+ 115   1      }
+ 116          
+ 117          
 
 
 MODULE INFORMATION:   STATIC OVERLAYABLE
    CODE SIZE        =     74    ----
-C51 COMPILER V9.53.0.0   TIMERS                                                            01/29/2020 12:05:49 PAGE 3   
-
    CONSTANT SIZE    =   ----    ----
    XDATA SIZE       =   ----    ----
    PDATA SIZE       =   ----    ----

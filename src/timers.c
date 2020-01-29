@@ -1,9 +1,20 @@
-/*
- * timers.c
- *
- *  Created on: Jan 16, 2020
- *      Author: a92862
- */
+//-----------------------------------------------------------------------------
+// timers.c
+//-----------------------------------------------------------------------------
+// Copyright 2013, Silicon Laboratories, Inc.
+// http://www.silabs.com
+//
+// Created on: Apr 19, 2013
+//     Author: sgghang
+// Adapted on: Jan 16, 2020
+// Author: a92862
+//
+//  Timer 1 : Uart used.
+//  Timer 2 : initiate ADC start, synchronized with PCA counter
+//  Timer 3 : @start_up, general delay
+//
+//
+//-----------------------------------------------------------------------------
 
 #include "bldcdk.h"
 

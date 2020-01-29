@@ -1,4 +1,4 @@
-C51 COMPILER V9.53.0.0   BTN                                                               01/29/2020 12:05:47 PAGE 1   
+C51 COMPILER V9.53.0.0   BTN                                                               01/29/2020 13:56:05 PAGE 1   
 
 
 C51 COMPILER V9.53.0.0, COMPILATION OF MODULE BTN
@@ -7,12 +7,11 @@ COMPILER INVOKED BY: c:\SiliconLabs\SimplicityStudio\v4\developer\toolchains\kei
                     -SimplicityStudio\v4_workspace\EFM8BB1_BLDC_PORT\src\btn.c OMF2 SMALL DEBUG OBJECTEXTEND ROM(LARGE) WARNINGLEVEL(2) FLOAT
                     -FUZZY(3) OPTIMIZE(8,SPEED) INTVECTOR(0X0000) INTPROMOTE INCDIR(C:\Users\A92862\SimplicityStudio\v4_workspace\EFM8BB1_BLD
                     -C_PORT\inc;C:\Users\A92862\SimplicityStudio\v4_workspace\EFM8BB1_BLDC_PORT\inc\config;C:/SiliconLabs/SimplicityStudio/v4
-                    -/developer/sdks/8051/v4.1.7//kits/common/drivers/efm8_retargetserial;C:/SiliconLabs/SimplicityStudio/v4/developer/sdks/8
-                    -051/v4.1.7//Lib/efm8_assert;C:/SiliconLabs/SimplicityStudio/v4/developer/sdks/8051/v4.1.7//kits/common/bsp;C:/SiliconLab
-                    -s/SimplicityStudio/v4/developer/sdks/8051/v4.1.7//kits/EFM8BB1_LCK/config;C:/SiliconLabs/SimplicityStudio/v4/developer/s
-                    -dks/8051/v4.1.7//Device/shared/si8051Base;C:/SiliconLabs/SimplicityStudio/v4/developer/sdks/8051/v4.1.7//Device/EFM8BB1/
-                    -inc;C:/SiliconLabs/SimplicityStudio/v4/developer/sdks/8051/v4.1.7//Device/EFM8BB1/peripheral_driver/inc) PRINT(.\src\btn
-                    -.lst) COND PAGEWIDTH(120) PAGELENGTH(65) OBJECT(.\src\btn.OBJ)
+                    -/developer/sdks/8051/v4.1.7//Lib/efm8_assert;C:/SiliconLabs/SimplicityStudio/v4/developer/sdks/8051/v4.1.7//kits/common/
+                    -bsp;C:/SiliconLabs/SimplicityStudio/v4/developer/sdks/8051/v4.1.7//kits/EFM8BB1_LCK/config;C:/SiliconLabs/SimplicityStud
+                    -io/v4/developer/sdks/8051/v4.1.7//Device/shared/si8051Base;C:/SiliconLabs/SimplicityStudio/v4/developer/sdks/8051/v4.1.7
+                    -//Device/EFM8BB1/inc;C:/SiliconLabs/SimplicityStudio/v4/developer/sdks/8051/v4.1.7//Device/EFM8BB1/peripheral_driver/inc
+                    -) PRINT(.\src\btn.lst) COND PAGEWIDTH(120) PAGELENGTH(65) OBJECT(.\src\btn.OBJ)
 
 line level    source
 
@@ -24,112 +23,115 @@ line level    source
    6          //
    7          // Created on: Jun 19, 2013
    8          //     Author: khsoh
-   9          //-----------------------------------------------------------------------------
-  10          
-  11          //-----------------------------------------------------------------------------
-  12          // Includes
-  13          //-----------------------------------------------------------------------------
-  14          #include "bldcdk.h"
-  15          
+   9          //
+  10          // Adapted on: Jan 16, 2020
+  11          // Author: a92862
+  12          //-----------------------------------------------------------------------------
+  13          
+  14          //-----------------------------------------------------------------------------
+  15          // Includes
   16          //-----------------------------------------------------------------------------
-  17          // Global Constants
-  18          //-----------------------------------------------------------------------------
-  19          // Debouncing release time configuration - in units of 2.7ms
-  20          #define BTN_DEBOUNCE_TIME   8       // 8 == 20+ msecs
-  21          
-  22          // Defines the return value of btn1_state
-  23          #define BTN_RELEASED    0
-  24          #define BTN_PRESSED     1
-  25          #define BTN_DEBOUNCING  2
-  26          
-  27          //-----------------------------------------------------------------------------
-  28          // Global Variables
-  29          //-----------------------------------------------------------------------------
-  30          static U8 SEG_XDATA btn1_state = BTN_RELEASED;
-  31          static U8 SEG_XDATA api_btn1_state = BTN_RELEASED;
-  32          U8 btn_released_time;
-  33          
-  34          //-----------------------------------------------------------------------------
-  35          // Function Prototypes
-  36          //-----------------------------------------------------------------------------
-  37          U8 is_btn1_pressed(void);
-  38          void btn_process(void);
-  39          
-  40          
-  41          //-----------------------------------------------------------------------------
-  42          // is_btn1_pressed
-  43          //-----------------------------------------------------------------------------
-  44          // Return Value:
-  45          //     0: btn1 is not pressed
-  46          //     1: btn1 is pressed.
-  47          //
-C51 COMPILER V9.53.0.0   BTN                                                               01/29/2020 12:05:47 PAGE 2   
+  17          #include "bldcdk.h"
+  18          
+  19          //-----------------------------------------------------------------------------
+  20          // Global Constants
+  21          //-----------------------------------------------------------------------------
+  22          // Debouncing release time configuration - in units of 2.7ms
+  23          #define BTN_DEBOUNCE_TIME   8       // 8 == 20+ msecs
+  24          
+  25          // Defines the return value of btn1_state
+  26          #define BTN_RELEASED    0
+  27          #define BTN_PRESSED     1
+  28          #define BTN_DEBOUNCING  2
+  29          
+  30          //-----------------------------------------------------------------------------
+  31          // Global Variables
+  32          //-----------------------------------------------------------------------------
+  33          static U8 SEG_XDATA btn1_state = BTN_RELEASED;
+  34          static U8 SEG_XDATA api_btn1_state = BTN_RELEASED;
+  35          U8 btn_released_time;
+  36          
+  37          //-----------------------------------------------------------------------------
+  38          // Function Prototypes
+  39          //-----------------------------------------------------------------------------
+  40          U8 is_btn1_pressed(void);
+  41          void btn_process(void);
+  42          
+  43          
+  44          //-----------------------------------------------------------------------------
+  45          // is_btn1_pressed
+  46          //-----------------------------------------------------------------------------
+  47          // Return Value:
+  48          //     0: btn1 is not pressed
+C51 COMPILER V9.53.0.0   BTN                                                               01/29/2020 13:56:05 PAGE 2   
 
-  48          // Parameters:
-  49          //     None
+  49          //     1: btn1 is pressed.
   50          //
-  51          // Description:
-  52          //
-  53          //-----------------------------------------------------------------------------
-  54          U8 is_btn1_pressed(void)
-  55          {
-  56   1          btn_process();
-  57   1      
-  58   1          if ( (btn1_state == BTN_PRESSED) && (api_btn1_state == BTN_RELEASED) )
-  59   1          {
-  60   2              api_btn1_state = btn1_state;
-  61   2              return 1;
-  62   2          }
-  63   1          api_btn1_state = btn1_state;
-  64   1          return 0;
-  65   1      }
-  66          
-  67          //-----------------------------------------------------------------------------
-  68          // btn_process
-  69          //-----------------------------------------------------------------------------
-  70          //
-  71          // Return Value : None
-  72          // Parameters   : None
+  51          // Parameters:
+  52          //     None
+  53          //
+  54          // Description:
+  55          //
+  56          //-----------------------------------------------------------------------------
+  57          U8 is_btn1_pressed(void)
+  58          {
+  59   1          btn_process();
+  60   1      
+  61   1          if ( (btn1_state == BTN_PRESSED) && (api_btn1_state == BTN_RELEASED) )
+  62   1          {
+  63   2              api_btn1_state = btn1_state;
+  64   2              return 1;
+  65   2          }
+  66   1          api_btn1_state = btn1_state;
+  67   1          return 0;
+  68   1      }
+  69          
+  70          //-----------------------------------------------------------------------------
+  71          // btn_process
+  72          //-----------------------------------------------------------------------------
   73          //
-  74          // Function to be called regularly to detect button state and
-  75          // ensure button release is debounced
-  76          //-----------------------------------------------------------------------------
-  77          void btn_process(void)
-  78          {
-  79   1          U8 curtime;
-  80   1      
-  81   1          if (IS_BTN1_PRESSED())
-  82   1          {
-  83   2              btn1_state = BTN_PRESSED;
-  84   2          }
-  85   1          else if (btn1_state != BTN_RELEASED)
-  86   1          {
-  87   2              curtime = (U8)SL_MTR_time();
-  88   2      
-  89   2              // Button not pressed - we would need to debounce
-  90   2              if (btn1_state == BTN_PRESSED)
-  91   2              {
-  92   3                  btn1_state = BTN_DEBOUNCING;
-  93   3                  btn_released_time = curtime;
-  94   3              }
-  95   2              else  // Must be debouncing state
-  96   2              {
-  97   3                  if ( (curtime - btn_released_time) >= BTN_DEBOUNCE_TIME )
-  98   3                  {
-  99   4                      // Button is released when release has been debounced
- 100   4                      btn1_state = BTN_RELEASED;
- 101   4                  }
- 102   3              }
- 103   2          }
- 104   1      }
+  74          // Return Value : None
+  75          // Parameters   : None
+  76          //
+  77          // Function to be called regularly to detect button state and
+  78          // ensure button release is debounced
+  79          //-----------------------------------------------------------------------------
+  80          void btn_process(void)
+  81          {
+  82   1          U8 curtime;
+  83   1      
+  84   1          if (IS_BTN1_PRESSED())
+  85   1          {
+  86   2              btn1_state = BTN_PRESSED;
+  87   2          }
+  88   1          else if (btn1_state != BTN_RELEASED)
+  89   1          {
+  90   2              curtime = (U8)SL_MTR_time();
+  91   2      
+  92   2              // Button not pressed - we would need to debounce
+  93   2              if (btn1_state == BTN_PRESSED)
+  94   2              {
+  95   3                  btn1_state = BTN_DEBOUNCING;
+  96   3                  btn_released_time = curtime;
+  97   3              }
+  98   2              else  // Must be debouncing state
+  99   2              {
+ 100   3                  if ( (curtime - btn_released_time) >= BTN_DEBOUNCE_TIME )
+ 101   3                  {
+ 102   4                      // Button is released when release has been debounced
+ 103   4                      btn1_state = BTN_RELEASED;
+ 104   4                  }
+ 105   3              }
+ 106   2          }
+ 107   1      }
 
 
 MODULE INFORMATION:   STATIC OVERLAYABLE
    CODE SIZE        =     80    ----
+C51 COMPILER V9.53.0.0   BTN                                                               01/29/2020 13:56:05 PAGE 3   
+
    CONSTANT SIZE    =   ----    ----
    XDATA SIZE       =      2    ----
-C51 COMPILER V9.53.0.0   BTN                                                               01/29/2020 12:05:47 PAGE 3   
-
    PDATA SIZE       =   ----    ----
    DATA SIZE        =      1    ----
    IDATA SIZE       =   ----    ----

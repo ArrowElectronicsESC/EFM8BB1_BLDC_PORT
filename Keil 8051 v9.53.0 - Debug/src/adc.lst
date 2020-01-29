@@ -1,4 +1,4 @@
-C51 COMPILER V9.53.0.0   ADC                                                               01/29/2020 12:05:47 PAGE 1   
+C51 COMPILER V9.53.0.0   ADC                                                               01/29/2020 13:56:04 PAGE 1   
 
 
 C51 COMPILER V9.53.0.0, COMPILATION OF MODULE ADC
@@ -7,157 +7,161 @@ COMPILER INVOKED BY: c:\SiliconLabs\SimplicityStudio\v4\developer\toolchains\kei
                     -SimplicityStudio\v4_workspace\EFM8BB1_BLDC_PORT\src\adc.c OMF2 SMALL DEBUG OBJECTEXTEND ROM(LARGE) WARNINGLEVEL(2) FLOAT
                     -FUZZY(3) OPTIMIZE(8,SPEED) INTVECTOR(0X0000) INTPROMOTE INCDIR(C:\Users\A92862\SimplicityStudio\v4_workspace\EFM8BB1_BLD
                     -C_PORT\inc;C:\Users\A92862\SimplicityStudio\v4_workspace\EFM8BB1_BLDC_PORT\inc\config;C:/SiliconLabs/SimplicityStudio/v4
-                    -/developer/sdks/8051/v4.1.7//kits/common/drivers/efm8_retargetserial;C:/SiliconLabs/SimplicityStudio/v4/developer/sdks/8
-                    -051/v4.1.7//Lib/efm8_assert;C:/SiliconLabs/SimplicityStudio/v4/developer/sdks/8051/v4.1.7//kits/common/bsp;C:/SiliconLab
-                    -s/SimplicityStudio/v4/developer/sdks/8051/v4.1.7//kits/EFM8BB1_LCK/config;C:/SiliconLabs/SimplicityStudio/v4/developer/s
-                    -dks/8051/v4.1.7//Device/shared/si8051Base;C:/SiliconLabs/SimplicityStudio/v4/developer/sdks/8051/v4.1.7//Device/EFM8BB1/
-                    -inc;C:/SiliconLabs/SimplicityStudio/v4/developer/sdks/8051/v4.1.7//Device/EFM8BB1/peripheral_driver/inc) PRINT(.\src\adc
-                    -.lst) COND PAGEWIDTH(120) PAGELENGTH(65) OBJECT(.\src\adc.OBJ)
+                    -/developer/sdks/8051/v4.1.7//Lib/efm8_assert;C:/SiliconLabs/SimplicityStudio/v4/developer/sdks/8051/v4.1.7//kits/common/
+                    -bsp;C:/SiliconLabs/SimplicityStudio/v4/developer/sdks/8051/v4.1.7//kits/EFM8BB1_LCK/config;C:/SiliconLabs/SimplicityStud
+                    -io/v4/developer/sdks/8051/v4.1.7//Device/shared/si8051Base;C:/SiliconLabs/SimplicityStudio/v4/developer/sdks/8051/v4.1.7
+                    -//Device/EFM8BB1/inc;C:/SiliconLabs/SimplicityStudio/v4/developer/sdks/8051/v4.1.7//Device/EFM8BB1/peripheral_driver/inc
+                    -) PRINT(.\src\adc.lst) COND PAGEWIDTH(120) PAGELENGTH(65) OBJECT(.\src\adc.OBJ)
 
 line level    source
 
-   1          /*
-   2           * adc.c
-   3           *
-   4           *  Created on: Jan 16, 2020
-   5           *      Author: a92862
-   6           */
-   7          
-   8          //-----------------------------------------------------------------------------
-   9          // Includes
-  10          //-----------------------------------------------------------------------------
-  11          #include "bldcdk.h"
+   1          //-----------------------------------------------------------------------------
+   2          // adc.c
+   3          //-----------------------------------------------------------------------------
+   4          // Copyright 2013, Silicon Laboratories, Inc.
+   5          // http://www.silabs.com
+   6          //
+   7          // Created on: Apr 22, 2013
+   8          //     Author: sgghang
+   9          // Adapted on: Jan 16, 2020
+  10          // Author: a92862
+  11          //-----------------------------------------------------------------------------
   12          
   13          //-----------------------------------------------------------------------------
-  14          // Global Constants
+  14          // Includes
   15          //-----------------------------------------------------------------------------
-  16          
+  16          #include "bldcdk.h"
   17          
   18          //-----------------------------------------------------------------------------
-  19          // Function Prototypes
+  19          // Global Constants
   20          //-----------------------------------------------------------------------------
-  21          void ADC_initialize_adc(void);
+  21          
   22          
   23          //-----------------------------------------------------------------------------
-  24          // Global Variables
+  24          // Function Prototypes
   25          //-----------------------------------------------------------------------------
-  26          // ADC mux table for POT(speed input), VMDC, Current
-  27          const U8 code adc_mux[NUM_ADC_POINTS] = {
-  28          #ifdef FEATURE_OVERCURRENT
-  29              IMEAS_ADCMX,
-  30          #endif
-  31          #ifdef FEATURE_MEAS_VMDC
-  32              VMDC_ADCMX,
-  33          #endif
-  34          #ifdef FEATURE_MEAS_POT
-  35              POT_ADCMX
-  36          #endif
-  37          };
-  38          
-  39          static SEG_IDATA U8 adc_index;
-  40          SEG_XDATA U16       adc_result[NUM_ADC_POINTS];
-  41          SEG_DATA U8         adc_flags;
-  42          
-  43          //-----------------------------------------------------------------------------
-  44          // ADC_initialize_adc
-  45          //-----------------------------------------------------------------------------
-  46          //
-  47          // Return Value : None
-C51 COMPILER V9.53.0.0   ADC                                                               01/29/2020 12:05:47 PAGE 2   
+  26          void ADC_initialize_adc(void);
+  27          
+  28          //-----------------------------------------------------------------------------
+  29          // Global Variables
+  30          //-----------------------------------------------------------------------------
+  31          // ADC mux table for POT(speed input), VMDC, Current
+  32          const U8 code adc_mux[NUM_ADC_POINTS] = {
+  33          #ifdef FEATURE_OVERCURRENT
+  34              IMEAS_ADCMX,
+  35          #endif
+  36          #ifdef FEATURE_MEAS_VMDC
+  37              VMDC_ADCMX,
+  38          #endif
+  39          #ifdef FEATURE_MEAS_POT
+  40              POT_ADCMX
+  41          #endif
+  42          };
+  43          
+  44          static SEG_IDATA U8 adc_index;
+  45          SEG_XDATA U16       adc_result[NUM_ADC_POINTS];
+  46          SEG_DATA U8         adc_flags;
+  47          
+  48          //-----------------------------------------------------------------------------
+C51 COMPILER V9.53.0.0   ADC                                                               01/29/2020 13:56:04 PAGE 2   
 
-  48          // Parameters   : None
-  49          //
-  50          // Burst mode timing consists of the following segments for non-low-mode:
-  51          // (A) Start Burst mode Preparation:
-  52          //       7 HFO clocks
-  53          // (B) Each SAR conversion consists of:
-  54          //       1 HFO clock for MS Bit SAR preparation:
-  55          //       4*ADTM SAR clocks before conversion
-  56          //       11 SAR clocks for conversion
-  57          //       1 HFO clock at end of SAR for LS bit latching
-  58          //     Sub-Total = number of accumulation x (sum of above)
-  59          // (C) Burst mode tracking time BETWEEN SAR conversion:
-  60          //        66-ADTK HFO clocks
-  61          //     Sub-Total = (number of accumulation - 1) x (sum of above)
-  62          // (D) Synchronization: 3 SYSCLK to transfer status into ADINT bit.
-  63          //
-  64          // ADC Timing is synchronized with pwm signal to calculate average current.
-  65          //
-  66          // We use ADSC = 4 (i.e. SARCLK = 5 HFOCLKS)
-  67          //        ADTM = 0
-  68          //        ADTK = 59
-  69          //        ADRPT = 5 (64x accumulation)
-  70          // Ignoring (D), the total time for 64 accumulation:
-  71          //  7 + ( 1 + ((11 + 4*0) * 5) + 1 ) * 64 + (66 - 59) * (64 - 1) = 4096 HFO clocks
-  72          // As the PWM frequency is 10-bit, and 1 SYSCLK = 1 HFO clock, the ADC averaging
-  73          //  occurs over exactly 4 PWM cycles
-  74          //-----------------------------------------------------------------------------
-  75          void ADC_initialize_adc(void)
-  76          {
-  77   1              // ADC Ref : Internal 1.65V
-  78   1              REF0CN = (0x03<<3);
-  79   1      
-  80   1              // 64 accumulation(16bit effectively) and right justified,shifted right
-  81   1              // by 2bit. The adc result has 14bit resolution.
-  82   1              ADC0AC = 0x95;
-  83   1      
-  84   1              // SAR clock = 24.5/(1+ADSC) = 4.9MHz
-  85   1              // ADSC = 4, ADTM = 0, adc0 gain = 0.5
-  86   1              ADC0CF = 0x20;
-  87   1      
-  88   1              // ADCMBE = 1,  Common mode buffer enable;
-  89   1              ADC0CN1 = 0x01;
-  90   1      
-  91   1              // Burst mode track time = 7 HFO CLK: ADC0TK = 66 - 7 = 59
-  92   1              ADC0TK = 59;
-  93   1      
-  94   1              // ADPWR = 8 SYSCLK
-  95   1              ADC0PWR = 1;
-  96   1      
-  97   1              // Enable ADC, Start of conversion mode = AD0BUSY
-  98   1              // Enable Burst mode (ADCMBE=1)
-  99   1              ADC0CN0 = 0xC0;
- 100   1      
- 101   1          // initiate 1st conversion of adc.
- 102   1          ADC_CLEAR_FLAG();
- 103   1          adc_index = 0;
- 104   1          ADC0MX = adc_mux[adc_index];
- 105   1          ADC0CN0_ADBUSY = 1;
- 106   1          adc_flags = 0;
- 107   1      }
- 108          
- 109          //-----------------------------------------------------------------------------
- 110          // ADC_task
-C51 COMPILER V9.53.0.0   ADC                                                               01/29/2020 12:05:47 PAGE 3   
+  49          // ADC_initialize_adc
+  50          //-----------------------------------------------------------------------------
+  51          //
+  52          // Return Value : None
+  53          // Parameters   : None
+  54          //
+  55          // Burst mode timing consists of the following segments for non-low-mode:
+  56          // (A) Start Burst mode Preparation:
+  57          //       7 HFO clocks
+  58          // (B) Each SAR conversion consists of:
+  59          //       1 HFO clock for MS Bit SAR preparation:
+  60          //       4*ADTM SAR clocks before conversion
+  61          //       11 SAR clocks for conversion
+  62          //       1 HFO clock at end of SAR for LS bit latching
+  63          //     Sub-Total = number of accumulation x (sum of above)
+  64          // (C) Burst mode tracking time BETWEEN SAR conversion:
+  65          //        66-ADTK HFO clocks
+  66          //     Sub-Total = (number of accumulation - 1) x (sum of above)
+  67          // (D) Synchronization: 3 SYSCLK to transfer status into ADINT bit.
+  68          //
+  69          // ADC Timing is synchronized with pwm signal to calculate average current.
+  70          //
+  71          // We use ADSC = 4 (i.e. SARCLK = 5 HFOCLKS)
+  72          //        ADTM = 0
+  73          //        ADTK = 59
+  74          //        ADRPT = 5 (64x accumulation)
+  75          // Ignoring (D), the total time for 64 accumulation:
+  76          //  7 + ( 1 + ((11 + 4*0) * 5) + 1 ) * 64 + (66 - 59) * (64 - 1) = 4096 HFO clocks
+  77          // As the PWM frequency is 10-bit, and 1 SYSCLK = 1 HFO clock, the ADC averaging
+  78          //  occurs over exactly 4 PWM cycles
+  79          //-----------------------------------------------------------------------------
+  80          void ADC_initialize_adc(void)
+  81          {
+  82   1              // ADC Ref : Internal 1.65V
+  83   1              REF0CN = (0x03<<3);
+  84   1      
+  85   1              // 64 accumulation(16bit effectively) and right justified,shifted right
+  86   1              // by 2bit. The adc result has 14bit resolution.
+  87   1              ADC0AC = 0x95;
+  88   1      
+  89   1              // SAR clock = 24.5/(1+ADSC) = 4.9MHz
+  90   1              // ADSC = 4, ADTM = 0, adc0 gain = 0.5
+  91   1              ADC0CF = 0x20;
+  92   1      
+  93   1              // ADCMBE = 1,  Common mode buffer enable;
+  94   1              ADC0CN1 = 0x01;
+  95   1      
+  96   1              // Burst mode track time = 7 HFO CLK: ADC0TK = 66 - 7 = 59
+  97   1              ADC0TK = 59;
+  98   1      
+  99   1              // ADPWR = 8 SYSCLK
+ 100   1              ADC0PWR = 1;
+ 101   1      
+ 102   1              // Enable ADC, Start of conversion mode = AD0BUSY
+ 103   1              // Enable Burst mode (ADCMBE=1)
+ 104   1              ADC0CN0 = 0xC0;
+ 105   1      
+ 106   1          // initiate 1st conversion of adc.
+ 107   1          ADC_CLEAR_FLAG();
+ 108   1          adc_index = 0;
+ 109   1          ADC0MX = adc_mux[adc_index];
+ 110   1          ADC0CN0_ADBUSY = 1;
+ 111   1          adc_flags = 0;
+C51 COMPILER V9.53.0.0   ADC                                                               01/29/2020 13:56:04 PAGE 3   
 
- 111          //-----------------------------------------------------------------------------
- 112          // Return Value : None
- 113          // Parameters   : None
- 114          //
- 115          // Description  :
- 116          //  AD0BUSY initiate conversion.
- 117          //  Once conversion is done, adc_flags updated accordingly. The latest result
- 118          //  can be found at the adc_result[] in the point of application level.
- 119          //  User application should call this function regularly.
- 120          //-----------------------------------------------------------------------------
- 121          void ADC_task(void)
- 122          {
- 123   1          if(ADC0CN0_ADINT)
- 124   1          {
- 125   2              adc_result[adc_index] = ADC0;
- 126   2              ADC_CLEAR_FLAG();
- 127   2      
- 128   2              adc_flags |= (1<<adc_index);
- 129   2              adc_index++;
- 130   2              if( adc_index >= NUM_ADC_POINTS)
- 131   2              {
- 132   3                  adc_index = 0;
- 133   3              }
- 134   2              ADC0MX = adc_mux[adc_index];
- 135   2              // start conversion
- 136   2              ADC_START();
- 137   2          }
- 138   1      }
+ 112   1      }
+ 113          
+ 114          //-----------------------------------------------------------------------------
+ 115          // ADC_task
+ 116          //-----------------------------------------------------------------------------
+ 117          // Return Value : None
+ 118          // Parameters   : None
+ 119          //
+ 120          // Description  :
+ 121          //  AD0BUSY initiate conversion.
+ 122          //  Once conversion is done, adc_flags updated accordingly. The latest result
+ 123          //  can be found at the adc_result[] in the point of application level.
+ 124          //  User application should call this function regularly.
+ 125          //-----------------------------------------------------------------------------
+ 126          void ADC_task(void)
+ 127          {
+ 128   1          if(ADC0CN0_ADINT)
+ 129   1          {
+ 130   2              adc_result[adc_index] = ADC0;
+ 131   2              ADC_CLEAR_FLAG();
+ 132   2      
+ 133   2              adc_flags |= (1<<adc_index);
+ 134   2              adc_index++;
+ 135   2              if( adc_index >= NUM_ADC_POINTS)
+ 136   2              {
+ 137   3                  adc_index = 0;
+ 138   3              }
+ 139   2              ADC0MX = adc_mux[adc_index];
+ 140   2              // start conversion
+ 141   2              ADC_START();
+ 142   2          }
+ 143   1      }
 
 
 MODULE INFORMATION:   STATIC OVERLAYABLE

@@ -8,12 +8,9 @@
 #ifndef INC_BLDCDK_H_
 #define INC_BLDCDK_H_
 
-// TODO: add other header files associated with project
 
 #include <SI_EFM8BB1_Register_Enums.h>
 #include <compiler_defs.h>
-//#include "InitDevice.h"
-#include "retargetserial.h"
 
 // Protothreads-related header files
 #include "pt.h"
@@ -24,7 +21,6 @@
 
 #include "bsp.h"
 #include "btn.h"
-#include "pca_0.h"
 #include "pca.h"
 #include "motor.h"
 #include "adc.h"

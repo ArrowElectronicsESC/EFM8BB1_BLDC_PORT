@@ -1,14 +1,20 @@
-/*
- * BLDC_RD_Sytems.h
- *
- *  Created on: Jan 9, 2020
- *      Author: a92862
- */
+//------------------------------------------------------------------------------
+// BLDC_RD_System.h
+//------------------------------------------------------------------------------
+// Copyright (C) 2013, Silicon Laboratories, Inc.
+// http://www.silabs.com
+//
+// Description:
+//
+// This file defines system parameters for BLDC reference design.
+//
+// Release 0.0 - May 10, 2013 mufayyuz
+//    -Initial Revision.
+// Adapted Jan 6, 2020 a92862
 
 #ifndef INC_BLDC_RD_SYSTEM_H_
 #define INC_BLDC_RD_SYSTEM_H_
 
-// TODO: Fix old lines labeled 'HERE'
 #include <SI_EFM8BB1_Register_Enums.h>
 //------------------------------------------------------------------------------
 // System clock frequency in Hz
@@ -86,14 +92,7 @@
 #undef FEATURE_RPM_STALL_DETECTION
 #endif
 
-//-----------------------------------------------------------------------------
-// Button define
-//-----------------------------------------------------------------------------
-// BTN1 is used to start the motor running in the reference design kit.
-//SI_SBIT(BTN1, SFR_P1, 1);	// Define BTN1
-//
-//SI_SBIT(BTN0, SFR_P2, 1);	// Define BTN0
-
+// FG not implemented in this design
 #define FG_PORT         P2
 #define FG_PIN          0
 
@@ -496,18 +495,18 @@
 #define HIGH_DUTY_POLARITY          ((1^MOTDRV_PWM_ACT) << MOTPWM_CHANNEL)
 
 
+// Define BTN0
 #ifdef FEATURE_BTN0
-SI_SBIT(BTN0, SFR_P2, 1);	// Define BTN0
-//#define CONFIG_BTN0()		do { SFR_P2 &= ~(1 << (1)); } while (0);
+SI_SBIT(BTN0, SFR_P2, 1);
 #define IS_BTN0_PRESSED()	(BTN0 == 0)
 #else
 #define CONFIG_BTN0()
 #define IS_BTN0_PRESSED()   (0)
 #endif
 
+// Define BTN1
 #ifdef FEATURE_BTN1
 SI_SBIT(BTN1, SFR_P1, 1);	// Define BTN1
-//#define CONFIG_BTN1()		do { SFR_P1 &= ~(1 << (1)); } while (0);
 #define IS_BTN1_PRESSED()   (BTN1 == 1)
 #else
 #define CONFIG_BTN1()
@@ -516,8 +515,7 @@ SI_SBIT(BTN1, SFR_P1, 1);	// Define BTN1
 
 
 #ifdef FEATURE_FG
-// HERE
-//SBIT(FG, FG_PORT, FG_PIN);
+SBIT(FG, FG_PORT, FG_PIN);
 #define FG_MDOUT    PxMDOUT(FG_PORT)
 #define CONFIG_FG() do { FG_MDOUT |= 1 << (FG_PIN); } while (0)
 #define SET_FG()    do { FG = 1; } while (0)
@@ -531,8 +529,7 @@ SI_SBIT(BTN1, SFR_P1, 1);	// Define BTN1
 #endif
 
 #ifdef FEATURE_PWMIN
-// HERE
-//SBIT(PWMIN, PWMIN_PORT, PWMIN_BIT);
+SBIT(PWMIN, PWMIN_PORT, PWMIN_BIT);
 #define PWMIN_MDOUT    PxMDOUT(BTN0_PORT)
 #define PWMIN_MASK     PxMASK(PWMIN_PORT)
 #define PWMIN_MAT      PxMAT(PWMIN_PORT)
@@ -547,8 +544,7 @@ SI_SBIT(BTN1, SFR_P1, 1);	// Define BTN1
 
 
 #ifdef FEATURE_LED0
-// HERE
-//SBIT(LED0, LED0_PORT, LED0_BIT);
+SBIT(LED0, LED0_PORT, LED0_BIT);
 #define LED0_MDOUT  PxMDOUT(LED0_PORT)
 
 #define LED0_ON()   do { LED0 = 0; } while (0)

@@ -1,4 +1,4 @@
-C51 COMPILER V9.53.0.0   COMP                                                              01/29/2020 12:05:47 PAGE 1   
+C51 COMPILER V9.53.0.0   COMP                                                              01/29/2020 13:56:05 PAGE 1   
 
 
 C51 COMPILER V9.53.0.0, COMPILATION OF MODULE COMP
@@ -7,12 +7,11 @@ COMPILER INVOKED BY: c:\SiliconLabs\SimplicityStudio\v4\developer\toolchains\kei
                     -SimplicityStudio\v4_workspace\EFM8BB1_BLDC_PORT\src\comp.c OMF2 SMALL DEBUG OBJECTEXTEND ROM(LARGE) WARNINGLEVEL(2) FLOA
                     -TFUZZY(3) OPTIMIZE(8,SPEED) INTVECTOR(0X0000) INTPROMOTE INCDIR(C:\Users\A92862\SimplicityStudio\v4_workspace\EFM8BB1_BL
                     -DC_PORT\inc;C:\Users\A92862\SimplicityStudio\v4_workspace\EFM8BB1_BLDC_PORT\inc\config;C:/SiliconLabs/SimplicityStudio/v
-                    -4/developer/sdks/8051/v4.1.7//kits/common/drivers/efm8_retargetserial;C:/SiliconLabs/SimplicityStudio/v4/developer/sdks/
-                    -8051/v4.1.7//Lib/efm8_assert;C:/SiliconLabs/SimplicityStudio/v4/developer/sdks/8051/v4.1.7//kits/common/bsp;C:/SiliconLa
-                    -bs/SimplicityStudio/v4/developer/sdks/8051/v4.1.7//kits/EFM8BB1_LCK/config;C:/SiliconLabs/SimplicityStudio/v4/developer/
-                    -sdks/8051/v4.1.7//Device/shared/si8051Base;C:/SiliconLabs/SimplicityStudio/v4/developer/sdks/8051/v4.1.7//Device/EFM8BB1
-                    -/inc;C:/SiliconLabs/SimplicityStudio/v4/developer/sdks/8051/v4.1.7//Device/EFM8BB1/peripheral_driver/inc) PRINT(.\src\co
-                    -mp.lst) COND PAGEWIDTH(120) PAGELENGTH(65) OBJECT(.\src\comp.OBJ)
+                    -4/developer/sdks/8051/v4.1.7//Lib/efm8_assert;C:/SiliconLabs/SimplicityStudio/v4/developer/sdks/8051/v4.1.7//kits/common
+                    -/bsp;C:/SiliconLabs/SimplicityStudio/v4/developer/sdks/8051/v4.1.7//kits/EFM8BB1_LCK/config;C:/SiliconLabs/SimplicityStu
+                    -dio/v4/developer/sdks/8051/v4.1.7//Device/shared/si8051Base;C:/SiliconLabs/SimplicityStudio/v4/developer/sdks/8051/v4.1.
+                    -7//Device/EFM8BB1/inc;C:/SiliconLabs/SimplicityStudio/v4/developer/sdks/8051/v4.1.7//Device/EFM8BB1/peripheral_driver/in
+                    -c) PRINT(.\src\comp.lst) COND PAGEWIDTH(120) PAGELENGTH(65) OBJECT(.\src\comp.OBJ)
 
 line level    source
 
@@ -24,51 +23,54 @@ line level    source
    6          //
    7          // Created on: Mat 20, 2013
    8          //     Author: sgghang
-   9          //-----------------------------------------------------------------------------
-  10          
-  11          //-----------------------------------------------------------------------------
-  12          // Includes
-  13          //-----------------------------------------------------------------------------
-  14          #include "bldcdk.h"
-  15          
+   9          //
+  10          // Adapted on: Jan 16, 2020
+  11          // Author: a92862
+  12          //-----------------------------------------------------------------------------
+  13          
+  14          //-----------------------------------------------------------------------------
+  15          // Includes
   16          //-----------------------------------------------------------------------------
-  17          // Global Constants
-  18          //-----------------------------------------------------------------------------
-  19          
-  20          
+  17          #include "bldcdk.h"
+  18          
+  19          //-----------------------------------------------------------------------------
+  20          // Global Constants
   21          //-----------------------------------------------------------------------------
-  22          // Function Prototypes
-  23          //-----------------------------------------------------------------------------
-  24          
-  25          
+  22          
+  23          
+  24          //-----------------------------------------------------------------------------
+  25          // Function Prototypes
   26          //-----------------------------------------------------------------------------
-  27          // Global Variables
-  28          //-----------------------------------------------------------------------------
-  29          
-  30          //-----------------------------------------------------------------------------
-  31          // COMP_initialize_comp
-  32          //-----------------------------------------------------------------------------
-  33          //
-  34          // Return Value : None
-  35          // Parameters   : None
+  27          
+  28          
+  29          //-----------------------------------------------------------------------------
+  30          // Global Variables
+  31          //-----------------------------------------------------------------------------
+  32          
+  33          //-----------------------------------------------------------------------------
+  34          // COMP_initialize_comp
+  35          //-----------------------------------------------------------------------------
   36          //
-  37          // Description  :
-  38          //-----------------------------------------------------------------------------
-  39          #if (BLDC_RD_PWM_METHOD == H_BRIDGE_HIGH_SIDE_PWM) || \
-  40              (BLDC_RD_PWM_METHOD == H_BRIDGE_LOW_SIDE_PWM) || \
-  41              (BLDC_RD_PWM_METHOD == H_BRIDGE_MIXED_MODE_PWM)
-  42          void COMP_initialize_comp(void)
-  43          {
-  44   1              CMP0MX = compMux[0];
-  45   1      
-  46   1          // enable comparator 0
-  47   1          // Hysteresis 0mV
-C51 COMPILER V9.53.0.0   COMP                                                              01/29/2020 12:05:47 PAGE 2   
+  37          // Return Value : None
+  38          // Parameters   : None
+  39          //
+  40          // Description  :
+  41          //-----------------------------------------------------------------------------
+  42          #if (BLDC_RD_PWM_METHOD == H_BRIDGE_HIGH_SIDE_PWM) || \
+  43              (BLDC_RD_PWM_METHOD == H_BRIDGE_LOW_SIDE_PWM) || \
+  44              (BLDC_RD_PWM_METHOD == H_BRIDGE_MIXED_MODE_PWM)
+  45          void COMP_initialize_comp(void)
+  46          {
+  47   1              CMP0MX = compMux[0];
+  48   1      
+C51 COMPILER V9.53.0.0   COMP                                                              01/29/2020 13:56:05 PAGE 2   
 
-  48   1              CMP0CN0 = 0x80;
-  49   1      }
-  50          #endif
-  51          
+  49   1          // enable comparator 0
+  50   1          // Hysteresis 0mV
+  51   1              CMP0CN0 = 0x80;
+  52   1      }
+  53          #endif
+  54          
 
 
 MODULE INFORMATION:   STATIC OVERLAYABLE

@@ -1,8 +1,6 @@
 "./lib/efm8_assert/assert.OBJ",
 "./lib/efm8bb1/peripheralDrivers/src/pca_0.OBJ",
 "./src/EFM8BB1_BLDC_PORT.OBJ",
-"./src/InitDevice.OBJ",
-"./src/Interrupts.OBJ",
 "./src/MCP_Core.OBJ",
 "./src/MCP_Registers.OBJ",
 "./src/SILABS_STARTUP.OBJ",

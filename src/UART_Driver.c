@@ -1,9 +1,18 @@
-/*
- * UART_Driver.c
- *
- *  Created on: Jan 20, 2020
- *      Author: a92862
- */
+//------------------------------------------------------------------------------
+// UART_Driver.c
+//------------------------------------------------------------------------------
+// Copyright (C) 2013, Silicon Laboratories, Inc.
+// http://www.silabs.com
+//
+// Description:
+//
+// This file implements UART driver for C8051F85x_6x devices.
+// The APIs implemented here will allow users to initialize and configure UART
+// of C8051F85x_6x devices and to receive and send data over this UART.
+//
+// Release 0.0 - April 10, 2013 mufayyuz
+//    -Initial Revision.
+// Adapted Jan 16, 2020 a92862
 
 
 //------------------------------------------------------------------------------

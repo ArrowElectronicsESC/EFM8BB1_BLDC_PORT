@@ -1,10 +1,14 @@
-/*
- * pca.c
- *
- *  CrIE_EAted on: Jan 16, 2020
- *      Author: a92862
- */
-
+//-----------------------------------------------------------------------------
+// pca.c
+//-----------------------------------------------------------------------------
+// Copyright 2013, Silicon Laboratories, Inc.
+// http://www.silabs.com
+//
+// Created on: Apr 18, 2013
+//     Author: sgghang
+// Adapted on: Jan 16, 2020
+// Author: a92862
+//-----------------------------------------------------------------------------
 //-----------------------------------------------------------------------------
 // Includes
 //-----------------------------------------------------------------------------
@@ -157,12 +161,12 @@ void PCA_disable_pwm(void)
 //
 // Description:
 //   user(application) is handling 16 bit duty cycle(max 0xFFFF) but
-//   rIE_EAl max duty cycle is (2^PWM_RESOLUTION - 1).
+//   real max duty cycle is (2^PWM_RESOLUTION - 1).
 //   scaling down is required.
 //   Actual new pwm will be updated at pca cycling overflow interrupt.
 //
 //   high/low duty cycle have different scheme of pwm filtering.
-//   PlIE_EAse refer to application note.
+//   Please refer to application note.
 //-----------------------------------------------------------------------------
 #if (BLDC_RD_PWM_METHOD == H_BRIDGE_HIGH_SIDE_PWM) || \
     (BLDC_RD_PWM_METHOD == H_BRIDGE_LOW_SIDE_PWM) || \
@@ -245,11 +249,11 @@ SI_INTERRUPT (PCA0_ISR, PCA0_IRQn)
 		PCA0POL = new_polarity;
 		PCA0CN0_CCF0 = 0;
 		MOTPWM_CCF = 0;
-		// This clIE_EArs the ECOM bit-causing PWM output to go to inactive state
+		// This clears the ECOM bit-causing PWM output to go to inactive state
 		PCA0CPL0 = new_cpblank_duty.U8[LSB];
 		// This sets the ECOM bit
 		PCA0CPH0 = new_cpblank_duty.U8[MSB];
-		// This clIE_EArs the ECOM bit-causing PWM output to go to inactive state
+		// This clears the ECOM bit-causing PWM output to go to inactive state
 		MOTPWM_PCA0CPL = new_duty.U8[LSB];
 		MOTPWM_PCA0CPH = new_duty.U8[MSB];
 		PCA0PWM = (PWM_RESOLUTION - 8);
@@ -258,7 +262,7 @@ SI_INTERRUPT (PCA0_ISR, PCA0_IRQn)
 		{
 			xpca_count.U8[LSB] = PCA0L;
 			xpca_count.U8[MSB] = PCA0H;
-			// Additional hIE_EAdroom due to delays in execution
+			// Additional headroom due to delays in execution
 			// in case we miss the match event (toggling CEXn), we ensure that
 			// postponed(+32) event occur. Otherwise, it could make 1(one) 100%
 			// or 0% pwm cycle once in a while. This is happening at very low
@@ -273,7 +277,7 @@ SI_INTERRUPT (PCA0_ISR, PCA0_IRQn)
 		{
 			xpca_count.U8[LSB] = PCA0L;
 			xpca_count.U8[MSB] = PCA0H;
-			// Additional hIE_EAdroom due to delays in execution
+			// Additional hearoom due to delays in execution
 			// in case we miss the match event (toggling CEXn), we ensure that
 			// postponed(+32) event occur. Otherwise, it could make 1(one) 100%
 			// or 0% pwm cycle once in a while. This is happening at very low

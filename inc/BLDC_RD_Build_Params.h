@@ -1,9 +1,17 @@
-/*
- * BLDC_RD_Build_Params.h
- *
- *  Created on: Jan 9, 2020
- *      Author: a92862
- */
+//------------------------------------------------------------------------------
+// BLDC_RD_Build_Params.h
+//------------------------------------------------------------------------------
+// Copyright (C) 2013, Silicon Laboratories, Inc.
+// http://www.silabs.com
+//
+// Description:
+//
+// This file defines some parameters that are changed at build time configure
+// the system for a particular operation.
+//
+// Release 0.0 - May 10, 2013 mufayyuz
+//    -Initial Revision.
+// Adapted Jan 6, 2020 a92862
 
 #ifndef INC_BLDC_RD_BUILD_PARAMS_H_
 #define INC_BLDC_RD_BUILD_PARAMS_H_

@@ -1,4 +1,4 @@
-C51 COMPILER V9.53.0.0   MTRAPP                                                            01/29/2020 12:05:48 PAGE 1   
+C51 COMPILER V9.53.0.0   MTRAPP                                                            01/29/2020 13:56:06 PAGE 1   
 
 
 C51 COMPILER V9.53.0.0, COMPILATION OF MODULE MTRAPP
@@ -7,336 +7,344 @@ COMPILER INVOKED BY: c:\SiliconLabs\SimplicityStudio\v4\developer\toolchains\kei
                     -SimplicityStudio\v4_workspace\EFM8BB1_BLDC_PORT\src\mtrapp.c OMF2 SMALL DEBUG OBJECTEXTEND ROM(LARGE) WARNINGLEVEL(2) FL
                     -OATFUZZY(3) OPTIMIZE(8,SPEED) INTVECTOR(0X0000) INTPROMOTE INCDIR(C:\Users\A92862\SimplicityStudio\v4_workspace\EFM8BB1_
                     -BLDC_PORT\inc;C:\Users\A92862\SimplicityStudio\v4_workspace\EFM8BB1_BLDC_PORT\inc\config;C:/SiliconLabs/SimplicityStudio
-                    -/v4/developer/sdks/8051/v4.1.7//kits/common/drivers/efm8_retargetserial;C:/SiliconLabs/SimplicityStudio/v4/developer/sdk
-                    -s/8051/v4.1.7//Lib/efm8_assert;C:/SiliconLabs/SimplicityStudio/v4/developer/sdks/8051/v4.1.7//kits/common/bsp;C:/Silicon
-                    -Labs/SimplicityStudio/v4/developer/sdks/8051/v4.1.7//kits/EFM8BB1_LCK/config;C:/SiliconLabs/SimplicityStudio/v4/develope
-                    -r/sdks/8051/v4.1.7//Device/shared/si8051Base;C:/SiliconLabs/SimplicityStudio/v4/developer/sdks/8051/v4.1.7//Device/EFM8B
-                    -B1/inc;C:/SiliconLabs/SimplicityStudio/v4/developer/sdks/8051/v4.1.7//Device/EFM8BB1/peripheral_driver/inc) PRINT(.\src\
-                    -mtrapp.lst) COND PAGEWIDTH(120) PAGELENGTH(65) OBJECT(.\src\mtrapp.OBJ)
+                    -/v4/developer/sdks/8051/v4.1.7//Lib/efm8_assert;C:/SiliconLabs/SimplicityStudio/v4/developer/sdks/8051/v4.1.7//kits/comm
+                    -on/bsp;C:/SiliconLabs/SimplicityStudio/v4/developer/sdks/8051/v4.1.7//kits/EFM8BB1_LCK/config;C:/SiliconLabs/SimplicityS
+                    -tudio/v4/developer/sdks/8051/v4.1.7//Device/shared/si8051Base;C:/SiliconLabs/SimplicityStudio/v4/developer/sdks/8051/v4.
+                    -1.7//Device/EFM8BB1/inc;C:/SiliconLabs/SimplicityStudio/v4/developer/sdks/8051/v4.1.7//Device/EFM8BB1/peripheral_driver/
+                    -inc) PRINT(.\src\mtrapp.lst) COND PAGEWIDTH(120) PAGELENGTH(65) OBJECT(.\src\mtrapp.OBJ)
 
 line level    source
 
-   1          /*
-   2           * mtrapp.c
-   3           *
-   4           *  Created on: Jan 20, 2020
-   5           *      Author: a92862
-   6           */
-   7          
-   8          #include "bldcdk.h"
-   9          
-  10          //-----------------------------------------------------------------------------
-  11          // Global Constants
-  12          //-----------------------------------------------------------------------------
-  13          
-  14          #define MTRAPP_ATOMIC_ACCESS_START()     \
-  15          do                                       \
-  16          {                                        \
-  17              saved_ea = EA;                       \
-  18              EA = 0;                              \
-  19          } while (0)
-  20          
-  21          #define MTRAPP_ATOMIC_ACCESS_END()       \
-  22          do                                       \
-  23          {                                        \
-  24              EA = saved_ea;                       \
-  25          } while (0)
-  26          
-  27          
-  28          //-----------------------------------------------------------------------------
-  29          // Global Variables
-  30          //-----------------------------------------------------------------------------
-  31          // Additional motor current to accumulate to perform further averaging
-  32          #if BLDC_RD_RPM_OR_PWM == RPM_PARAMETER
-  33          static SEG_DATA U16     prev_target_rpm;
-  34          #endif
-  35          static SEG_XDATA U16     read_speed_interval;
+   1          //-----------------------------------------------------------------------------
+   2          // mtrapp.c
+   3          //-----------------------------------------------------------------------------
+   4          // Copyright 2013, Silicon Laboratories, Inc.
+   5          // http://www.silabs.com
+   6          //
+   7          // Created on: July 5, 2013
+   8          //     Author: khsoh
+   9          // Adapted on: Jan 16, 2020
+  10          // Author: a92862
+  11          //
+  12          // Motor control application task
+  13          // - to demonstrate a potential use of how to implement a motor control
+  14          //   application
+  15          //-----------------------------------------------------------------------------
+  16          
+  17          #include "bldcdk.h"
+  18          
+  19          //-----------------------------------------------------------------------------
+  20          // Global Constants
+  21          //-----------------------------------------------------------------------------
+  22          
+  23          #define MTRAPP_ATOMIC_ACCESS_START()     \
+  24          do                                       \
+  25          {                                        \
+  26              saved_ea = EA;                       \
+  27              EA = 0;                              \
+  28          } while (0)
+  29          
+  30          #define MTRAPP_ATOMIC_ACCESS_END()       \
+  31          do                                       \
+  32          {                                        \
+  33              EA = saved_ea;                       \
+  34          } while (0)
+  35          
   36          
-  37          #if BLDC_RD_RPM_PWM_SRC == PWM_SPEED_SOURCE
+  37          //-----------------------------------------------------------------------------
+  38          // Global Variables
+  39          //-----------------------------------------------------------------------------
+  40          // Additional motor current to accumulate to perform further averaging
+  41          #if BLDC_RD_RPM_OR_PWM == RPM_PARAMETER
+  42          static SEG_DATA U16     prev_target_rpm;
+  43          #endif
+  44          static SEG_XDATA U16     read_speed_interval;
+  45          
+  46          #if BLDC_RD_RPM_PWM_SRC == PWM_SPEED_SOURCE
               SEG_XDATA UU32          prev_edge;
               SEG_XDATA UU32          new_edge;
+C51 COMPILER V9.53.0.0   MTRAPP                                                            01/29/2020 13:56:06 PAGE 2   
+
               bit                     last_edge_event;
               #endif
-  42          static bit speed_ctrl_by_pc;
-  43          static bit start_by_pc;
-  44          static SEG_XDATA U16    pot_reading;
-  45          
-  46          //-----------------------------------------------------------------------------
-  47          // MTRAPP_init
-C51 COMPILER V9.53.0.0   MTRAPP                                                            01/29/2020 12:05:48 PAGE 2   
-
-  48          //-----------------------------------------------------------------------------
-  49          //
-  50          // Return Value : None
-  51          // Parameters   : None
-  52          //
-  53          // initialization for application level.
-  54          //-----------------------------------------------------------------------------
-  55          void MTRAPP_init()
-  56          {
-  57   1          read_speed_interval = DEFAULT_SPEED_ADC_INTERVAL;
-  58   1          SLW_oc_debounce = MCP_get_8bit_register(MCP_REG_OVER_CURRENT_PERSISTANCE);
-  59   1          SLW_current_limit = MCP_get_8bit_register(MCP_REG_OVER_CURRENT_THRESHOLD);
-  60   1          SLW_motor_max_rpm = MCP_get_16bit_register(MCP_REG_MAXIMUM_OPERATIONAL_SPEED);
-  61   1          speed_ctrl_by_pc = 0;
-  62   1          start_by_pc = 0;
-  63   1      #if BLDC_RD_RPM_OR_PWM == RPM_PARAMETER
-  64   1          SLW_target_rpm = 0;
-  65   1      #endif
-  66   1          SLW_target_pwm_duty = 0;
-  67   1          pot_reading = 0;
-  68   1      #if BLDC_RD_RPM_PWM_SRC == PWM_SPEED_SOURCE
+  51          static bit speed_ctrl_by_pc;
+  52          static bit start_by_pc;
+  53          static SEG_XDATA U16    pot_reading;
+  54          
+  55          //-----------------------------------------------------------------------------
+  56          // MTRAPP_init
+  57          //-----------------------------------------------------------------------------
+  58          //
+  59          // Return Value : None
+  60          // Parameters   : None
+  61          //
+  62          // initialization for application level.
+  63          //-----------------------------------------------------------------------------
+  64          void MTRAPP_init()
+  65          {
+  66   1          read_speed_interval = DEFAULT_SPEED_ADC_INTERVAL;
+  67   1          SLW_oc_debounce = MCP_get_8bit_register(MCP_REG_OVER_CURRENT_PERSISTANCE);
+  68   1          SLW_current_limit = MCP_get_8bit_register(MCP_REG_OVER_CURRENT_THRESHOLD);
+  69   1          SLW_motor_max_rpm = MCP_get_16bit_register(MCP_REG_MAXIMUM_OPERATIONAL_SPEED);
+  70   1          speed_ctrl_by_pc = 0;
+  71   1          start_by_pc = 0;
+  72   1      #if BLDC_RD_RPM_OR_PWM == RPM_PARAMETER
+  73   1          SLW_target_rpm = 0;
+  74   1      #endif
+  75   1          SLW_target_pwm_duty = 0;
+  76   1          pot_reading = 0;
+  77   1      #if BLDC_RD_RPM_PWM_SRC == PWM_SPEED_SOURCE
                   // enable port match interrupt
                   EIE1 |= (0x01<<1);
               #endif
-  72   1      }
-  73          
-  74          //-----------------------------------------------------------------------------
-  75          // MTRAPP_task
-  76          //-----------------------------------------------------------------------------
-  77          //
-  78          // Return Value : None
-  79          // Parameters   : None
-  80          //
-  81          // Application level task.
-  82          // NOTE : application should call SL_MTR_motor() regularly to keep motor
-  83          // running.
-  84          //-----------------------------------------------------------------------------
-  85          void MTRAPP_task()
-  86          {
-  87   1      #if BLDC_RD_RPM_OR_PWM == RPM_PARAMETER
-  88   1          U16 SEG_XDATA Pg, Ig;
-  89   1      #endif
-  90   1          static U8 last_report;
-  91   1          U8 tmp;
-  92   1          bit run_dir;
-  93   1      
-  94   1          // keep motor running and manage state of motor
-  95   1          // NOTE : application should call this regularly.
-  96   1          SL_MTR_motor();
-  97   1      
-  98   1          tmp = is_btn1_pressed();
-  99   1          if( MOTOR_STOPPED == SLR_motor_state )
- 100   1          {
- 101   2              if (tmp || start_by_pc)
- 102   2              {
- 103   3                  if( !SLR_motor_stalled)
- 104   3                  {
- 105   4                      if(ADC0CN0 & 0x90)
- 106   4                      {
- 107   5                          // SL_MTR_start_motor need CPT0MX_IMEASURE pin which is
- 108   5                          // same as IMEAS_ADCMX.
- 109   5                          // wait if adc in progress by ADC_task().
- 110   5                              while(!ADC0CN0_ADINT);
-C51 COMPILER V9.53.0.0   MTRAPP                                                            01/29/2020 12:05:48 PAGE 3   
+  81   1      }
+  82          
+  83          //-----------------------------------------------------------------------------
+  84          // MTRAPP_task
+  85          //-----------------------------------------------------------------------------
+  86          //
+  87          // Return Value : None
+  88          // Parameters   : None
+  89          //
+  90          // Application level task.
+  91          // NOTE : application should call SL_MTR_motor() regularly to keep motor
+  92          // running.
+  93          //-----------------------------------------------------------------------------
+  94          void MTRAPP_task()
+  95          {
+  96   1      #if BLDC_RD_RPM_OR_PWM == RPM_PARAMETER
+  97   1          U16 SEG_XDATA Pg, Ig;
+  98   1      #endif
+  99   1          static U8 last_report;
+ 100   1          U8 tmp;
+ 101   1          bit run_dir;
+ 102   1      
+ 103   1          // keep motor running and manage state of motor
+ 104   1          // NOTE : application should call this regularly.
+ 105   1          SL_MTR_motor();
+ 106   1      
+ 107   1          tmp = is_btn1_pressed();
+ 108   1          if( MOTOR_STOPPED == SLR_motor_state )
+ 109   1          {
+ 110   2              if (tmp || start_by_pc)
+ 111   2              {
+C51 COMPILER V9.53.0.0   MTRAPP                                                            01/29/2020 13:56:06 PAGE 3   
 
- 111   5                          // disconnect all pins
- 112   5                          ADC0MX = 0x1F;
- 113   5                      }
- 114   4      
- 115   4                      if (tmp)
- 116   4                      {
- 117   5                          // Button 1 pressed - we reset speed_ctrl_by_pc
- 118   5                          speed_ctrl_by_pc = 0;
- 119   5                      }
- 120   4      
- 121   4                      SL_MTR_start_motor();
- 122   4                      // Configure LED0 here - in case we share LED with buttons
- 123   4                      // In ref design, BTN0 and LED0 are shared.
- 124   4                      // If FEATURE_LED0 is not defined, this macro does not
- 125   4                      // generate any code.
- 126   4                      CONFIG_LED0();
- 127   4                      // update direction register.
- 128   4                      MCP_set_8bit_register(MCP_REG_PRESENT_MOTOR_DIRECTION, \
- 129   4                              SLW_user_direction, 0);
- 130   4                  }
- 131   3                  start_by_pc = 0;
- 132   3              }
- 133   2      
- 134   2              // --------------------------------------------------------------------
- 135   2              // read motor direction changes
- 136   2              MTRAPP_read_direction();
- 137   2      
- 138   2              // --------------------------------------------------------------------
- 139   2              // followings can be move to mtrapp_init(), if application need only
- 140   2              // default(or fixed) value.
- 141   2              SLW_oc_debounce = MCP_get_8bit_register(MCP_REG_OVER_CURRENT_PERSISTANCE);
- 142   2              SLW_current_limit = MCP_get_8bit_register(MCP_REG_OVER_CURRENT_THRESHOLD);
- 143   2              SLW_motor_max_rpm = MCP_get_16bit_register(MCP_REG_MAXIMUM_OPERATIONAL_SPEED);
- 144   2              SL_MTR_change_num_poles( MCP_get_8bit_register \
- 145   2                      (MCP_REG_MOTOR_POLE_PAIRS_COUNT) * 2 );
- 146   2      #if BLDC_RD_RPM_OR_PWM == PWM_PARAMETER
+ 112   3                  if( !SLR_motor_stalled)
+ 113   3                  {
+ 114   4                      if(ADC0CN0 & 0x90)
+ 115   4                      {
+ 116   5                          // SL_MTR_start_motor need CPT0MX_IMEASURE pin which is
+ 117   5                          // same as IMEAS_ADCMX.
+ 118   5                          // wait if adc in progress by ADC_task().
+ 119   5                              while(!ADC0CN0_ADINT);
+ 120   5                          // disconnect all pins
+ 121   5                          ADC0MX = 0x1F;
+ 122   5                      }
+ 123   4      
+ 124   4                      if (tmp)
+ 125   4                      {
+ 126   5                          // Button 1 pressed - we reset speed_ctrl_by_pc
+ 127   5                          speed_ctrl_by_pc = 0;
+ 128   5                      }
+ 129   4      
+ 130   4                      SL_MTR_start_motor();
+ 131   4                      // Configure LED0 here - in case we share LED with buttons
+ 132   4                      // In ref design, BTN0 and LED0 are shared.
+ 133   4                      // If FEATURE_LED0 is not defined, this macro does not
+ 134   4                      // generate any code.
+ 135   4                      CONFIG_LED0();
+ 136   4                      // update direction register.
+ 137   4                      MCP_set_8bit_register(MCP_REG_PRESENT_MOTOR_DIRECTION, \
+ 138   4                              SLW_user_direction, 0);
+ 139   4                  }
+ 140   3                  start_by_pc = 0;
+ 141   3              }
+ 142   2      
+ 143   2              // --------------------------------------------------------------------
+ 144   2              // read motor direction changes
+ 145   2              MTRAPP_read_direction();
+ 146   2      
+ 147   2              // --------------------------------------------------------------------
+ 148   2              // followings can be move to mtrapp_init(), if application need only
+ 149   2              // default(or fixed) value.
+ 150   2              SLW_oc_debounce = MCP_get_8bit_register(MCP_REG_OVER_CURRENT_PERSISTANCE);
+ 151   2              SLW_current_limit = MCP_get_8bit_register(MCP_REG_OVER_CURRENT_THRESHOLD);
+ 152   2              SLW_motor_max_rpm = MCP_get_16bit_register(MCP_REG_MAXIMUM_OPERATIONAL_SPEED);
+ 153   2              SL_MTR_change_num_poles( MCP_get_8bit_register \
+ 154   2                      (MCP_REG_MOTOR_POLE_PAIRS_COUNT) * 2 );
+ 155   2      #if BLDC_RD_RPM_OR_PWM == PWM_PARAMETER
                       SLW_acceleration_step_size = \
                               MCP_get_16bit_register(MCP_REG_ACCELERATION_STEP_SIZE);
                       SLW_deceleration_step_size = \
                               MCP_get_16bit_register(MCP_REG_DECELERATION_STEP_SIZE);
               #endif
- 152   2      
- 153   2      #if BLDC_RD_RPM_OR_PWM == RPM_PARAMETER
- 154   2              Pg = MCP_get_16bit_register(MCP_REG_PROPORTIONAL_GAIN);
- 155   2              Ig = MCP_get_16bit_register(MCP_REG_INTEGRAL_GAIN);
- 156   2              SL_MTR_change_pid_gain(Pg, Ig);
- 157   2      #endif
- 158   2          }
- 159   1          else if( MOTOR_RUNNING == SLR_motor_state )
- 160   1          {
- 161   2      #if BLDC_RD_RPM_OR_PWM == RPM_PARAMETER
- 162   2              if (tmp || !SLW_target_rpm )
- 163   2      #elif BLDC_RD_RPM_OR_PWM == PWM_PARAMETER
+ 161   2      
+ 162   2      #if BLDC_RD_RPM_OR_PWM == RPM_PARAMETER
+ 163   2              Pg = MCP_get_16bit_register(MCP_REG_PROPORTIONAL_GAIN);
+ 164   2              Ig = MCP_get_16bit_register(MCP_REG_INTEGRAL_GAIN);
+ 165   2              SL_MTR_change_pid_gain(Pg, Ig);
+ 166   2      #endif
+ 167   2          }
+ 168   1          else if( MOTOR_RUNNING == SLR_motor_state )
+ 169   1          {
+ 170   2      #if BLDC_RD_RPM_OR_PWM == RPM_PARAMETER
+ 171   2              if (tmp || !SLW_target_rpm )
+ 172   2      #elif BLDC_RD_RPM_OR_PWM == PWM_PARAMETER
                       if (tmp || !SLW_target_pwm_duty )
               #endif
- 166   2      
- 167   2              {
- 168   3                  SL_MTR_stop_motor();
- 169   3      #if defined(FEATURE_HYPERDRIVE)
+C51 COMPILER V9.53.0.0   MTRAPP                                                            01/29/2020 13:56:06 PAGE 4   
+
+ 175   2      
+ 176   2              {
+ 177   3                  SL_MTR_stop_motor();
+ 178   3      #if defined(FEATURE_HYPERDRIVE)
                           // The following does nothing if FEATURE_LED0 is not enabled
                           LED0_OFF();
               #endif
- 173   3                  // Re-configure BTN0 because this is shared with LED0 in
-C51 COMPILER V9.53.0.0   MTRAPP                                                            01/29/2020 12:05:48 PAGE 4   
+ 182   3                  // Re-configure BTN0 because this is shared with LED0 in
+ 183   3                  // reference design kit.
+ 184   3                  //CONFIG_BTN0();
+ 185   3              }
+ 186   2          }
+ 187   1          // Enable stream data even motor stopped.
+ 188   1          tmp = (U8)SL_MTR_time();
+ 189   1          if((last_report != tmp) && (tmp & RPM_REPORT_PERIOD == RPM_REPORT_PERIOD))
+ 190   1          {
+ 191   2              last_report = tmp;
+ 192   2              MCP_set_16bit_register(MCP_REG_PRESENT_MOTOR_SPEED,
+ 193   2                      SLR_motor_current_rpm, 0);
+ 194   2              MCP_set_16bit_register(MCP_REG_ACTIVE_PWM_DUTY_CYCLE, SLR_pwm_duty, 0);
+ 195   2              run_dir = MCP_get_8bit_register(MCP_REG_PRESENT_MOTOR_DIRECTION);
+ 196   2              MCP_set_8bit_register(MCP_REG_PRESENT_MOTOR_DIRECTION, \
+ 197   2                      run_dir, 0);
+ 198   2          }
+ 199   1      
+ 200   1          // -----------------------------------------------------------------------
+ 201   1          // read new target speed
+ 202   1          MTRAPP_read_target_speed();
+ 203   1      
+ 204   1          // -----------------------------------------------------------------------
+ 205   1          // update average current to register 0x32.
+ 206   1          MCP_set_16bit_register(MCP_REG_MOTOR_COIL_CURRENT,SLR_motor_current,0);
+ 207   1      
+ 208   1          // -----------------------------------------------------------------------
+ 209   1          // read Vmotor and update register. 0x34
+ 210   1          // update reg 0x34
+ 211   1      #ifdef FEATURE_MEAS_VMDC
+ 212   1          MCP_set_16bit_register(MCP_REG_MOTOR_OPERATING_VOLTAGE,SLR_motor_voltage, 0);
+ 213   1      #endif
+ 214   1      }
+ 215          
+ 216          //-----------------------------------------------------------------------------
+ 217          // MTRAPP_read_direction
+ 218          //-----------------------------------------------------------------------------
+ 219          //
+ 220          // Return Value : None
+ 221          // Parameters   : None but it will change global variable SLW_user_direction.
+ 222          //
+ 223          //  read NEXT motor running direction according to build parameter.
+ 224          //  In case of DIRECTION_BY_BUTTON, when button released
+ 225          //  SLW_user_direction is updated.
+ 226          //-----------------------------------------------------------------------------
+ 227          void MTRAPP_read_direction(void)
+ 228          {
+ 229   1          static bit wait_release=1;
+ 230   1      
+ 231   1          if(wait_release == 1)
+ 232   1          {
+ 233   2              if( IS_BTN0_PRESSED() )
+ 234   2              {
+ 235   3                  wait_release = 0;
+ 236   3              }
+ 237   2          }
+C51 COMPILER V9.53.0.0   MTRAPP                                                            01/29/2020 13:56:06 PAGE 5   
 
- 174   3                  // reference design kit.
- 175   3                  //CONFIG_BTN0();
- 176   3              }
- 177   2          }
- 178   1          // Enable stream data even motor stopped.
- 179   1          tmp = (U8)SL_MTR_time();
- 180   1          if((last_report != tmp) && (tmp & RPM_REPORT_PERIOD == RPM_REPORT_PERIOD))
- 181   1          {
- 182   2              last_report = tmp;
- 183   2              MCP_set_16bit_register(MCP_REG_PRESENT_MOTOR_SPEED,
- 184   2                      SLR_motor_current_rpm, 0);
- 185   2              MCP_set_16bit_register(MCP_REG_ACTIVE_PWM_DUTY_CYCLE, SLR_pwm_duty, 0);
- 186   2              run_dir = MCP_get_8bit_register(MCP_REG_PRESENT_MOTOR_DIRECTION);
- 187   2              MCP_set_8bit_register(MCP_REG_PRESENT_MOTOR_DIRECTION, \
- 188   2                      run_dir, 0);
- 189   2          }
- 190   1      
- 191   1          // -----------------------------------------------------------------------
- 192   1          // read new target speed
- 193   1          MTRAPP_read_target_speed();
- 194   1      
- 195   1          // -----------------------------------------------------------------------
- 196   1          // update average current to register 0x32.
- 197   1          MCP_set_16bit_register(MCP_REG_MOTOR_COIL_CURRENT,SLR_motor_current,0);
- 198   1      
- 199   1          // -----------------------------------------------------------------------
- 200   1          // read Vmotor and update register. 0x34
- 201   1          // update reg 0x34
- 202   1      #ifdef FEATURE_MEAS_VMDC
- 203   1          MCP_set_16bit_register(MCP_REG_MOTOR_OPERATING_VOLTAGE,SLR_motor_voltage, 0);
- 204   1      #endif
- 205   1      }
- 206          
- 207          //-----------------------------------------------------------------------------
- 208          // MTRAPP_read_direction
- 209          //-----------------------------------------------------------------------------
- 210          //
- 211          // Return Value : None
- 212          // Parameters   : None but it will change global variable SLW_user_direction.
- 213          //
- 214          //  read NEXT motor running direction according to build parameter.
- 215          //  In case of DIRECTION_BY_BUTTON, when button released
- 216          //  SLW_user_direction is updated.
- 217          //-----------------------------------------------------------------------------
- 218          void MTRAPP_read_direction(void)
- 219          {
- 220   1          static bit wait_release=1;
- 221   1      
- 222   1          if(wait_release == 1)
- 223   1          {
- 224   2              if( IS_BTN0_PRESSED() )
- 225   2              {
- 226   3                  wait_release = 0;
- 227   3              }
- 228   2          }
- 229   1          else if( !IS_BTN0_PRESSED() && (wait_release == 0))
- 230   1          {
- 231   2              SLW_user_direction = ~SLW_user_direction;
- 232   2              MCP_set_8bit_register(MCP_REG_TARGET_MOTOR_DIRECTION, \
- 233   2                      (U8)SLW_user_direction, 0);
- 234   2              wait_release = 1;
- 235   2          }
- 236   1          // read register. 0x02 (0:CW, 1:CCW)
-C51 COMPILER V9.53.0.0   MTRAPP                                                            01/29/2020 12:05:48 PAGE 5   
-
- 237   1          SLW_user_direction = MCP_get_8bit_register(MCP_REG_TARGET_MOTOR_DIRECTION);
- 238   1      }
- 239          
- 240          
- 241          //-----------------------------------------------------------------------------
- 242          // MTRAPP_read_target_speed
- 243          //-----------------------------------------------------------------------------
- 244          //
- 245          // Return Value : None
- 246          // Parameters   : None but it will change global variable SLW_target_rpm.
- 247          //
- 248          //  set SLW_target_rpm or SLW_target_pwm_duty according to build-time parameter.
- 249          //  Those target values are saved to register accordingly.
- 250          //  To reach 100% of target duty cycle or SLW_motor_max_rpm in any case,
- 251          //  just added small constant to the adc result.
+ 238   1          else if( !IS_BTN0_PRESSED() && (wait_release == 0))
+ 239   1          {
+ 240   2              SLW_user_direction = ~SLW_user_direction;
+ 241   2              MCP_set_8bit_register(MCP_REG_TARGET_MOTOR_DIRECTION, \
+ 242   2                      (U8)SLW_user_direction, 0);
+ 243   2              wait_release = 1;
+ 244   2          }
+ 245   1          // read register. 0x02 (0:CW, 1:CCW)
+ 246   1          SLW_user_direction = MCP_get_8bit_register(MCP_REG_TARGET_MOTOR_DIRECTION);
+ 247   1      }
+ 248          
+ 249          
+ 250          //-----------------------------------------------------------------------------
+ 251          // MTRAPP_read_target_speed
  252          //-----------------------------------------------------------------------------
- 253          void MTRAPP_read_target_speed(void)
- 254          {
- 255   1      #if BLDC_RD_RPM_PWM_SRC == POT_SPEED_SOURCE
- 256   1      #if BLDC_RD_RPM_OR_PWM == RPM_PARAMETER
- 257   1          static U16 last_read_speed_time;
- 258   1          U16 temp;
- 259   1      
- 260   1          if( ((U16)SL_MTR_time() - last_read_speed_time) < read_speed_interval )
- 261   1          {
- 262   2              return;
- 263   2          }
- 264   1          last_read_speed_time = (U16)SL_MTR_time();
- 265   1      
- 266   1          if (speed_ctrl_by_pc || ( MOTOR_STOPPED == SLR_motor_state ))
- 267   1          {
- 268   2              // read reg 0x3C (target rpm)
- 269   2              temp = MCP_get_16bit_register(MCP_REG_TARGET_MOTOR_SPEED);
- 270   2              if( SLW_target_rpm != temp )
- 271   2              {
- 272   3                  if (temp == 1)
- 273   3                  {
- 274   4                      // Special case of target speed of 1.
- 275   4                      start_by_pc = 1;
- 276   4      
- 277   4                      // Restore target speed
- 278   4                      MCP_set_16bit_register(MCP_REG_TARGET_MOTOR_SPEED, SLW_target_rpm, 0);
- 279   4                  }
- 280   3                  else
- 281   3                  {
- 282   4                      SLW_target_rpm = temp;
- 283   4                  }
- 284   3                  speed_ctrl_by_pc = 1;
- 285   3              }
- 286   2          }
- 287   1      
- 288   1          // read latest adc result....
- 289   1          temp = adc_result[ADC_MUX_POT];
- 290   1          // CW : Increase, CCW : Decrease speed
- 291   1          temp = MAX_ADC_VALUE - temp;
- 292   1          // Just added some amount to reach SLW_motor_max_rpm(or 100% duty) in any case.
- 293   1          temp += (MAX_ADC_VALUE>>5);      // about 3%
- 294   1      
- 295   1          pot_reading = ((U32)(SLW_motor_max_rpm * (U32)temp))>>ADC_RESOLUTION;
- 296   1          pot_reading = (prev_target_rpm + pot_reading)>>1;
- 297   1          prev_target_rpm = pot_reading;
- 298   1          if( pot_reading < APP_MOTOR_MIN_RPM )
- 299   1          {
-C51 COMPILER V9.53.0.0   MTRAPP                                                            01/29/2020 12:05:48 PAGE 6   
+ 253          //
+ 254          // Return Value : None
+ 255          // Parameters   : None but it will change global variable SLW_target_rpm.
+ 256          //
+ 257          //  set SLW_target_rpm or SLW_target_pwm_duty according to build-time parameter.
+ 258          //  Those target values are saved to register accordingly.
+ 259          //  To reach 100% of target duty cycle or SLW_motor_max_rpm in any case,
+ 260          //  just added small constant to the adc result.
+ 261          //-----------------------------------------------------------------------------
+ 262          void MTRAPP_read_target_speed(void)
+ 263          {
+ 264   1      #if BLDC_RD_RPM_PWM_SRC == POT_SPEED_SOURCE
+ 265   1      #if BLDC_RD_RPM_OR_PWM == RPM_PARAMETER
+ 266   1          static U16 last_read_speed_time;
+ 267   1          U16 temp;
+ 268   1      
+ 269   1          if( ((U16)SL_MTR_time() - last_read_speed_time) < read_speed_interval )
+ 270   1          {
+ 271   2              return;
+ 272   2          }
+ 273   1          last_read_speed_time = (U16)SL_MTR_time();
+ 274   1      
+ 275   1          if (speed_ctrl_by_pc || ( MOTOR_STOPPED == SLR_motor_state ))
+ 276   1          {
+ 277   2              // read reg 0x3C (target rpm)
+ 278   2              temp = MCP_get_16bit_register(MCP_REG_TARGET_MOTOR_SPEED);
+ 279   2              if( SLW_target_rpm != temp )
+ 280   2              {
+ 281   3                  if (temp == 1)
+ 282   3                  {
+ 283   4                      // Special case of target speed of 1.
+ 284   4                      start_by_pc = 1;
+ 285   4      
+ 286   4                      // Restore target speed
+ 287   4                      MCP_set_16bit_register(MCP_REG_TARGET_MOTOR_SPEED, SLW_target_rpm, 0);
+ 288   4                  }
+ 289   3                  else
+ 290   3                  {
+ 291   4                      SLW_target_rpm = temp;
+ 292   4                  }
+ 293   3                  speed_ctrl_by_pc = 1;
+ 294   3              }
+ 295   2          }
+ 296   1      
+ 297   1          // read latest adc result....
+ 298   1          temp = adc_result[ADC_MUX_POT];
+ 299   1          // CW : Increase, CCW : Decrease speed
+ 300   1          temp = MAX_ADC_VALUE - temp;
+C51 COMPILER V9.53.0.0   MTRAPP                                                            01/29/2020 13:56:06 PAGE 6   
 
- 300   2              pot_reading = APP_MOTOR_MIN_RPM;
- 301   2          }
- 302   1      
- 303   1          if ( !speed_ctrl_by_pc )
- 304   1          {
- 305   2              // Use POT when speed is not controlled by PC
- 306   2              SLW_target_rpm = pot_reading;
- 307   2              // set register
- 308   2              MCP_set_16bit_register(MCP_REG_TARGET_MOTOR_SPEED, SLW_target_rpm, 0);
- 309   2          }
- 310   1      
- 311   1      #elif BLDC_RD_RPM_OR_PWM == PWM_PARAMETER
+ 301   1          // Just added some amount to reach SLW_motor_max_rpm(or 100% duty) in any case.
+ 302   1          temp += (MAX_ADC_VALUE>>5);      // about 3%
+ 303   1      
+ 304   1          pot_reading = ((U32)(SLW_motor_max_rpm * (U32)temp))>>ADC_RESOLUTION;
+ 305   1          pot_reading = (prev_target_rpm + pot_reading)>>1;
+ 306   1          prev_target_rpm = pot_reading;
+ 307   1          if( pot_reading < APP_MOTOR_MIN_RPM )
+ 308   1          {
+ 309   2              pot_reading = APP_MOTOR_MIN_RPM;
+ 310   2          }
+ 311   1      
+ 312   1          if ( !speed_ctrl_by_pc )
+ 313   1          {
+ 314   2              // Use POT when speed is not controlled by PC
+ 315   2              SLW_target_rpm = pot_reading;
+ 316   2              // set register
+ 317   2              MCP_set_16bit_register(MCP_REG_TARGET_MOTOR_SPEED, SLW_target_rpm, 0);
+ 318   2          }
+ 319   1      
+ 320   1      #elif BLDC_RD_RPM_OR_PWM == PWM_PARAMETER
                   static U16 last_read_speed_time;
                   U16 temp;
               
@@ -380,6 +388,8 @@ line level    source
                       pot_reading = MAX_USER_PWM_VALUE;
                   }
                   else
+C51 COMPILER V9.53.0.0   MTRAPP                                                            01/29/2020 13:56:06 PAGE 7   
+
                   {
                       // target pwm = 16 bit value.
                       pot_reading = (temp<<(16-ADC_RESOLUTION));
@@ -388,8 +398,6 @@ line level    source
                   if ( !speed_ctrl_by_pc )
                   {
                       // Use POT when speed is not controlled by PC
-C51 COMPILER V9.53.0.0   MTRAPP                                                            01/29/2020 12:05:48 PAGE 7   
-
                       SLW_target_pwm_duty = pot_reading;
                       // set register (16bit pwm duty cycle)
                       MCP_set_16bit_register(MCP_REG_TARGET_PWM_DUTY_CYCLE, \
@@ -397,13 +405,13 @@ line level    source
                   }
               
               #endif
- 370   1      #elif BLDC_RD_RPM_PWM_SRC == PWM_SPEED_SOURCE
+ 379   1      #elif BLDC_RD_RPM_PWM_SRC == PWM_SPEED_SOURCE
                   MTRAPP_read_pwm_input();
               #endif
- 373   1      }
- 374          
- 375          
- 376          #if BLDC_RD_RPM_PWM_SRC == PWM_SPEED_SOURCE
+ 382   1      }
+ 383          
+ 384          
+ 385          #if BLDC_RD_RPM_PWM_SRC == PWM_SPEED_SOURCE
               //-----------------------------------------------------------------------------
               // MTRAPP_read_pwm_input
               //-----------------------------------------------------------------------------
@@ -445,6 +453,8 @@ line level    source
               #if BLDC_RD_RPM_OR_PWM == RPM_PARAMETER
                   if (speed_ctrl_by_pc || ( MOTOR_STOPPED == SLR_motor_state ))
                   {
+C51 COMPILER V9.53.0.0   MTRAPP                                                            01/29/2020 13:56:06 PAGE 8   
+
                       temp = MCP_get_16bit_register(MCP_REG_TARGET_MOTOR_SPEED);
                       if( SLW_target_rpm != temp )
                       {
@@ -453,8 +463,6 @@ line level    source
                               // Special case of target speed of 1.
                               start_by_pc = 1;
               
-C51 COMPILER V9.53.0.0   MTRAPP                                                            01/29/2020 12:05:48 PAGE 8   
-
                               // Restore target speed
                               MCP_set_16bit_register(MCP_REG_TARGET_MOTOR_SPEED, SLW_target_rpm, 0);
                           }
@@ -510,6 +518,8 @@ line level    source
                   pot_reading += (MAX_USER_PWM_VALUE>>5);
                   if(pot_reading < (MAX_USER_PWM_VALUE>>5))
                       pot_reading = MAX_USER_PWM_VALUE;
+C51 COMPILER V9.53.0.0   MTRAPP                                                            01/29/2020 13:56:06 PAGE 9   
+
                   else if(pot_reading < SLR_minimum_duty.U16)
                       pot_reading = SLR_minimum_duty.U16;
               
@@ -518,8 +528,6 @@ line level    source
                   {
                       // Use POT when speed is not controlled by PC
                       SLW_target_pwm_duty = pot_reading;
-C51 COMPILER V9.53.0.0   MTRAPP                                                            01/29/2020 12:05:48 PAGE 9   
-
                       // set register (16bit pwm duty cycle)
                       MCP_set_16bit_register(MCP_REG_TARGET_PWM_DUTY_CYCLE, \
                                              SLW_target_pwm_duty, 0);
@@ -538,7 +546,7 @@ line level    source
                   PWMIN_MAT ^= (1<<PWMIN_BIT);
               }
               #endif
- 507          
+ 516          
 
 
 MODULE INFORMATION:   STATIC OVERLAYABLE

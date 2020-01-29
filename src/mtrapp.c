@@ -1,9 +1,18 @@
-/*
- * mtrapp.c
- *
- *  Created on: Jan 20, 2020
- *      Author: a92862
- */
+//-----------------------------------------------------------------------------
+// mtrapp.c
+//-----------------------------------------------------------------------------
+// Copyright 2013, Silicon Laboratories, Inc.
+// http://www.silabs.com
+//
+// Created on: July 5, 2013
+//     Author: khsoh
+// Adapted on: Jan 16, 2020
+// Author: a92862
+//
+// Motor control application task
+// - to demonstrate a potential use of how to implement a motor control
+//   application
+//-----------------------------------------------------------------------------
 
 #include "bldcdk.h"
 
