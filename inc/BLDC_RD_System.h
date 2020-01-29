@@ -266,7 +266,7 @@
 //-----------------------------------------------------------------------------
 // BOARD CONFIGURATION
 //-----------------------------------------------------------------------------
-#define OP_AMP_GAIN                   (5.1/3.3)       // J202,J303 installed
+#define OP_AMP_GAIN                   1       // J202,J303 installed
 #define LOAD_RESISTOR                 50              // unit in mOhm
 #define MOTOR_OC_MAX_DEBOUNCE         5
 

@@ -101,7 +101,7 @@ void PCA_initialize_pca(void)
     EIE1 |= (0x01<<4);
     user_timer = 0;
 }
-#endif
+
 
 //-----------------------------------------------------------------------------
 // PCA_set_initial_polarity
@@ -145,7 +145,7 @@ void PCA_disable_pwm(void)
     PCA0CPM0 &= ~(0x01<<1);
     MOTPWM_PCA0CPM &= ~(0x01<<1);
 }
-
+#endif
 
 //-----------------------------------------------------------------------------
 // PCA_change_duty_cycle

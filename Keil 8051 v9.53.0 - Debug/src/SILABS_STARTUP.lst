@@ -1,19 +1,18 @@
-AX51 MACRO ASSEMBLER  SILABS_STARTUP                                                        01/24/20 14:58:52 PAGE     1
+AX51 MACRO ASSEMBLER  SILABS_STARTUP                                                        01/28/20 15:11:39 PAGE     1
 
 
 MACRO ASSEMBLER AX51 V3.12.0.0
 OBJECT MODULE PLACED IN .\src\SILABS_STARTUP.OBJ
-ASSEMBLER INVOKED BY: c:\SiliconLabs\SimplicityStudio\v4\developer\toolchains\keil_8051\9.53\BIN\AX51.exe C:\SiliconLabs
-                      \SimplicityStudio\v4\developer\sdks\8051\v4.1.7\Device\shared\si8051Base\SILABS_STARTUP.A51 ERRORP
-                      RINT SET(SMALL,SILABS_STARTUP=1) DEBUG MACRO NOMOD51 INCDIR(C:\Users\A92862\SimplicityStudio\v4_wo
-                      rkspace\EFM8BB1_BLDC_PORT\inc;C:\Users\A92862\SimplicityStudio\v4_workspace\EFM8BB1_BLDC_PORT\inc\
-                      config;C:/SiliconLabs/SimplicityStudio/v4/developer/sdks/8051/v4.1.7//Lib/efm8_assert;C:/SiliconLa
-                      bs/SimplicityStudio/v4/developer/sdks/8051/v4.1.7//kits/common/bsp;C:/SiliconLabs/SimplicityStudio
-                      /v4/developer/sdks/8051/v4.1.7//kits/EFM8BB1_LCK/config;C:/SiliconLabs/SimplicityStudio/v4/develop
-                      er/sdks/8051/v4.1.7//Device/shared/si8051Base;C:/SiliconLabs/SimplicityStudio/v4/developer/sdks/80
-                      51/v4.1.7//Device/EFM8BB1/inc;C:/SiliconLabs/SimplicityStudio/v4/developer/sdks/8051/v4.1.7//Devic
-                      e/EFM8BB1/peripheral_driver/inc) PRINT(.\src\SILABS_STARTUP.lst) COND SYMBOLS PAGEWIDTH(120) PAGEL
-                      ENGTH(65) OBJECT(.\src\SILABS_STARTUP.OBJ) 
+ASSEMBLER INVOKED BY: c:\SiliconLabs\SimplicityStudio\v4\developer\toolchains\keil_8051\9.53\BIN\AX51.exe C:\Users\A9286
+                      2\SimplicityStudio\v4_workspace\EFM8BB1_BLDC_PORT\src\SILABS_STARTUP.A51 ERRORPRINT SET(SMALL,SILA
+                      BS_STARTUP=1) DEBUG MACRO NOMOD51 INCDIR(C:\Users\A92862\SimplicityStudio\v4_workspace\EFM8BB1_BLD
+                      C_PORT\inc;C:\Users\A92862\SimplicityStudio\v4_workspace\EFM8BB1_BLDC_PORT\inc\config;C:/SiliconLa
+                      bs/SimplicityStudio/v4/developer/sdks/8051/v4.1.7//Lib/efm8_assert;C:/SiliconLabs/SimplicityStudio
+                      /v4/developer/sdks/8051/v4.1.7//kits/common/bsp;C:/SiliconLabs/SimplicityStudio/v4/developer/sdks/
+                      8051/v4.1.7//kits/EFM8BB1_LCK/config;C:/SiliconLabs/SimplicityStudio/v4/developer/sdks/8051/v4.1.7
+                      //Device/shared/si8051Base;C:/SiliconLabs/SimplicityStudio/v4/developer/sdks/8051/v4.1.7//Device/E
+                      FM8BB1/inc;C:/SiliconLabs/SimplicityStudio/v4/developer/sdks/8051/v4.1.7//Device/EFM8BB1/periphera
+                      l_driver/inc) PRINT(.\src\SILABS_STARTUP.lst) COND SYMBOLS PAGEWIDTH(120) PAGELENGTH(65) OBJECT(.\src\SILABS_STARTUP.OBJ) 
 
 LOC    OBJ             LINE     SOURCE
 
@@ -48,23 +47,23 @@ LOC    OBJ             LINE     SOURCE
                          29     ;     <i>       The IDATA space overlaps physically the DATA and BIT areas.
  0080                    30     IDATALEN        EQU     80H
                          31     ;
-                         32     ; <o> XDATASTART: XDATA memory start address <0x0-0xFFFF> 
+                         32     ; <o> XDATASTART: XDATA memory start address <0x0-0xFFFF>
                          33     ;     <i> The absolute start address of XDATA memory
- 0000                    34     XDATASTART      EQU     0     
+ 0000                    34     XDATASTART      EQU     0
                          35     ;
-                         36     ; <o> XDATALEN: XDATA memory size <0x0-0xFFFF> 
+                         36     ; <o> XDATALEN: XDATA memory size <0x0-0xFFFF>
                          37     ;     <i> The length of XDATA memory in bytes.
- 0000                    38     XDATALEN        EQU     0      
+ 0000                    38     XDATALEN        EQU     0
                          39     ;
-                         40     ; <o> PDATASTART: PDATA memory start address <0x0-0xFFFF> 
+                         40     ; <o> PDATASTART: PDATA memory start address <0x0-0xFFFF>
                          41     ;     <i> The absolute start address of PDATA memory
  0000                    42     PDATASTART      EQU     0H
                          43     ;
-                         44     ; <o> PDATALEN: PDATA memory size <0x0-0xFF> 
+                         44     ; <o> PDATALEN: PDATA memory size <0x0-0xFF>
                          45     ;     <i> The length of PDATA memory in bytes.
-AX51 MACRO ASSEMBLER  SILABS_STARTUP                                                        01/24/20 14:58:52 PAGE     2
-
  0000                    46     PDATALEN        EQU     0H
+AX51 MACRO ASSEMBLER  SILABS_STARTUP                                                        01/28/20 15:11:39 PAGE     2
+
                          47     ;
                          48     ;</h>
                          49     ;------------------------------------------------------------------------------
@@ -80,26 +79,26 @@ LOC    OBJ             LINE     SOURCE
  0000                    59     IBPSTACK        EQU     0       ; set to 1 if small reentrant is used.
                          60     ;  <o> IBPSTACKTOP: End address of SMALL model stack <0x0-0xFF>
                          61     ;     <i> Set the top of the stack to the highest location.
- 0100                    62     IBPSTACKTOP     EQU     0xFF +1     ; default 0FFH+1  
+ 0100                    62     IBPSTACKTOP     EQU     0xFF +1     ; default 0FFH+1
                          63     ; </h>
                          64     ;
-                         65     ; <h> Stack Space for reentrant functions in the LARGE model.      
+                         65     ; <h> Stack Space for reentrant functions in the LARGE model.
                          66     ;  <q> XBPSTACK: Enable LARGE model reentrant stack
                          67     ;     <i> Stack space for reentrant functions in the LARGE model.
  0000                    68     XBPSTACK        EQU     0       ; set to 1 if large reentrant is used.
                          69     ;  <o> XBPSTACKTOP: End address of LARGE model stack <0x0-0xFFFF>
                          70     ;     <i> Set the top of the stack to the highest location.
- 00010000                71     XBPSTACKTOP     EQU     0xFFFF +1   ; default 0FFFFH+1 
+ 00010000                71     XBPSTACKTOP     EQU     0xFFFF +1   ; default 0FFFFH+1
                          72     ; </h>
                          73     ;
-                         74     ; <h> Stack Space for reentrant functions in the COMPACT model.    
+                         74     ; <h> Stack Space for reentrant functions in the COMPACT model.
                          75     ;  <q> PBPSTACK: Enable COMPACT model reentrant stack
                          76     ;     <i> Stack space for reentrant functions in the COMPACT model.
  0000                    77     PBPSTACK        EQU     0       ; set to 1 if compact reentrant is used.
                          78     ;
                          79     ;   <o> PBPSTACKTOP: End address of COMPACT model stack <0x0-0xFFFF>
                          80     ;     <i> Set the top of the stack to the highest location.
- 0100                    81     PBPSTACKTOP     EQU     0xFF +1     ; default 0FFH+1  
+ 0100                    81     PBPSTACKTOP     EQU     0xFF +1     ; default 0FFH+1
                          82     ; </h>
                          83     ;</h>
                          84     ;------------------------------------------------------------------------------
@@ -107,29 +106,29 @@ LOC    OBJ             LINE     SOURCE
                          86     ;  Memory Page for Using the Compact Model with 64 KByte xdata RAM
                          87     ;  <e>Compact Model Page Definition
                          88     ;
-                         89     ;  <i>Define the XDATA page used for PDATA variables. 
+                         89     ;  <i>Define the XDATA page used for PDATA variables.
                          90     ;  <i>PPAGE must conform with the PPAGE set in the linker invocation.
                          91     ;
                          92     ; Enable pdata memory page initalization
  0000                    93     PPAGEENABLE     EQU     0       ; set to 1 if pdata object are used.
                          94     ;
-                         95     ; <o> PPAGE number <0x0-0xFF> 
+                         95     ; <o> PPAGE number <0x0-0xFF>
                          96     ; <i> uppermost 256-byte address of the page used for PDATA variables.
  0000                    97     PPAGE           EQU     0
                          98     ;
-                         99     ; <o> SFR address which supplies uppermost address byte <0x0-0xFF> 
+                         99     ; <o> SFR address which supplies uppermost address byte <0x0-0xFF>
                         100     ; <i> most 8051 variants use P2 as uppermost address byte
  00A0                   101     PPAGE_SFR       DATA    0A0H
                         102     ;
                         103     ; </e>
                         104     ;------------------------------------------------------------------------------
                         105     
-                        106     ; Standard SFR Symbols 
+                        106     ; Standard SFR Symbols
  00E0                   107     ACC     DATA    0E0H
  00F0                   108     B       DATA    0F0H
-AX51 MACRO ASSEMBLER  SILABS_STARTUP                                                        01/24/20 14:58:52 PAGE     3
-
  0081                   109     SP      DATA    81H
+AX51 MACRO ASSEMBLER  SILABS_STARTUP                                                        01/28/20 15:11:39 PAGE     3
+
  0082                   110     DPL     DATA    82H
  0083                   111     DPH     DATA    83H
                         112     
@@ -151,20 +150,19 @@ LOC    OBJ             LINE     SOURCE
 ------                  128                     RSEG    ?C_C51STARTUP
                         129     
 000000                  130     STARTUP1:
-                        131     
-                        132     $if  (SILABS_STARTUP = 1)
-                        133     EXTRN   CODE (SiLabs_Startup)
-000000 120000     E     134                     LCALL   SiLabs_Startup
-                        135     $endif 
-                        136     
-                        137     IF IDATALEN <> 0
-000003 787F             138                     MOV     R0,#IDATALEN - 1
-000005 E4               139                     CLR     A
-000006 F6               140     IDATALOOP:      MOV     @R0,A
-000007 D8FD             141                     DJNZ    R0,IDATALOOP
-                        142     ENDIF
-                        143     
-                        144     IF XDATALEN <> 0
+                        131     $if  (SILABS_STARTUP = 1)
+                        132     EXTRN   CODE (SiLabs_Startup)
+000000 120000     E     133                     LCALL   SiLabs_Startup
+                        134     $endif 
+                        135     
+                        136     IF IDATALEN <> 0
+000003 787F             137                     MOV     R0,#IDATALEN - 1
+000005 E4               138                     CLR     A
+000006 F6               139     IDATALOOP:      MOV     @R0,A
+000007 D8FD             140                     DJNZ    R0,IDATALOOP
+                        141     ENDIF
+                        142     
+                        143     IF XDATALEN <> 0
                                                 MOV     DPTR,#XDATASTART
                                                 MOV     R7,#LOW (XDATALEN)
                                   IF (LOW (XDATALEN)) <> 0
@@ -178,12 +176,12 @@ LOC    OBJ             LINE     SOURCE
                                                 DJNZ    R7,XDATALOOP
                                                 DJNZ    R6,XDATALOOP
                                 ENDIF
-                        158     
-                        159     IF PPAGEENABLE <> 0
+                        157     
+                        158     IF PPAGEENABLE <> 0
                                                 MOV     PPAGE_SFR,#PPAGE
                                 ENDIF
-                        162     
-                        163     IF PDATALEN <> 0
+                        161     
+                        162     IF PDATALEN <> 0
                                                 MOV     R0,#LOW (PDATASTART)
                                                 MOV     R7,#LOW (PDATALEN)
                                                 CLR     A
@@ -191,43 +189,43 @@ LOC    OBJ             LINE     SOURCE
                                                 INC     R0
                                                 DJNZ    R7,PDATALOOP
                                 ENDIF
-                        171     
-AX51 MACRO ASSEMBLER  SILABS_STARTUP                                                        01/24/20 14:58:52 PAGE     4
-
-                        172     IF IBPSTACK <> 0
+                        170     
+                        171     IF IBPSTACK <> 0
                                 EXTRN DATA (?C_IBP)
+AX51 MACRO ASSEMBLER  SILABS_STARTUP                                                        01/28/20 15:11:39 PAGE     4
+
                                 
                                                 MOV     ?C_IBP,#LOW IBPSTACKTOP
                                 ENDIF
-                        177     
-                        178     IF XBPSTACK <> 0
+                        176     
+                        177     IF XBPSTACK <> 0
                                 EXTRN DATA (?C_XBP)
                                 
                                                 MOV     ?C_XBP,#HIGH XBPSTACKTOP
                                                 MOV     ?C_XBP+1,#LOW XBPSTACKTOP
                                 ENDIF
-                        184     
-                        185     IF PBPSTACK <> 0
+                        183     
+                        184     IF PBPSTACK <> 0
                                 EXTRN DATA (?C_PBP)
                                                 MOV     ?C_PBP,#LOW PBPSTACKTOP
                                 ENDIF
-                        189     
-000009 758100     F     190                     MOV     SP,#?STACK-1
-                        191     
-                        192     ; This code is required if you use L51_BANK.A51 with Banking Mode 4
-                        193     ;<h> Code Banking
-                        194     ; <q> Select Bank 0 for L51_BANK.A51 Mode 4
-                        195     $if  (USE_BANKING = 1)      
+                        188     
+000009 758100     F     189                     MOV     SP,#?STACK-1
+                        190     
+                        191     ; This code is required if you use L51_BANK.A51 with Banking Mode 4
+                        192     ;<h> Code Banking
+                        193     ; <q> Select Bank 0 for L51_BANK.A51 Mode 4
+                        194     $if  (USE_BANKING = 1)
                                 ;     <i> Initialize bank mechanism to code bank 0 when using L51_BANK.A51 with Banking 
                                Mode 4.
                                 EXTRN CODE (?B_SWITCH0)
                                                 CALL    ?B_SWITCH0      ; init bank mechanism to code bank 0
                                 $endif 
-                        200     ;</h>
-00000C 020000     E     201                     LJMP    ?C_START
-                        202     
-                        203                     END
-AX51 MACRO ASSEMBLER  SILABS_STARTUP                                                        01/24/20 14:58:52 PAGE     5
+                        199     ;</h>
+00000C 020000     E     200                     LJMP    ?C_START
+                        201     
+                        202                     END
+AX51 MACRO ASSEMBLER  SILABS_STARTUP                                                        01/28/20 15:11:39 PAGE     5
 
 SYMBOL TABLE LISTING
 ------ ----- -------

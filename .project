@@ -19,11 +19,6 @@
 	</natures>
 	<linkedResources>
 		<link>
-			<name>src/SILABS_STARTUP.A51</name>
-			<type>1</type>
-			<locationURI>STUDIO_SDK_LOC/Device/shared/si8051Base/SILABS_STARTUP.A51</locationURI>
-		</link>
-		<link>
 			<name>lib/bsp/bsp.h</name>
 			<type>1</type>
 			<locationURI>STUDIO_SDK_LOC/kits/common/bsp/bsp.h</locationURI>

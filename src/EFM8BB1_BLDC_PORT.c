@@ -38,8 +38,13 @@ void SiLabs_Startup (void)
 
 void main(void)
 {
-	enter_DefaultMode_from_RESET();
+//	uint16_t delay_count;                       // Used to implement a delay
 
+//	enter_DefaultMode_from_RESET();
+
+//    for (delay_count = 15000; delay_count > 0; delay_count--);	// wait a moment
+
+	CLKSEL = 0x0;
 	Port_Setup();
 	UART_init();
 	ADC_initialize_adc();
@@ -49,6 +54,7 @@ void main(void)
 	SL_MTR_init();
 	MTRAPP_init();
 
+	IE_EA = 1;
 	while (1)
 	{
 		ADC_task();

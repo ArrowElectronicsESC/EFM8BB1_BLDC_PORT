@@ -12,7 +12,7 @@
 
 #include <SI_EFM8BB1_Register_Enums.h>
 #include <compiler_defs.h>
-#include "InitDevice.h"
+//#include "InitDevice.h"
 #include "retargetserial.h"
 
 // Protothreads-related header files

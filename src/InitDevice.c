@@ -35,6 +35,7 @@ extern void enter_DefaultMode_from_RESET(void) {
 	TIMER_SETUP_0_enter_DefaultMode_from_RESET();
 	PCA_0_enter_DefaultMode_from_RESET();
 	PCACH_0_enter_DefaultMode_from_RESET();
+	PCACH_1_enter_DefaultMode_from_RESET();
 	UART_0_enter_DefaultMode_from_RESET();
 	INTERRUPT_0_enter_DefaultMode_from_RESET();
 	// [Config Calls]$
@@ -84,7 +85,7 @@ extern void PORTS_0_enter_DefaultMode_from_RESET(void) {
 
 	// $[P0MDOUT - Port 0 Output Mode]
 	/***********************************************************************
-	 - P0.0 output is push-pull
+	 - P0.0 output is open-drain
 	 - P0.1 output is open-drain
 	 - P0.2 output is open-drain
 	 - P0.3 output is open-drain
@@ -93,7 +94,7 @@ extern void PORTS_0_enter_DefaultMode_from_RESET(void) {
 	 - P0.6 output is open-drain
 	 - P0.7 output is open-drain
 	 ***********************************************************************/
-	P0MDOUT = P0MDOUT_B0__PUSH_PULL | P0MDOUT_B1__OPEN_DRAIN
+	P0MDOUT = P0MDOUT_B0__OPEN_DRAIN | P0MDOUT_B1__OPEN_DRAIN
 			| P0MDOUT_B2__OPEN_DRAIN | P0MDOUT_B3__OPEN_DRAIN
 			| P0MDOUT_B4__PUSH_PULL | P0MDOUT_B5__OPEN_DRAIN
 			| P0MDOUT_B6__OPEN_DRAIN | P0MDOUT_B7__OPEN_DRAIN;
@@ -315,11 +316,11 @@ extern void PCA_0_enter_DefaultMode_from_RESET(void) {
 	/***********************************************************************
 	 - PCA channel
 	 - Enable the comparator clear function on PCA channel 0
-	 - Disable the comparator clear function on PCA channel 1
+	 - Enable the comparator clear function on PCA channel 1
 	 - Disable the comparator clear function on PCA channel 2
 	 ***********************************************************************/
 	PCA0CLR = PCA0CLR_CPCPOL__LOW | PCA0CLR_CPCE0__ENABLED
-			| PCA0CLR_CPCE1__DISABLED | PCA0CLR_CPCE2__DISABLED;
+			| PCA0CLR_CPCE1__ENABLED | PCA0CLR_CPCE2__DISABLED;
 	// [PCA0CLR - PCA Comparator Clear Control]$
 
 	// $[PCA0L - PCA Counter/Timer Low Byte]
@@ -695,6 +696,44 @@ extern void CMP_0_enter_DefaultMode_from_RESET(void) {
 	 ***********************************************************************/
 	CMP0CN0 |= CMP0CN0_CPEN__ENABLED;
 	// [CMP0CN0 - Comparator 0 Control 0]$
+
+}
+
+extern void PCACH_1_enter_DefaultMode_from_RESET(void) {
+	// $[PCA0 Settings Save]
+	// Select Capture/Compare register)
+	PCA0PWM &= ~PCA0PWM_ARSEL__BMASK;
+	// [PCA0 Settings Save]$
+
+	// $[PCA0CPM1 - PCA Channel 1 Capture/Compare Mode]
+	/***********************************************************************
+	 - Disable negative edge capture
+	 - Enable a Capture/Compare Flag interrupt request when CCF1 is set
+	 - Enable match function
+	 - 8 to 11-bit PWM selected
+	 - Disable positive edge capture
+	 - Enable comparator function
+	 - Enable PWM function
+	 - Disable toggle function
+	 ***********************************************************************/
+	PCA0CPM1 = PCA0CPM1_CAPN__DISABLED | PCA0CPM1_ECCF__ENABLED
+			| PCA0CPM1_MAT__ENABLED | PCA0CPM1_PWM16__8_BIT
+			| PCA0CPM1_CAPP__DISABLED | PCA0CPM1_ECOM__ENABLED
+			| PCA0CPM1_PWM__ENABLED | PCA0CPM1_TOG__DISABLED;
+	// [PCA0CPM1 - PCA Channel 1 Capture/Compare Mode]$
+
+	// $[PCA0CPL1 - PCA Channel 1 Capture Module Low Byte]
+	// [PCA0CPL1 - PCA Channel 1 Capture Module Low Byte]$
+
+	// $[PCA0CPH1 - PCA Channel 1 Capture Module High Byte]
+	PCA0CPH1 = 0x00;
+	// [PCA0CPH1 - PCA Channel 1 Capture Module High Byte]$
+
+	// $[Auto-reload]
+	// [Auto-reload]$
+
+	// $[PCA0 Settings Restore]
+	// [PCA0 Settings Restore]$
 
 }
 
