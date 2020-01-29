@@ -1,4 +1,4 @@
-C51 COMPILER V9.53.0.0   COMP                                                              01/28/2020 16:32:33 PAGE 1   
+C51 COMPILER V9.53.0.0   COMP                                                              01/29/2020 12:05:47 PAGE 1   
 
 
 C51 COMPILER V9.53.0.0, COMPILATION OF MODULE COMP
@@ -63,7 +63,7 @@ line level    source
   45   1      
   46   1          // enable comparator 0
   47   1          // Hysteresis 0mV
-C51 COMPILER V9.53.0.0   COMP                                                              01/28/2020 16:32:33 PAGE 2   
+C51 COMPILER V9.53.0.0   COMP                                                              01/29/2020 12:05:47 PAGE 2   
 
   48   1              CMP0CN0 = 0x80;
   49   1      }

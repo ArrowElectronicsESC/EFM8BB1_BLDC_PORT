@@ -1,4 +1,4 @@
-C51 COMPILER V9.53.0.0   EFM8BB1_BLDC_PORT                                                 01/28/2020 16:32:30 PAGE 1   
+C51 COMPILER V9.53.0.0   EFM8BB1_BLDC_PORT                                                 01/29/2020 12:05:45 PAGE 1   
 
 
 C51 COMPILER V9.53.0.0, COMPILATION OF MODULE EFM8BB1_BLDC_PORT
@@ -56,14 +56,14 @@ line level    source
   38          
   39          void main(void)
   40          {
-  41   1      //      uint16_t delay_count;                       // Used to implement a delay
+  41   1              uint16_t delay_count;                       // Used to implement a delay
   42   1      
   43   1      //      enter_DefaultMode_from_RESET();
   44   1      
-  45   1      //    for (delay_count = 15000; delay_count > 0; delay_count--);        // wait a moment
+  45   1          for (delay_count = 15000; delay_count > 0; delay_count--);  // wait a moment
   46   1      
   47   1              CLKSEL = 0x0;
-C51 COMPILER V9.53.0.0   EFM8BB1_BLDC_PORT                                                 01/28/2020 16:32:30 PAGE 2   
+C51 COMPILER V9.53.0.0   EFM8BB1_BLDC_PORT                                                 01/29/2020 12:05:45 PAGE 2   
 
   48   1              Port_Setup();
   49   1              UART_init();
@@ -128,7 +128,7 @@ line level    source
  108   1      //      CONFIG_BTN0();
  109   1      //      CONFIG_BTN1();
  110   1      
-C51 COMPILER V9.53.0.0   EFM8BB1_BLDC_PORT                                                 01/28/2020 16:32:30 PAGE 3   
+C51 COMPILER V9.53.0.0   EFM8BB1_BLDC_PORT                                                 01/29/2020 12:05:45 PAGE 3   
 
  111   1          // skip all except UART and one of filtered terminal pins which will
  112   1          // detect ZC during startup.
@@ -193,7 +193,7 @@ line level    source
                   }
               
                   // start pid tuning.
-C51 COMPILER V9.53.0.0   EFM8BB1_BLDC_PORT                                                 01/28/2020 16:32:30 PAGE 4   
+C51 COMPILER V9.53.0.0   EFM8BB1_BLDC_PORT                                                 01/29/2020 12:05:45 PAGE 4   
 
                   // save initial speed.
                   Y0 = MCP_get_16bit_register(MCP_REG_PRESENT_MOTOR_SPEED);
@@ -258,7 +258,7 @@ line level    source
                   KA = KP_KONST*Amplitude;
                   nKp = ROUND_DIV((((U32)tune_disp)<<16), KA);
                   // Ki = Kp/(2.2*Pu) = 4*d/(a*3.14*3.2*2.2*Pu);
-C51 COMPILER V9.53.0.0   EFM8BB1_BLDC_PORT                                                 01/28/2020 16:32:30 PAGE 5   
+C51 COMPILER V9.53.0.0   EFM8BB1_BLDC_PORT                                                 01/29/2020 12:05:45 PAGE 5   
 
                   KA = KA*Pu;
                   nKi = ROUND_DIV((((U32)tune_disp)<<16), KA);
@@ -303,7 +303,7 @@ line level    source
 
 
 MODULE INFORMATION:   STATIC OVERLAYABLE
-   CODE SIZE        =    107    ----
+   CODE SIZE        =    120    ----
    CONSTANT SIZE    =   ----    ----
    XDATA SIZE       =   ----    ----
    PDATA SIZE       =   ----    ----

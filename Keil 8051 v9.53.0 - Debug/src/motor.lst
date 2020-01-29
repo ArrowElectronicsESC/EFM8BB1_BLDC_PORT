@@ -1,4 +1,4 @@
-C51 COMPILER V9.53.0.0   MOTOR                                                             01/28/2020 16:32:33 PAGE 1   
+C51 COMPILER V9.53.0.0   MOTOR                                                             01/29/2020 12:05:48 PAGE 1   
 
 
 C51 COMPILER V9.53.0.0, COMPILATION OF MODULE MOTOR
@@ -63,7 +63,7 @@ line level    source
   45          const U8 code compMux[12] = {
   46              (CPMUX_Y << 4) | CPMUX_C,
   47              (CPMUX_Y << 4) | CPMUX_A,
-C51 COMPILER V9.53.0.0   MOTOR                                                             01/28/2020 16:32:33 PAGE 2   
+C51 COMPILER V9.53.0.0   MOTOR                                                             01/29/2020 12:05:48 PAGE 2   
 
   48              (CPMUX_Y << 4) | CPMUX_B,
   49              (CPMUX_Y << 4) | CPMUX_C,
@@ -128,7 +128,7 @@ line level    source
  108                  {
  109                      ~MOTDRV_BL_MASK, ~MOTDRV_BL_MASK, ~MOTDRV_AL_MASK,
  110                      ~MOTDRV_AL_MASK, ~MOTDRV_CL_MASK, ~MOTDRV_CL_MASK
-C51 COMPILER V9.53.0.0   MOTOR                                                             01/28/2020 16:32:33 PAGE 3   
+C51 COMPILER V9.53.0.0   MOTOR                                                             01/29/2020 12:05:48 PAGE 3   
 
  111                  },
  112          };
@@ -193,7 +193,7 @@ line level    source
  171          
  172          // timer for hyperdrive mode
  173          #ifdef FEATURE_HYPERDRIVE
-C51 COMPILER V9.53.0.0   MOTOR                                                             01/28/2020 16:32:33 PAGE 4   
+C51 COMPILER V9.53.0.0   MOTOR                                                             01/29/2020 12:05:48 PAGE 4   
 
               SEG_DATA U8       hyperdrive_speed;
               SEG_XDATA UU16    xhyp_speed;
@@ -258,7 +258,7 @@ line level    source
  234          
  235          // number of oc debounce at register. 0x05
  236          SEG_XDATA U8 SLW_oc_debounce;
-C51 COMPILER V9.53.0.0   MOTOR                                                             01/28/2020 16:32:33 PAGE 5   
+C51 COMPILER V9.53.0.0   MOTOR                                                             01/29/2020 12:05:48 PAGE 5   
 
  237          // reg. 0x04. over current threshold.
  238          SEG_XDATA U8 SLW_current_limit;
@@ -323,7 +323,7 @@ line level    source
               #endif
  298   1      
  299   1      }
-C51 COMPILER V9.53.0.0   MOTOR                                                             01/28/2020 16:32:33 PAGE 6   
+C51 COMPILER V9.53.0.0   MOTOR                                                             01/29/2020 12:05:48 PAGE 6   
 
  300          
  301          
@@ -388,7 +388,7 @@ line level    source
  360   1          {
  361   2              return;
  362   2          }
-C51 COMPILER V9.53.0.0   MOTOR                                                             01/28/2020 16:32:33 PAGE 7   
+C51 COMPILER V9.53.0.0   MOTOR                                                             01/29/2020 12:05:48 PAGE 7   
 
  363   1          // respect user selected direction
  364   1          MTR_set_direction(SLW_user_direction);
@@ -453,7 +453,7 @@ line level    source
  423   1          CMP0MX = (CPMUX_Y << 4) | CPMUX_A;
  424   1      
  425   1          SLR_motor_state = MOTOR_STOPPED;
-C51 COMPILER V9.53.0.0   MOTOR                                                             01/28/2020 16:32:33 PAGE 8   
+C51 COMPILER V9.53.0.0   MOTOR                                                             01/29/2020 12:05:48 PAGE 8   
 
  426   1          SLR_motor_current_rpm = 0;
  427   1          SLW_rpm_updated = 1;                // for apps level status.
@@ -518,7 +518,7 @@ line level    source
  486   1          t1 = 0;
  487   1          while(--t1);
  488   1          cptout = ((CMP0CN0 & 0x40) == 0x40);
-C51 COMPILER V9.53.0.0   MOTOR                                                             01/28/2020 16:32:33 PAGE 9   
+C51 COMPILER V9.53.0.0   MOTOR                                                             01/29/2020 12:05:48 PAGE 9   
 
  489   1          if( cptout == motor_direction)
  490   1          {
@@ -583,7 +583,7 @@ line level    source
                   {
                       P1 = (P1 & ~MOTDRV_ALL_MASK) | hyperactive_gpio[open_phase+6];
                   }
-C51 COMPILER V9.53.0.0   MOTOR                                                             01/28/2020 16:32:33 PAGE 10  
+C51 COMPILER V9.53.0.0   MOTOR                                                             01/29/2020 12:05:48 PAGE 10  
 
                   else
                   {
@@ -648,7 +648,7 @@ line level    source
  612          // Small delay in response make significant current surge. (a few us delay is
  613          // pretty significant in 24kHz(42us period) PWM frequency)
  614          // Please refer to application note for more details.
-C51 COMPILER V9.53.0.0   MOTOR                                                             01/28/2020 16:32:33 PAGE 11  
+C51 COMPILER V9.53.0.0   MOTOR                                                             01/29/2020 12:05:48 PAGE 11  
 
  615          //-----------------------------------------------------------------------------
  616          void MTR_start_spinning(void)
@@ -713,7 +713,7 @@ line level    source
  675   2              {
  676   3                  T_k = start_delay[idx++];
  677   3              }
-C51 COMPILER V9.53.0.0   MOTOR                                                             01/28/2020 16:32:33 PAGE 12  
+C51 COMPILER V9.53.0.0   MOTOR                                                             01/29/2020 12:05:48 PAGE 12  
 
  678   2              else
  679   2              {
@@ -778,7 +778,7 @@ line level    source
  738          // MTR_do_quickstart
  739          //-----------------------------------------------------------------------------
  740          //
-C51 COMPILER V9.53.0.0   MOTOR                                                             01/28/2020 16:32:33 PAGE 13  
+C51 COMPILER V9.53.0.0   MOTOR                                                             01/29/2020 12:05:48 PAGE 13  
 
  741          // Return Value : None
  742          // Parameters   : None
@@ -843,7 +843,7 @@ line level    source
  801   4                      MTR_ATOMIC_ACCESS_END();
  802   4                  }
  803   3      
-C51 COMPILER V9.53.0.0   MOTOR                                                             01/28/2020 16:32:33 PAGE 14  
+C51 COMPILER V9.53.0.0   MOTOR                                                             01/29/2020 12:05:48 PAGE 14  
 
  804   3      
  805   3                  // BEMF Falling, comparator output Falling edge
@@ -908,7 +908,7 @@ line level    source
  864   1          // period = prev_zc_time.U16[LSB]*TIMER3_PRESCALER(=12)/6
  865   1          //ticks.U32 = (U32)TIMER3_PRESCALER * prev_zc_time.U16[LSB] / 6;
  866   1          // This is for 30deg rotate(zero-crossing to commutation)
-C51 COMPILER V9.53.0.0   MOTOR                                                             01/28/2020 16:32:33 PAGE 15  
+C51 COMPILER V9.53.0.0   MOTOR                                                             01/29/2020 12:05:48 PAGE 15  
 
  867   1          ticks.U32 = 2UL * prev_zc_time.U16[LSB];
  868   1      
@@ -973,7 +973,7 @@ line level    source
  927          // MTR_calculate_motor_rpm
  928          //-----------------------------------------------------------------------------
  929          //
-C51 COMPILER V9.53.0.0   MOTOR                                                             01/28/2020 16:32:33 PAGE 16  
+C51 COMPILER V9.53.0.0   MOTOR                                                             01/29/2020 12:05:48 PAGE 16  
 
  930          // Return Value : None
  931          // Parameters   : None
@@ -1038,7 +1038,7 @@ line level    source
  990          //
  991          // Return Value : None
  992          // Parameters   : None
-C51 COMPILER V9.53.0.0   MOTOR                                                             01/28/2020 16:32:33 PAGE 17  
+C51 COMPILER V9.53.0.0   MOTOR                                                             01/29/2020 12:05:48 PAGE 17  
 
  993          //
  994          // Description:
@@ -1103,7 +1103,7 @@ line level    source
                       {
                           // This is to handle overflow across 0xffff-0x0000 boundary
                           scaled_pwm = MAX_USER_PWM_VALUE;
-C51 COMPILER V9.53.0.0   MOTOR                                                             01/28/2020 16:32:33 PAGE 18  
+C51 COMPILER V9.53.0.0   MOTOR                                                             01/29/2020 12:05:48 PAGE 18  
 
                       }
               
@@ -1168,7 +1168,7 @@ line level    source
 1115   1      }
 1116          
 1117          //-----------------------------------------------------------------------------
-C51 COMPILER V9.53.0.0   MOTOR                                                             01/28/2020 16:32:33 PAGE 19  
+C51 COMPILER V9.53.0.0   MOTOR                                                             01/29/2020 12:05:48 PAGE 19  
 
 1118          // SL_MTR_change_num_poles
 1119          //-----------------------------------------------------------------------------
@@ -1233,7 +1233,7 @@ line level    source
 1178   4                      accum_motor_current = 0;
 1179   4                      accum_motor_current_count = CURRENT_ACC;
 1180   4      
-C51 COMPILER V9.53.0.0   MOTOR                                                             01/28/2020 16:32:33 PAGE 20  
+C51 COMPILER V9.53.0.0   MOTOR                                                             01/29/2020 12:05:48 PAGE 20  
 
 1181   4                      //current in 0.01A
 1182   4                      // Only 14bits need for PC side. (2^14 * 0.01A = 163A max value)
@@ -1298,7 +1298,7 @@ line level    source
 1241   1          {
 1242   2      #ifdef FEATURE_OVERCURRENT
 1243   2              if( SLW_oc_debounce && SLW_current_limit)
-C51 COMPILER V9.53.0.0   MOTOR                                                             01/28/2020 16:32:33 PAGE 21  
+C51 COMPILER V9.53.0.0   MOTOR                                                             01/29/2020 12:05:48 PAGE 21  
 
 1244   2              {
 1245   3                  if ( (MOTOR_RUNNING == SLR_motor_state) && \
@@ -1363,7 +1363,7 @@ line level    source
 1304          //
 1305          // CMP0 ISR Content goes here. Remember to clear flag bits:
 1306          // CMP0CN0::CPFIF (Comparator Falling-Edge Flag)
-C51 COMPILER V9.53.0.0   MOTOR                                                             01/28/2020 16:32:33 PAGE 22  
+C51 COMPILER V9.53.0.0   MOTOR                                                             01/29/2020 12:05:48 PAGE 22  
 
 1307          // CMP0CN0::CPRIF (Comparator Rising-Edge Flag)
 1308          //
@@ -1428,7 +1428,7 @@ line level    source
                                   hrem_time += ((U16)ticks.UU16[LSB].U8[LSB] * ticks.UU16[MSB].U8[MSB]) >> 8;
                                   ticks.U16[LSB] = hrem_time;
               
-C51 COMPILER V9.53.0.0   MOTOR                                                             01/28/2020 16:32:33 PAGE 23  
+C51 COMPILER V9.53.0.0   MOTOR                                                             01/29/2020 12:05:48 PAGE 23  
 
                               }
                               else
@@ -1493,7 +1493,7 @@ line level    source
 1430   1      
 1431   1          // to avoid any overhead, do critical one first.
 1432   1          if ( TIMER0_COMMUTATION == timer0_state )
-C51 COMPILER V9.53.0.0   MOTOR                                                             01/28/2020 16:32:33 PAGE 24  
+C51 COMPILER V9.53.0.0   MOTOR                                                             01/29/2020 12:05:48 PAGE 24  
 
 1433   1          {
 1434   2              if( 0 == repeated_timer0 )// it takes about 8 us
@@ -1558,7 +1558,7 @@ line level    source
 1493   1          {
 1494   2              // enable comparator interrupt
 1495   2              // falling edge detection for ZC
-C51 COMPILER V9.53.0.0   MOTOR                                                             01/28/2020 16:32:33 PAGE 25  
+C51 COMPILER V9.53.0.0   MOTOR                                                             01/29/2020 12:05:48 PAGE 25  
 
 1496   2              CMP0CN0 &= ~0x30;
 1497   2              CMP0MD = 0x00;
