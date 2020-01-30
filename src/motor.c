@@ -1433,7 +1433,7 @@ SI_INTERRUPT (TIMER0_ISR, TIMER0_IRQn)
 {
     static UU16 hyt;
     TCON_TF0 = 0;
-
+here:
     // to avoid any overhead, do critical one first.
     if ( TIMER0_COMMUTATION == timer0_state )
     {
@@ -1491,7 +1491,7 @@ SI_INTERRUPT (TIMER0_ISR, TIMER0_IRQn)
         hyt.U16 -= hrem_time;
         TL0 = hyt.U8[LSB];
         TH0 = hyt.U8[MSB];
-        TR0 = 1;
+        TCON_TR0 = 1;
         MTR_hyper_commutate();
     }
 #endif

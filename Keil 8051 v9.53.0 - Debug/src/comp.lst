@@ -1,4 +1,4 @@
-C51 COMPILER V9.53.0.0   COMP                                                              01/29/2020 13:56:05 PAGE 1   
+C51 COMPILER V9.53.0.0   COMP                                                              01/30/2020 11:09:12 PAGE 1   
 
 
 C51 COMPILER V9.53.0.0, COMPILATION OF MODULE COMP
@@ -63,7 +63,7 @@ line level    source
   46          {
   47   1              CMP0MX = compMux[0];
   48   1      
-C51 COMPILER V9.53.0.0   COMP                                                              01/29/2020 13:56:05 PAGE 2   
+C51 COMPILER V9.53.0.0   COMP                                                              01/30/2020 11:09:12 PAGE 2   
 
   49   1          // enable comparator 0
   50   1          // Hysteresis 0mV

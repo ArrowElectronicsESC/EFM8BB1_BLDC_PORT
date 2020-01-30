@@ -1,4 +1,4 @@
-C51 COMPILER V9.53.0.0   MOTOR                                                             01/29/2020 13:56:05 PAGE 1   
+C51 COMPILER V9.53.0.0   MOTOR                                                             01/30/2020 11:13:08 PAGE 1   
 
 
 C51 COMPILER V9.53.0.0, COMPILATION OF MODULE MOTOR
@@ -63,7 +63,7 @@ line level    source
   46          // Zero crossing : Falling edge of comparator output.
   47          // Falling bemf : CP0N = VMY(P0.3) CP0P=VMA,VMB, VMC (P0.0~P0.2)
   48          // Rising bemf  : CP0N = VMA,VMB,VMC(P0.0~P0.2) CP0P=VMY(P0.3)
-C51 COMPILER V9.53.0.0   MOTOR                                                             01/29/2020 13:56:05 PAGE 2   
+C51 COMPILER V9.53.0.0   MOTOR                                                             01/30/2020 11:13:08 PAGE 2   
 
   49          // comMux[0~5] is for Falling bemf
   50          // comMux[6~11] is for Rising bemf
@@ -128,7 +128,7 @@ line level    source
  109          const U8 code skipPattern[2][6] = {
  110                  {
  111                      ~MOTDRV_AH_MASK, ~MOTDRV_CH_MASK, ~MOTDRV_CH_MASK,
-C51 COMPILER V9.53.0.0   MOTOR                                                             01/29/2020 13:56:05 PAGE 3   
+C51 COMPILER V9.53.0.0   MOTOR                                                             01/30/2020 11:13:08 PAGE 3   
 
  112                      ~MOTDRV_BH_MASK, ~MOTDRV_BH_MASK, ~MOTDRV_AH_MASK
  113                  },
@@ -154,23 +154,23 @@ line level    source
  133          
  134          
  135          #ifdef FEATURE_HYPERDRIVE
-              // First 6 [0-5] are for falling BEMF, and last 6 [6-11] are for rising BEMF
-              const U8 code hyperactive_gpio[12] = {
-                  MOTDRV_HILOLO_ON(A, B, C),
-                  MOTDRV_HILOLO_ON(C, B, A),
-                  MOTDRV_HILOLO_ON(C, A, B),
-                  MOTDRV_HILOLO_ON(B, A, C),
-                  MOTDRV_HILOLO_ON(B, C, A),
-                  MOTDRV_HILOLO_ON(A, C, B),
-              
-                  MOTDRV_HILOHI_ON(A, B, C),
-                  MOTDRV_HILOHI_ON(C, B, A),
-                  MOTDRV_HILOHI_ON(C, A, B),
-                  MOTDRV_HILOHI_ON(B, A, C),
-                  MOTDRV_HILOHI_ON(B, C, A),
-                  MOTDRV_HILOHI_ON(A, C, B)
-              };
-              #endif
+ 136          // First 6 [0-5] are for falling BEMF, and last 6 [6-11] are for rising BEMF
+ 137          const U8 code hyperactive_gpio[12] = {
+ 138              MOTDRV_HILOLO_ON(A, B, C),
+ 139              MOTDRV_HILOLO_ON(C, B, A),
+ 140              MOTDRV_HILOLO_ON(C, A, B),
+ 141              MOTDRV_HILOLO_ON(B, A, C),
+ 142              MOTDRV_HILOLO_ON(B, C, A),
+ 143              MOTDRV_HILOLO_ON(A, C, B),
+ 144          
+ 145              MOTDRV_HILOHI_ON(A, B, C),
+ 146              MOTDRV_HILOHI_ON(C, B, A),
+ 147              MOTDRV_HILOHI_ON(C, A, B),
+ 148              MOTDRV_HILOHI_ON(B, A, C),
+ 149              MOTDRV_HILOHI_ON(B, C, A),
+ 150              MOTDRV_HILOHI_ON(A, C, B)
+ 151          };
+ 152          #endif
  153          
  154          SEG_IDATA U8      SLR_motor_state = MOTOR_STOPPED;
  155          // expected next commutation index value
@@ -193,17 +193,17 @@ line level    source
  172          
  173          // measuring commutation time (one electrical rotate)
  174          SEG_DATA UU32 time_per_rotate;
-C51 COMPILER V9.53.0.0   MOTOR                                                             01/29/2020 13:56:05 PAGE 4   
+C51 COMPILER V9.53.0.0   MOTOR                                                             01/30/2020 11:13:08 PAGE 4   
 
  175          // for fast phase reference.
  176          SEG_DATA U8       open_phase;
  177          
  178          // timer for hyperdrive mode
  179          #ifdef FEATURE_HYPERDRIVE
-              SEG_DATA U8       hyperdrive_speed;
-              SEG_XDATA UU16    xhyp_speed;
-              SEG_XDATA U16     hrem_time;
-              #endif
+ 180          SEG_DATA U8       hyperdrive_speed;
+ 181          SEG_XDATA UU16    xhyp_speed;
+ 182          SEG_XDATA U16     hrem_time;
+ 183          #endif
  184          
  185          // calculated current motor running rpm
  186          SEG_XDATA U16     SLR_motor_current_rpm;
@@ -258,7 +258,7 @@ line level    source
  235          #define CURRENT_SHIFT_ACC   (4)
  236          #define CURRENT_ACC         (1 << CURRENT_SHIFT_ACC)
  237          static SEG_XDATA U32    accum_motor_current;
-C51 COMPILER V9.53.0.0   MOTOR                                                             01/29/2020 13:56:05 PAGE 5   
+C51 COMPILER V9.53.0.0   MOTOR                                                             01/30/2020 11:13:08 PAGE 5   
 
  238          static SEG_XDATA U8     accum_motor_current_count;
  239          static SEG_XDATA U8     average_motor_current_adc;
@@ -323,7 +323,7 @@ line level    source
  298   1          //SLR_minimum_rpm = (U16)((60UL*1.2*2*SYSCLK)/(65536*2*6*SPEED_UNIT))/num_poles;
  299   1      #ifndef BUILD_FOR_PROTOCOL
                   SLW_oc_debounce = MOTOR_OC_MAX_DEBOUNCE;
-C51 COMPILER V9.53.0.0   MOTOR                                                             01/29/2020 13:56:05 PAGE 6   
+C51 COMPILER V9.53.0.0   MOTOR                                                             01/30/2020 11:13:08 PAGE 6   
 
                   SLW_current_limit = MOTOR_OC;
                   SLW_motor_max_rpm = MOTOR_MAX_RPM;
@@ -388,7 +388,7 @@ line level    source
  361          //      After staring motor, SLR_motor_state would be MOTOR_RUNNING.
  362          //-----------------------------------------------------------------------------
  363          void SL_MTR_start_motor(void)
-C51 COMPILER V9.53.0.0   MOTOR                                                             01/29/2020 13:56:05 PAGE 7   
+C51 COMPILER V9.53.0.0   MOTOR                                                             01/30/2020 11:13:08 PAGE 7   
 
  364          {
  365   1          if ((MOTOR_STOPPED != SLR_motor_state) || SLR_motor_stalled )
@@ -453,7 +453,7 @@ line level    source
  424   1          MTR_ATOMIC_ACCESS_END();
  425   1          // stop timer 3 and clear flag
  426   1          TMR3CN0 &= ~0x84;
-C51 COMPILER V9.53.0.0   MOTOR                                                             01/29/2020 13:56:05 PAGE 8   
+C51 COMPILER V9.53.0.0   MOTOR                                                             01/30/2020 11:13:08 PAGE 8   
 
  427   1      
  428   1          // keep tracking one phase of bemf
@@ -518,7 +518,7 @@ line level    source
  487   1          // CP0- = C, CP0+ = B
  488   1          // B>C ==> 1(CCW), B<C ==> 0(CW)
  489   1          CMP0MX = (CPMUX_C << 4) | (CPMUX_B);
-C51 COMPILER V9.53.0.0   MOTOR                                                             01/29/2020 13:56:05 PAGE 9   
+C51 COMPILER V9.53.0.0   MOTOR                                                             01/30/2020 11:13:08 PAGE 9   
 
  490   1          // cmp = (B>C)?1:0; B>C ==>CCW(1), B<C ==>CW(0)
  491   1          // just considering comparator response time.
@@ -573,29 +573,29 @@ line level    source
  540   1      }
  541          
  542          #ifdef FEATURE_HYPERDRIVE
-              //-----------------------------------------------------------------------------
-              // MTR_hyper_commutate
-              //-----------------------------------------------------------------------------
-              //
-              // Return Value : None
-              // Parameters   : None
-              //
-              // This is to commutate to hyper drive mode.
-              //-----------------------------------------------------------------------------
-              void MTR_hyper_commutate(void)
-C51 COMPILER V9.53.0.0   MOTOR                                                             01/29/2020 13:56:05 PAGE 10  
+ 543          //-----------------------------------------------------------------------------
+ 544          // MTR_hyper_commutate
+ 545          //-----------------------------------------------------------------------------
+ 546          //
+ 547          // Return Value : None
+ 548          // Parameters   : None
+ 549          //
+ 550          // This is to commutate to hyper drive mode.
+ 551          //-----------------------------------------------------------------------------
+ 552          void MTR_hyper_commutate(void)
+C51 COMPILER V9.53.0.0   MOTOR                                                             01/30/2020 11:13:08 PAGE 10  
 
-              {
-                  if (rising_bemf)
-                  {
-                      P1 = (P1 & ~MOTDRV_ALL_MASK) | hyperactive_gpio[open_phase+6];
-                  }
-                  else
-                  {
-                      P1 = (P1 & ~MOTDRV_ALL_MASK) | hyperactive_gpio[open_phase];
-                  }
-              }
-              #endif
+ 553          {
+ 554   1          if (rising_bemf)
+ 555   1          {
+ 556   2              P1 = (P1 & ~MOTDRV_ALL_MASK) | hyperactive_gpio[open_phase+6];
+ 557   2          }
+ 558   1          else
+ 559   1          {
+ 560   2              P1 = (P1 & ~MOTDRV_ALL_MASK) | hyperactive_gpio[open_phase];
+ 561   2          }
+ 562   1      }
+ 563          #endif
  564          
  565          //-----------------------------------------------------------------------------
  566          // MTR_commutate
@@ -648,7 +648,7 @@ line level    source
  613          //
  614          // Alignment and blind spinning.
  615          // At the end, this will de-energize all phases to spin freely.
-C51 COMPILER V9.53.0.0   MOTOR                                                             01/29/2020 13:56:05 PAGE 11  
+C51 COMPILER V9.53.0.0   MOTOR                                                             01/30/2020 11:13:08 PAGE 11  
 
  616          // This function has used comparator clear function in PCA.
  617          // In order to cut current as expected, comparator has to have fastest response.
@@ -713,7 +713,7 @@ line level    source
  676   2              MTR_pre_commutation();
  677   2              MTR_commutate();
  678   2              MTR_ATOMIC_ACCESS_END();
-C51 COMPILER V9.53.0.0   MOTOR                                                             01/29/2020 13:56:05 PAGE 12  
+C51 COMPILER V9.53.0.0   MOTOR                                                             01/30/2020 11:13:08 PAGE 12  
 
  679   2      
  680   2              if( idx < NO_OF_STARTUP_DELAY)
@@ -778,7 +778,7 @@ line level    source
  739   1          P1 = ((P1 & ~MOTDRV_ALL_MASK) | MOTDRV_ALL_OFF) | ~MOTDRV_ALL_MASK;
  740   1          P1SKIP |= MOTDRV_ALL_MASK;
  741   1      }
-C51 COMPILER V9.53.0.0   MOTOR                                                             01/29/2020 13:56:05 PAGE 13  
+C51 COMPILER V9.53.0.0   MOTOR                                                             01/30/2020 11:13:08 PAGE 13  
 
  742          
  743          //-----------------------------------------------------------------------------
@@ -843,7 +843,7 @@ line level    source
  802   4                      TMR3CN0 &= ~0x04;
  803   4                      prev_zc_time.U16[LSB] = TMR3;
  804   4                      // to measure offset (overhead)
-C51 COMPILER V9.53.0.0   MOTOR                                                             01/29/2020 13:56:05 PAGE 14  
+C51 COMPILER V9.53.0.0   MOTOR                                                             01/30/2020 11:13:08 PAGE 14  
 
  805   4                      TMR3 = 0;
  806   4                      TMR3CN0 = 0x04;
@@ -908,7 +908,7 @@ line level    source
  865   1      
  866   1          // calculate next expected commutation time from current zero-crossing.
  867   1          // ticks is time from rising to falling zero-crossing time of phase A.
-C51 COMPILER V9.53.0.0   MOTOR                                                             01/29/2020 13:56:05 PAGE 15  
+C51 COMPILER V9.53.0.0   MOTOR                                                             01/30/2020 11:13:08 PAGE 15  
 
  868   1          // That is time for 180 deg.
  869   1          // Desired period for 30 deg is:
@@ -973,7 +973,7 @@ line level    source
  928   1          MTR_pid_init();
  929   1      #endif
  930   1      }
-C51 COMPILER V9.53.0.0   MOTOR                                                             01/29/2020 13:56:05 PAGE 16  
+C51 COMPILER V9.53.0.0   MOTOR                                                             01/30/2020 11:13:08 PAGE 16  
 
  931          
  932          //-----------------------------------------------------------------------------
@@ -1038,7 +1038,7 @@ line level    source
  991   1      }
  992          
  993          //-----------------------------------------------------------------------------
-C51 COMPILER V9.53.0.0   MOTOR                                                             01/29/2020 13:56:05 PAGE 17  
+C51 COMPILER V9.53.0.0   MOTOR                                                             01/30/2020 11:13:08 PAGE 17  
 
  994          // MTR_calculate_pid
  995          //-----------------------------------------------------------------------------
@@ -1055,9 +1055,9 @@ line level    source
 1006          void MTR_calculate_pid(void)
 1007          {
 1008   1      #ifdef FEATURE_HYPERDRIVE
-                  U16 scaled_pwm;
-                  U16 xspeed;
-              #endif
+1009   1          U16 scaled_pwm;
+1010   1          U16 xspeed;
+1011   1      #endif
 1012   1      
 1013   1      #if BLDC_RD_RPM_OR_PWM == RPM_PARAMETER
 1014   1          // MTR_pid_compute_newpwm() should be called regularly. This function
@@ -1099,51 +1099,51 @@ line level    source
               #endif
 1051   1      
 1052   1      #ifdef FEATURE_HYPERDRIVE
-              
-                  if (pid_done)
-                  {
-                      // Scale up by 10% - we want to reserve the remainder for hyperdrive mode
-C51 COMPILER V9.53.0.0   MOTOR                                                             01/29/2020 13:56:05 PAGE 18  
+1053   1      
+1054   1          if (pid_done)
+1055   1          {
+1056   2              // Scale up by 10% - we want to reserve the remainder for hyperdrive mode
+C51 COMPILER V9.53.0.0   MOTOR                                                             01/30/2020 11:13:08 PAGE 18  
 
-                      scaled_pwm = ((U32)(PWM_SCALE_FACTOR * 65536.0) * SLR_pwm_duty) >> 16;
-                      if (scaled_pwm < SLR_pwm_duty)
-                      {
-                          // This is to handle overflow across 0xffff-0x0000 boundary
-                          scaled_pwm = MAX_USER_PWM_VALUE;
-                      }
-              
-                      // Hyperdrive will start working when scaled_pwm is 100%,
-                      // or SLR_pwm_duty > (65536.0/PWM_SCALE_FACTOR).
-                      if ( (scaled_pwm ^ MAX_USER_PWM_VALUE) == 0 )
-                      {
-                          // Obtain hyperdrive timing based on fraction of 256
-                          // larger number implies faster speed [0-3]
-                          xspeed = ((U16)(SLR_pwm_duty - (U16)(65536.0/PWM_SCALE_FACTOR)) * HYPERDRIVE_FACTOR) >> HYPER_
+1057   2              scaled_pwm = ((U32)(PWM_SCALE_FACTOR * 65536.0) * SLR_pwm_duty) >> 16;
+1058   2              if (scaled_pwm < SLR_pwm_duty)
+1059   2              {
+1060   3                  // This is to handle overflow across 0xffff-0x0000 boundary
+1061   3                  scaled_pwm = MAX_USER_PWM_VALUE;
+1062   3              }
+1063   2      
+1064   2              // Hyperdrive will start working when scaled_pwm is 100%,
+1065   2              // or SLR_pwm_duty > (65536.0/PWM_SCALE_FACTOR).
+1066   2              if ( (scaled_pwm ^ MAX_USER_PWM_VALUE) == 0 )
+1067   2              {
+1068   3                  // Obtain hyperdrive timing based on fraction of 256
+1069   3                  // larger number implies faster speed [0-3]
+1070   3                  xspeed = ((U16)(SLR_pwm_duty - (U16)(65536.0/PWM_SCALE_FACTOR)) * HYPERDRIVE_FACTOR) >> HYPER_
              -SHIFT;
-                          if (xhyp_speed.U16 > xspeed)
-                          {
-                              xhyp_speed.U16--;
-                          }
-                          else if (xhyp_speed.U16 < xspeed)
-                          {
-                              xhyp_speed.U16++;
-                          }
-                      }
-                      else
-                      {
-                          xhyp_speed.U16 = 0;
-                      }
-                      hyperdrive_speed = xhyp_speed.U16 >> (8-HYPER_SHIFT);
-                      pid_done = 0;
-                  }
-                  else
-                  {
-                      scaled_pwm = SLR_pwm_duty;
-                  }
-                  PCA_change_duty_cycle(scaled_pwm);
-              #else
-1093   1          PCA_change_duty_cycle(SLR_pwm_duty);
-1094   1      #endif
+1071   3                  if (xhyp_speed.U16 > xspeed)
+1072   3                  {
+1073   4                      xhyp_speed.U16--;
+1074   4                  }
+1075   3                  else if (xhyp_speed.U16 < xspeed)
+1076   3                  {
+1077   4                      xhyp_speed.U16++;
+1078   4                  }
+1079   3              }
+1080   2              else
+1081   2              {
+1082   3                  xhyp_speed.U16 = 0;
+1083   3              }
+1084   2              hyperdrive_speed = xhyp_speed.U16 >> (8-HYPER_SHIFT);
+1085   2              pid_done = 0;
+1086   2          }
+1087   1          else
+1088   1          {
+1089   2              scaled_pwm = SLR_pwm_duty;
+1090   2          }
+1091   1          PCA_change_duty_cycle(scaled_pwm);
+1092   1      #else
+                  PCA_change_duty_cycle(SLR_pwm_duty);
+              #endif
 1095   1      }
 1096          
 1097          
@@ -1168,7 +1168,7 @@ line level    source
 1116   1          MTR_ATOMIC_ACCESS_START();
 1117   1          xtime = user_timer;
 1118   1          MTR_ATOMIC_ACCESS_END();
-C51 COMPILER V9.53.0.0   MOTOR                                                             01/29/2020 13:56:05 PAGE 19  
+C51 COMPILER V9.53.0.0   MOTOR                                                             01/30/2020 11:13:08 PAGE 19  
 
 1119   1      
 1120   1          return xtime;
@@ -1233,7 +1233,7 @@ line level    source
 1179   3                  accum_motor_current += tmp.U16;
 1180   3                  if (--accum_motor_current_count == 0)
 1181   3                  {
-C51 COMPILER V9.53.0.0   MOTOR                                                             01/29/2020 13:56:05 PAGE 20  
+C51 COMPILER V9.53.0.0   MOTOR                                                             01/30/2020 11:13:08 PAGE 20  
 
 1182   4                      tmp.U16 = accum_motor_current >> CURRENT_SHIFT_ACC;
 1183   4                      average_motor_current_adc = tmp.U16 >> (ADC_RESOLUTION-8);
@@ -1298,7 +1298,7 @@ line level    source
 1242   3              }
 1243   2              return;
 1244   2          }
-C51 COMPILER V9.53.0.0   MOTOR                                                             01/29/2020 13:56:05 PAGE 21  
+C51 COMPILER V9.53.0.0   MOTOR                                                             01/30/2020 11:13:08 PAGE 21  
 
 1245   1      
 1246   1          if ( adc_flags & (0x01<<ADC_MUX_CURRENT) )
@@ -1363,7 +1363,7 @@ line level    source
 1305          
 1306          
 1307          //-----------------------------------------------------------------------------
-C51 COMPILER V9.53.0.0   MOTOR                                                             01/29/2020 13:56:05 PAGE 22  
+C51 COMPILER V9.53.0.0   MOTOR                                                             01/30/2020 11:13:08 PAGE 22  
 
 1308          // CMP0_ISR
 1309          //-----------------------------------------------------------------------------
@@ -1411,49 +1411,49 @@ line level    source
 1351   1                  timer0_next.U16 = ticks.U16[LSB];
 1352   1                  TCON &= ~0x30;
 1353   1              #ifdef FEATURE_HYPERDRIVE
-                          if (hyperdrive_speed)
-                          {
-              
-                              // additional phase advance = (hrem_time * (hyperdrive_speed/256));
-                              // max(hyperdrive_speed) == 255
-                              hrem_time = (ticks.U16[LSB] >> HYPER_CMT_SHIFT);
-                              ticks.U16[MSB] = (U16)(hrem_time >> 8) * hyperdrive_speed;
-                              ticks.U16[MSB] += ((U16)(hrem_time & 0xff) * hyperdrive_speed) >> 8;
-                              ticks.U16[LSB] += ticks.U16[MSB];
-              
-                              timer0_next.U16 = ticks.U16[LSB];
-              
-                              //Re-use MSB of ticks
-                              ticks.UU16[MSB].U8[MSB] = 255 - hyperdrive_speed;
-              
-                              if (ticks.UU16[MSB].U8[MSB])
-                              {
-C51 COMPILER V9.53.0.0   MOTOR                                                             01/29/2020 13:56:05 PAGE 23  
+1354   1                  if (hyperdrive_speed)
+1355   1                  {
+1356   2      
+1357   2                      // additional phase advance = (hrem_time * (hyperdrive_speed/256));
+1358   2                      // max(hyperdrive_speed) == 255
+1359   2                      hrem_time = (ticks.U16[LSB] >> HYPER_CMT_SHIFT);
+1360   2                      ticks.U16[MSB] = (U16)(hrem_time >> 8) * hyperdrive_speed;
+1361   2                      ticks.U16[MSB] += ((U16)(hrem_time & 0xff) * hyperdrive_speed) >> 8;
+1362   2                      ticks.U16[LSB] += ticks.U16[MSB];
+1363   2      
+1364   2                      timer0_next.U16 = ticks.U16[LSB];
+1365   2      
+1366   2                      //Re-use MSB of ticks
+1367   2                      ticks.UU16[MSB].U8[MSB] = 255 - hyperdrive_speed;
+1368   2      
+1369   2                      if (ticks.UU16[MSB].U8[MSB])
+1370   2                      {
+C51 COMPILER V9.53.0.0   MOTOR                                                             01/30/2020 11:13:08 PAGE 23  
 
-                                  // hrem_time = (high(ticks.U16[LSB])*(255-hyperdrive_speed))>>8
-                                  hrem_time = (U16)ticks.UU16[LSB].U8[MSB] * ticks.UU16[MSB].U8[MSB];
-                                  hrem_time += ((U16)ticks.UU16[LSB].U8[LSB] * ticks.UU16[MSB].U8[MSB]) >> 8;
-                                  ticks.U16[LSB] = hrem_time;
-              
-                              }
-                              else
-                              {
-                                  // We should not energize the 3rd terminal immediately
-                                  // here as it would trigger a sudden surge in current
-                                  // best to go through timer interrupt to have a more
-                                  // gradual increase in current
-                                  ticks.U16[LSB] = 1;
-              
-                              }
-                              // hrem_time = (timer0_next + timer0_next*x) * y; (x < 1.0, y < 1.0)
-                              // x --> additional phase advance factor
-                              hrem_time = timer0_next.U16 - ticks.U16[LSB];
-                              timer0_state = TIMER0_START_HYPERDRIVE;
-              
-                              timer0_next.U16 >>= 1;  // Half the remaining time for skipping inductive kick
-                          }
-                          else
-                      #endif
+1371   3                          // hrem_time = (high(ticks.U16[LSB])*(255-hyperdrive_speed))>>8
+1372   3                          hrem_time = (U16)ticks.UU16[LSB].U8[MSB] * ticks.UU16[MSB].U8[MSB];
+1373   3                          hrem_time += ((U16)ticks.UU16[LSB].U8[LSB] * ticks.UU16[MSB].U8[MSB]) >> 8;
+1374   3                          ticks.U16[LSB] = hrem_time;
+1375   3      
+1376   3                      }
+1377   2                      else
+1378   2                      {
+1379   3                          // We should not energize the 3rd terminal immediately
+1380   3                          // here as it would trigger a sudden surge in current
+1381   3                          // best to go through timer interrupt to have a more
+1382   3                          // gradual increase in current
+1383   3                          ticks.U16[LSB] = 1;
+1384   3      
+1385   3                      }
+1386   2                      // hrem_time = (timer0_next + timer0_next*x) * y; (x < 1.0, y < 1.0)
+1387   2                      // x --> additional phase advance factor
+1388   2                      hrem_time = timer0_next.U16 - ticks.U16[LSB];
+1389   2                      timer0_state = TIMER0_START_HYPERDRIVE;
+1390   2      
+1391   2                      timer0_next.U16 >>= 1;  // Half the remaining time for skipping inductive kick
+1392   2                  }
+1393   1                  else
+1394   1              #endif
 1395   1                  {
 1396   2                      timer0_state = TIMER0_COMMUTATION;
 1397   2                  }
@@ -1493,11 +1493,11 @@ line level    source
 1431          //-----------------------------------------------------------------------------
 1432          SI_INTERRUPT (TIMER0_ISR, TIMER0_IRQn)
 1433          {
-C51 COMPILER V9.53.0.0   MOTOR                                                             01/29/2020 13:56:05 PAGE 24  
+C51 COMPILER V9.53.0.0   MOTOR                                                             01/30/2020 11:13:08 PAGE 24  
 
 1434   1          static UU16 hyt;
 1435   1          TCON_TF0 = 0;
-1436   1      
+1436   1      here:
 1437   1          // to avoid any overhead, do critical one first.
 1438   1          if ( TIMER0_COMMUTATION == timer0_state )
 1439   1          {
@@ -1541,26 +1541,26 @@ line level    source
 1477   3              }
 1478   2          }
 1479   1      #ifdef FEATURE_HYPERDRIVE
-                  else if ( TIMER0_START_HYPERDRIVE == timer0_state )
-                  {
-                      // Hyperdrive mode
-                      timer0_state = TIMER0_COMMUTATION;
-                      TCON &= ~0x30;
-                      hyt.U8[LSB] = TL0;
-                      hyt.U8[MSB] = TH0;
-                      if (hyt.U16 >= hrem_time)
-                      {
-                          goto here;
-                      }
-                      hyt.U16 -= hrem_time;
-                      TL0 = hyt.U8[LSB];
-                      TH0 = hyt.U8[MSB];
-                      TR0 = 1;
-                      MTR_hyper_commutate();
-                  }
-C51 COMPILER V9.53.0.0   MOTOR                                                             01/29/2020 13:56:05 PAGE 25  
+1480   1          else if ( TIMER0_START_HYPERDRIVE == timer0_state )
+1481   1          {
+1482   2              // Hyperdrive mode
+1483   2              timer0_state = TIMER0_COMMUTATION;
+1484   2              TCON &= ~0x30;
+1485   2              hyt.U8[LSB] = TL0;
+1486   2              hyt.U8[MSB] = TH0;
+1487   2              if (hyt.U16 >= hrem_time)
+1488   2              {
+1489   3                  goto here;
+1490   3              }
+1491   2              hyt.U16 -= hrem_time;
+1492   2              TL0 = hyt.U8[LSB];
+1493   2              TH0 = hyt.U8[MSB];
+1494   2              TCON_TR0 = 1;
+1495   2              MTR_hyper_commutate();
+1496   2          }
+C51 COMPILER V9.53.0.0   MOTOR                                                             01/30/2020 11:13:08 PAGE 25  
 
-              #endif
+1497   1      #endif
 1498   1          else if ( TIMER0_SKIP_INDUCTIVE_KICK == timer0_state )
 1499   1          {
 1500   2              // enable comparator interrupt
@@ -1591,17 +1591,15 @@ line level    source
 1525   3              }
 1526   2          }
 1527   1      }
-*** WARNING C280 IN LINE 1434 OF C:\Users\A92862\SimplicityStudio\v4_workspace\EFM8BB1_BLDC_PORT\src\motor.c: 'hyt': unr
-             -eferenced local variable
 1528          
 
 
 MODULE INFORMATION:   STATIC OVERLAYABLE
-   CODE SIZE        =   2628    ----
-   CONSTANT SIZE    =     42    ----
-   XDATA SIZE       =     39      14
+   CODE SIZE        =   3049    ----
+   CONSTANT SIZE    =     54    ----
+   XDATA SIZE       =     43      14
    PDATA SIZE       =   ----    ----
-   DATA SIZE        =     35      13
+   DATA SIZE        =     36      15
    IDATA SIZE       =      1    ----
    BIT SIZE         =     11       8
    EDATA SIZE       =   ----    ----
@@ -1611,4 +1609,4 @@ MODULE INFORMATION:   STATIC OVERLAYABLE
 END OF MODULE INFORMATION.
 
 
-C51 COMPILATION COMPLETE.  1 WARNING(S),  0 ERROR(S)
+C51 COMPILATION COMPLETE.  0 WARNING(S),  0 ERROR(S)
