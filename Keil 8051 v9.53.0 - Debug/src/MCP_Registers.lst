@@ -1,4 +1,4 @@
-C51 COMPILER V9.53.0.0   MCP_REGISTERS                                                     01/30/2020 11:09:10 PAGE 1   
+C51 COMPILER V9.53.0.0   MCP_REGISTERS                                                     02/10/2020 16:02:16 PAGE 1   
 
 
 C51 COMPILER V9.53.0.0, COMPILATION OF MODULE MCP_REGISTERS
@@ -63,7 +63,7 @@ line level    source
   46          #define INDEX_ACCELERATION_STEP_SIZE    8
   47          #define INDEX_DECELERATION_STEP_SIZE    9
   48          #define INDEX_PROPORTIONAL_GAIN         10
-C51 COMPILER V9.53.0.0   MCP_REGISTERS                                                     01/30/2020 11:09:10 PAGE 2   
+C51 COMPILER V9.53.0.0   MCP_REGISTERS                                                     02/10/2020 16:02:16 PAGE 2   
 
   49          #define INDEX_INTEGRAL_GAIN             11
   50          
@@ -128,7 +128,7 @@ line level    source
  109          //volatile U32 data MCP_reg16_dirty_bit_map;
  110          volatile U8 data MCP_reg16_dirty_bit_map[4];
  111          
-C51 COMPILER V9.53.0.0   MCP_REGISTERS                                                     01/30/2020 11:09:10 PAGE 3   
+C51 COMPILER V9.53.0.0   MCP_REGISTERS                                                     02/10/2020 16:02:16 PAGE 3   
 
  112          //------------------------------------------------------------------------------
  113          // MCP_Reg8_Access_Type:
@@ -193,7 +193,7 @@ line level    source
  172          //------------------------------------------------------------------------------
  173          volatile U16 MCP_REG_MEM_TYPE    MCP_16_bit_registers[16];
  174          
-C51 COMPILER V9.53.0.0   MCP_REGISTERS                                                     01/30/2020 11:09:10 PAGE 4   
+C51 COMPILER V9.53.0.0   MCP_REGISTERS                                                     02/10/2020 16:02:16 PAGE 4   
 
  175          //------------------------------------------------------------------------------
  176          // Local Functions Prototypes
@@ -258,7 +258,7 @@ line level    source
  235   1          MCP_16_bit_registers[INDEX_INTEGRAL_GAIN] = BLDC_RD_PI_INTEGRAL_GAIN;
  236   1      }
  237          
-C51 COMPILER V9.53.0.0   MCP_REGISTERS                                                     01/30/2020 11:09:10 PAGE 5   
+C51 COMPILER V9.53.0.0   MCP_REGISTERS                                                     02/10/2020 16:02:16 PAGE 5   
 
  238          //------------------------------------------------------------------------------
  239          // MCP_set_8bit_register:
@@ -323,7 +323,7 @@ line level    source
  298          //         0: Function is called internally by F/W
  299          //         1: Function is called as a result of Write Register Command ('=')
  300          //
-C51 COMPILER V9.53.0.0   MCP_REGISTERS                                                     01/30/2020 11:09:10 PAGE 6   
+C51 COMPILER V9.53.0.0   MCP_REGISTERS                                                     02/10/2020 16:02:16 PAGE 6   
 
  301          // Description:
  302          //     This function is called by MCP when a Write Register Command for 16-bit
@@ -388,7 +388,7 @@ line level    source
  361          //     address of valid 8-bit register is passed to it. It can write all 8-bit
  362          //     registers. When a register is written (modified), corresponding dirty bit
  363          //     is also set.
-C51 COMPILER V9.53.0.0   MCP_REGISTERS                                                     01/30/2020 11:09:10 PAGE 7   
+C51 COMPILER V9.53.0.0   MCP_REGISTERS                                                     02/10/2020 16:02:16 PAGE 7   
 
  364          //
  365          //------------------------------------------------------------------------------
@@ -453,7 +453,7 @@ line level    source
  424          //     This function is called by MCP when a Read Register Command is received
  425          //     from controller. It assumes that address validity is checked by caller.
  426          //------------------------------------------------------------------------------
-C51 COMPILER V9.53.0.0   MCP_REGISTERS                                                     01/30/2020 11:09:10 PAGE 8   
+C51 COMPILER V9.53.0.0   MCP_REGISTERS                                                     02/10/2020 16:02:16 PAGE 8   
 
  427          U8 MCP_get_8bit_register (U8 address)
  428          {
@@ -518,7 +518,7 @@ line level    source
  487          //
  488          // Return Value:
  489          //     Contents of addressed register
-C51 COMPILER V9.53.0.0   MCP_REGISTERS                                                     01/30/2020 11:09:10 PAGE 9   
+C51 COMPILER V9.53.0.0   MCP_REGISTERS                                                     02/10/2020 16:02:16 PAGE 9   
 
  490          //
  491          // Parameters:
@@ -583,7 +583,7 @@ line level    source
  550   1          {
  551   2              if (enable)
  552   2              {
-C51 COMPILER V9.53.0.0   MCP_REGISTERS                                                     01/30/2020 11:09:10 PAGE 10  
+C51 COMPILER V9.53.0.0   MCP_REGISTERS                                                     02/10/2020 16:02:16 PAGE 10  
 
  553   3                  MCP_reg8_status_update_map |= temp16;
  554   3                  //MCP_reg8_dirty_bit_map     |= ((U16)1 << address);
@@ -648,7 +648,7 @@ line level    source
  613   2          }
  614   1      
  615   1          return 0;
-C51 COMPILER V9.53.0.0   MCP_REGISTERS                                                     01/30/2020 11:09:10 PAGE 11  
+C51 COMPILER V9.53.0.0   MCP_REGISTERS                                                     02/10/2020 16:02:16 PAGE 11  
 
  616   1      }
  617          
@@ -713,7 +713,7 @@ line level    source
  676   1              (MCP_REG_RESERVED_END    >= address))
  677   1                             ||
  678   1              (MCP_REG_UNDEFINED_START <= address))
-C51 COMPILER V9.53.0.0   MCP_REGISTERS                                                     01/30/2020 11:09:10 PAGE 12  
+C51 COMPILER V9.53.0.0   MCP_REGISTERS                                                     02/10/2020 16:02:16 PAGE 12  
 
  679   1          {
  680   2              return 1;

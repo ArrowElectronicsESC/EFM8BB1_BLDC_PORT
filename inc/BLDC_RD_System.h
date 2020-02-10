@@ -507,7 +507,7 @@ SI_SBIT(BTN0, SFR_P2, 1);
 // Define BTN1
 #ifdef FEATURE_BTN1
 SI_SBIT(BTN1, SFR_P1, 1);	// Define BTN1
-#define IS_BTN1_PRESSED()   (BTN1 == 1)
+#define IS_BTN1_PRESSED()   (BTN1 == 0)
 #else
 #define CONFIG_BTN1()
 #define IS_BTN1_PRESSED()   (0)

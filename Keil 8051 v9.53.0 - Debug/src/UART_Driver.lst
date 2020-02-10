@@ -1,4 +1,4 @@
-C51 COMPILER V9.53.0.0   UART_DRIVER                                                       01/30/2020 11:09:11 PAGE 1   
+C51 COMPILER V9.53.0.0   UART_DRIVER                                                       02/10/2020 16:02:17 PAGE 1   
 
 
 C51 COMPILER V9.53.0.0, COMPILATION OF MODULE UART_DRIVER
@@ -63,7 +63,7 @@ line level    source
   46          
   47          #define UART_RX_BUFFER_FULL  (1 == (UART_RX_BUFFER_FREE_BYTES))
   48          
-C51 COMPILER V9.53.0.0   UART_DRIVER                                                       01/30/2020 11:09:11 PAGE 2   
+C51 COMPILER V9.53.0.0   UART_DRIVER                                                       02/10/2020 16:02:17 PAGE 2   
 
   49          #define UART_RX_BUFFER_EMPTY (0 == (UART_RX_BUFFER_FREE_BYTES))
   50          
@@ -128,7 +128,7 @@ line level    source
  109          // UART_init
  110          // void UART_init (void)
  111          //
-C51 COMPILER V9.53.0.0   UART_DRIVER                                                       01/30/2020 11:09:11 PAGE 3   
+C51 COMPILER V9.53.0.0   UART_DRIVER                                                       02/10/2020 16:02:17 PAGE 3   
 
  112          // Return Value:
  113          //     None
@@ -193,7 +193,7 @@ line level    source
  172   1      }
  173          
  174          //------------------------------------------------------------------------------
-C51 COMPILER V9.53.0.0   UART_DRIVER                                                       01/30/2020 11:09:11 PAGE 4   
+C51 COMPILER V9.53.0.0   UART_DRIVER                                                       02/10/2020 16:02:17 PAGE 4   
 
  175          // UART_send_byte
  176          // U8 UART_send_byte (U8)
@@ -258,7 +258,7 @@ line level    source
  235          {
  236   1          //Return error if Rx buffer is empty.
  237   1          if (UART_RX_BUFFER_EMPTY)
-C51 COMPILER V9.53.0.0   UART_DRIVER                                                       01/30/2020 11:09:11 PAGE 5   
+C51 COMPILER V9.53.0.0   UART_DRIVER                                                       02/10/2020 16:02:17 PAGE 5   
 
  238   1          {
  239   2              return UART_ERROR_RX_BUFFER_EMPTY;
@@ -323,7 +323,7 @@ line level    source
  298   2      
  299   2              #if 0 //To test the behaviour if alternate byte is not read from SBUF0
                               if (0 == temp)
-C51 COMPILER V9.53.0.0   UART_DRIVER                                                       01/30/2020 11:09:11 PAGE 6   
+C51 COMPILER V9.53.0.0   UART_DRIVER                                                       02/10/2020 16:02:17 PAGE 6   
 
                               {
                                   UART_rx_buffer[UART_rx_buffer_tail] = SBUF0;
@@ -388,7 +388,7 @@ line level    source
  361          //     by configuring Timer1 as follows:
  362          //     Mode: 8-bit auto-reload timer
  363          //     Clock source: System Clock
-C51 COMPILER V9.53.0.0   UART_DRIVER                                                       01/30/2020 11:09:11 PAGE 7   
+C51 COMPILER V9.53.0.0   UART_DRIVER                                                       02/10/2020 16:02:17 PAGE 7   
 
  364          //     Reload Value: 0xF3 for 921600 bps
  365          //
@@ -453,7 +453,7 @@ line level    source
               //------------------------------------------------------------------------------
               void UART_init (void)
               {
-C51 COMPILER V9.53.0.0   UART_DRIVER                                                       01/30/2020 11:09:11 PAGE 8   
+C51 COMPILER V9.53.0.0   UART_DRIVER                                                       02/10/2020 16:02:17 PAGE 8   
 
               
               }
@@ -518,7 +518,7 @@ line level    source
               //------------------------------------------------------------------------------
               // UART_get_tx_buffer_free_bytes
               // U8 UART_get_tx_buffer_free_bytes (void)
-C51 COMPILER V9.53.0.0   UART_DRIVER                                                       01/30/2020 11:09:11 PAGE 9   
+C51 COMPILER V9.53.0.0   UART_DRIVER                                                       02/10/2020 16:02:17 PAGE 9   
 
               //
               // Return Value:

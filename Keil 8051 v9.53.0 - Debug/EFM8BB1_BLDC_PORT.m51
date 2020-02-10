@@ -1,4 +1,4 @@
-LX51 LINKER/LOCATER V4.66.30.0                                                          01/30/2020  11:13:10  PAGE 1
+LX51 LINKER/LOCATER V4.66.30.0                                                          02/10/2020  16:02:20  PAGE 1
 
 
 LX51 LINKER/LOCATER V4.66.30.0, INVOKED BY:
@@ -64,7 +64,7 @@ INPUT MODULES INCLUDED:
   C:\SILICONLABS\SIMPLICITYSTUDIO\V4\DEVELOPER\TOOLCHAINS\KEIL_8051\9.53\LIB\C51S.LIB (?C?ULSHR)
          COMMENT TYPE 1: A51 / ASM51 Assembler
   C:\SILICONLABS\SIMPLICITYSTUDIO\V4\DEVELOPER\TOOLCHAINS\KEIL_8051\9.53\LIB\C51S.LIB (?C?SLSHR)
-LX51 LINKER/LOCATER V4.66.30.0                                                        01/30/2020  11:13:10  PAGE 2
+LX51 LINKER/LOCATER V4.66.30.0                                                        02/10/2020  16:02:20  PAGE 2
 
 
          COMMENT TYPE 1: A51 / ASM51 Assembler
@@ -129,7 +129,7 @@ START     STOP      LENGTH    ALIGN  RELOC    MEMORY CLASS   SEGMENT NAME
 0000B3H   0000B3H   000001H   BYTE   UNIT     IDATA          ?ID?MOTOR
 0000B4H   0000B4H   000001H   BYTE   UNIT     IDATA          ?STACK
 
-LX51 LINKER/LOCATER V4.66.30.0                                                        01/30/2020  11:13:10  PAGE 3
+LX51 LINKER/LOCATER V4.66.30.0                                                        02/10/2020  16:02:20  PAGE 3
 
 
 * * * * * * * * * * *   C O D E   M E M O R Y   * * * * * * * * * * * * *
@@ -194,7 +194,7 @@ START     STOP      LENGTH    ALIGN  RELOC    MEMORY CLASS   SEGMENT NAME
 001D3FH   001D62H   000024H   BYTE   UNIT     CODE           ?PR?MCP_GET_REGISTER_ADDRESS?MCP_CORE
 001D63H   001D83H   000021H   BYTE   UNIT     CODE           ?PR?IS_BTN1_PRESSED?BTN
 001D84H   001DA3H   000020H   BYTE   UNIT     CODE           ?PR?_MCP_GET_16BIT_REGISTER?MCP_REGISTERS
-LX51 LINKER/LOCATER V4.66.30.0                                                        01/30/2020  11:13:10  PAGE 4
+LX51 LINKER/LOCATER V4.66.30.0                                                        02/10/2020  16:02:20  PAGE 4
 
 
 001DA4H   001DBEH   00001BH   BYTE   UNIT     CODE           ?C_INITSEG
@@ -259,7 +259,7 @@ START     STOP      LENGTH    ALIGN  RELOC    MEMORY CLASS   SEGMENT NAME
 
 OVERLAY MAP OF MODULE:   EFM8BB1_BLDC_PORT.OMF.CRBUILD (ASSERT)
 
-LX51 LINKER/LOCATER V4.66.30.0                                                        01/30/2020  11:13:10  PAGE 5
+LX51 LINKER/LOCATER V4.66.30.0                                                        02/10/2020  16:02:20  PAGE 5
 
 
 
@@ -324,7 +324,7 @@ SL_MTR_INIT/MOTOR                             ----- -----  ----- -----  ----- --
   +--> PCA_INITIALIZE_PCA/PCA
   +--> TMR_INIT_TIMER3/TIMERS
   +--> TMR_INIT_TIMER0/TIMERS
-LX51 LINKER/LOCATER V4.66.30.0                                                        01/30/2020  11:13:10  PAGE 6
+LX51 LINKER/LOCATER V4.66.30.0                                                        02/10/2020  16:02:20  PAGE 6
 
 
   +--> COMP_INITIALIZE_COMP/COMP
@@ -389,7 +389,7 @@ MTR_PROCESS_ADC/MOTOR                         ----- -----  ----- -----  0075H 00
 MTR_CALCULATE_MOTOR_RPM/MOTOR                 21H.4 21H.4  ----- -----  0075H 0078H
 
 MTR_CALCULATE_PID/MOTOR                       ----- -----  005FH 0060H  ----- -----
-LX51 LINKER/LOCATER V4.66.30.0                                                        01/30/2020  11:13:10  PAGE 7
+LX51 LINKER/LOCATER V4.66.30.0                                                        02/10/2020  16:02:20  PAGE 7
 
 
   +--> MTR_PID_COMPUTE_NEWPWM/MTRPID
@@ -454,7 +454,7 @@ _SL_MTR_CHANGE_PID_GAIN/MTRPID                ----- -----  ----- -----  ----- --
 
 _MCP_SET_16BIT_REGISTER/MCP_REGISTERS         21H.4 21H.5  0061H 0064H  ----- -----
   +--> ?CO?MCP_REGISTERS
-LX51 LINKER/LOCATER V4.66.30.0                                                        01/30/2020  11:13:10  PAGE 8
+LX51 LINKER/LOCATER V4.66.30.0                                                        02/10/2020  16:02:20  PAGE 8
 
 
 
@@ -519,7 +519,7 @@ MCP_UPDATE_STATUS/MCP_CORE                    ----- -----  ----- -----  ----- --
   +--> _MCP_GET_8BIT_REGISTER/MCP_REGISTERS
   +--> _MCP_IS_16BIT_STATUS_UPDATE_ENABLED/MCP_REGISTERS
   +--> _MCP_GET_16BIT_REGISTER/MCP_REGISTERS
-LX51 LINKER/LOCATER V4.66.30.0                                                        01/30/2020  11:13:10  PAGE 9
+LX51 LINKER/LOCATER V4.66.30.0                                                        02/10/2020  16:02:20  PAGE 9
 
 
 
@@ -584,7 +584,7 @@ PUBLIC SYMBOLS OF MODULE:  EFM8BB1_BLDC_PORT.OMF.CRBUILD (ASSERT)
       01000158H   CODE     ---       ?C?ULDIV
       0100021FH   CODE     ---       ?C?ULSHR
       00000000H   NUMBER   ---       ?C?XDATASEG
-LX51 LINKER/LOCATER V4.66.30.0                                                        01/30/2020  11:13:10  PAGE 10
+LX51 LINKER/LOCATER V4.66.30.0                                                        02/10/2020  16:02:20  PAGE 10
 
 
       0100145BH   CODE     ---       ?C_START
@@ -649,7 +649,7 @@ PUBLIC SYMBOLS OF MODULE:  EFM8BB1_BLDC_PORT.OMF.CRBUILD (ASSERT)
 *SFR* 000000BBH   DATA     BYTE      ADC0MX
 *SFR* 000000DFH   DATA     BYTE      ADC0PWR
 *SFR* 000000B9H   DATA     BYTE      ADC0TK
-LX51 LINKER/LOCATER V4.66.30.0                                                        01/30/2020  11:13:10  PAGE 11
+LX51 LINKER/LOCATER V4.66.30.0                                                        02/10/2020  16:02:20  PAGE 11
 
 
       00000072H   DATA     BYTE      adc_flags
@@ -714,7 +714,7 @@ PUBLIC SYMBOLS OF MODULE:  EFM8BB1_BLDC_PORT.OMF.CRBUILD (ASSERT)
 *SFR* 000000A8H.5 DATA     BIT       IE_ET2
 *SFR* 000000A8H   DATA     BIT       IE_EX0
 *SFR* 000000A8H.2 DATA     BIT       IE_EX1
-LX51 LINKER/LOCATER V4.66.30.0                                                        01/30/2020  11:13:10  PAGE 12
+LX51 LINKER/LOCATER V4.66.30.0                                                        02/10/2020  16:02:20  PAGE 12
 
 
 *SFR* 000000B8H   DATA     BYTE      IP
@@ -779,7 +779,7 @@ PUBLIC SYMBOLS OF MODULE:  EFM8BB1_BLDC_PORT.OMF.CRBUILD (ASSERT)
 *SFR* 00000090H   DATA     BYTE      P1
 *SFR* 00000090H   DATA     BIT       P1_B0
 *SFR* 00000090H.1 DATA     BIT       P1_B1
-LX51 LINKER/LOCATER V4.66.30.0                                                        01/30/2020  11:13:10  PAGE 13
+LX51 LINKER/LOCATER V4.66.30.0                                                        02/10/2020  16:02:20  PAGE 13
 
 
 *SFR* 00000090H.2 DATA     BIT       P1_B2
@@ -844,7 +844,7 @@ PUBLIC SYMBOLS OF MODULE:  EFM8BB1_BLDC_PORT.OMF.CRBUILD (ASSERT)
       0200003FH   XDATA    BYTE      pre_port1
       0000002DH   DATA     ---       prev_zc_time
 *SFR* 000000F6H   DATA     BYTE      PRTDRV
-LX51 LINKER/LOCATER V4.66.30.0                                                        01/30/2020  11:13:10  PAGE 14
+LX51 LINKER/LOCATER V4.66.30.0                                                        02/10/2020  16:02:20  PAGE 14
 
 
 *SFR* 0000008FH   DATA     BYTE      PSCTL
@@ -909,7 +909,7 @@ PUBLIC SYMBOLS OF MODULE:  EFM8BB1_BLDC_PORT.OMF.CRBUILD (ASSERT)
 *SFR* 000000C0H.6 DATA     BIT       SMB0CN0_TXMODE
 *SFR* 000000C2H   DATA     BYTE      SMB0DAT
 *SFR* 000000ACH   DATA     BYTE      SMB0TC
-LX51 LINKER/LOCATER V4.66.30.0                                                        01/30/2020  11:13:10  PAGE 15
+LX51 LINKER/LOCATER V4.66.30.0                                                        02/10/2020  16:02:20  PAGE 15
 
 
 *SFR* 00000081H   DATA     BYTE      SP
@@ -974,7 +974,7 @@ PUBLIC SYMBOLS OF MODULE:  EFM8BB1_BLDC_PORT.OMF.CRBUILD (ASSERT)
       01001ECAH   CODE     ---       UART_init_buffers
       00000074H   IDATA    ---       UART_rx_buffer
       0000006AH   DATA     ---       UART_rx_buffer_head
-LX51 LINKER/LOCATER V4.66.30.0                                                        01/30/2020  11:13:10  PAGE 16
+LX51 LINKER/LOCATER V4.66.30.0                                                        02/10/2020  16:02:20  PAGE 16
 
 
       0000006CH   DATA     ---       UART_rx_buffer_tail
@@ -1039,7 +1039,7 @@ SYMBOL TABLE OF MODULE:  EFM8BB1_BLDC_PORT.OMF.CRBUILD (ASSERT)
       000000ECH   SFRSYM    DATA     BYTE      PCA0CPH2
       000000F0H.1 SFRSYM    DATA     BIT       B_B1
       000000C3H   SFRSYM    DATA     WORD      ADC0GT
-LX51 LINKER/LOCATER V4.66.30.0                                                        01/30/2020  11:13:10  PAGE 17
+LX51 LINKER/LOCATER V4.66.30.0                                                        02/10/2020  16:02:20  PAGE 17
 
 
       000000F0H.2 SFRSYM    DATA     BIT       B_B2
@@ -1104,7 +1104,7 @@ SYMBOL TABLE OF MODULE:  EFM8BB1_BLDC_PORT.OMF.CRBUILD (ASSERT)
       000000E8H.7 SFRSYM    DATA     BIT       ADC0CN0_ADEN
       00000089H   SFRSYM    DATA     BYTE      TMOD
       00000088H   SFRSYM    DATA     BYTE      TCON
-LX51 LINKER/LOCATER V4.66.30.0                                                        01/30/2020  11:13:10  PAGE 18
+LX51 LINKER/LOCATER V4.66.30.0                                                        02/10/2020  16:02:20  PAGE 18
 
 
       000000CFH   SFRSYM    DATA     BYTE      CRC0FLIP
@@ -1169,7 +1169,7 @@ SYMBOL TABLE OF MODULE:  EFM8BB1_BLDC_PORT.OMF.CRBUILD (ASSERT)
       00000088H.3 SFRSYM    DATA     BIT       TCON_IE1
       000000A0H.1 SFRSYM    DATA     BIT       P2_B1
       00000090H.2 SFRSYM    DATA     BIT       P1_B2
-LX51 LINKER/LOCATER V4.66.30.0                                                        01/30/2020  11:13:10  PAGE 19
+LX51 LINKER/LOCATER V4.66.30.0                                                        02/10/2020  16:02:20  PAGE 19
 
 
       00000080H.3 SFRSYM    DATA     BIT       P0_B3
@@ -1234,7 +1234,7 @@ SYMBOL TABLE OF MODULE:  EFM8BB1_BLDC_PORT.OMF.CRBUILD (ASSERT)
       000000F8H.7 SFRSYM    DATA     BIT       SPI0CN0_SPIF
       00000094H   SFRSYM    DATA     BYTE      TMR3L
       000000DFH   SFRSYM    DATA     BYTE      ADC0PWR
-LX51 LINKER/LOCATER V4.66.30.0                                                        01/30/2020  11:13:10  PAGE 20
+LX51 LINKER/LOCATER V4.66.30.0                                                        02/10/2020  16:02:20  PAGE 20
 
 
       000000A8H.7 SFRSYM    DATA     BIT       IE_EA
@@ -1299,7 +1299,7 @@ SYMBOL TABLE OF MODULE:  EFM8BB1_BLDC_PORT.OMF.CRBUILD (ASSERT)
       000000CAH   SFRSYM    DATA     BYTE      TMR2RLL
       000000FCH   SFRSYM    DATA     BYTE      PCA0CPH0
       00000092H   SFRSYM    DATA     BYTE      TMR3RLL
-LX51 LINKER/LOCATER V4.66.30.0                                                        01/30/2020  11:13:10  PAGE 21
+LX51 LINKER/LOCATER V4.66.30.0                                                        02/10/2020  16:02:20  PAGE 21
 
 
       000000EAH   SFRSYM    DATA     BYTE      PCA0CPH1
@@ -1364,7 +1364,7 @@ SYMBOL TABLE OF MODULE:  EFM8BB1_BLDC_PORT.OMF.CRBUILD (ASSERT)
       000000F2H   SFRSYM    DATA     BYTE      P1MDIN
       000000C0H.4 SFRSYM    DATA     BIT       SMB0CN0_STO
       000000FEH   SFRSYM    DATA     BYTE      P0MASK
-LX51 LINKER/LOCATER V4.66.30.0                                                        01/30/2020  11:13:10  PAGE 22
+LX51 LINKER/LOCATER V4.66.30.0                                                        02/10/2020  16:02:20  PAGE 22
 
 
       000000EEH   SFRSYM    DATA     BYTE      P1MASK
@@ -1429,7 +1429,7 @@ SYMBOL TABLE OF MODULE:  EFM8BB1_BLDC_PORT.OMF.CRBUILD (ASSERT)
       000000B8H   SFRSYM    DATA     BIT       IP_PX0
       00000090H   SFRSYM    DATA     BIT       P1_B0
       00000080H.1 SFRSYM    DATA     BIT       P0_B1
-LX51 LINKER/LOCATER V4.66.30.0                                                        01/30/2020  11:13:10  PAGE 23
+LX51 LINKER/LOCATER V4.66.30.0                                                        02/10/2020  16:02:20  PAGE 23
 
 
       000000B8H.2 SFRSYM    DATA     BIT       IP_PX1
@@ -1494,7 +1494,7 @@ SYMBOL TABLE OF MODULE:  EFM8BB1_BLDC_PORT.OMF.CRBUILD (ASSERT)
       000000D7H   SFRSYM    DATA     BYTE      SMB0ADR
       00000088H.4 SFRSYM    DATA     BIT       TCON_TR0
       000000C8H.4 SFRSYM    DATA     BIT       TMR2CN0_TF2CEN
-LX51 LINKER/LOCATER V4.66.30.0                                                        01/30/2020  11:13:10  PAGE 24
+LX51 LINKER/LOCATER V4.66.30.0                                                        02/10/2020  16:02:20  PAGE 24
 
 
       00000088H.6 SFRSYM    DATA     BIT       TCON_TR1
@@ -1559,7 +1559,7 @@ SYMBOL TABLE OF MODULE:  EFM8BB1_BLDC_PORT.OMF.CRBUILD (ASSERT)
       01001D1AH   LINE      CODE     ---       #86
       01001D1AH   LINE      CODE     ---       #87
       01001D1DH   LINE      CODE     ---       #88
-LX51 LINKER/LOCATER V4.66.30.0                                                        01/30/2020  11:13:10  PAGE 25
+LX51 LINKER/LOCATER V4.66.30.0                                                        02/10/2020  16:02:20  PAGE 25
 
 
       01001D20H   LINE      CODE     ---       #89
@@ -1624,7 +1624,7 @@ SYMBOL TABLE OF MODULE:  EFM8BB1_BLDC_PORT.OMF.CRBUILD (ASSERT)
       000000A6H   SFRSYM    DATA     BYTE      P2MDOUT
       000000A8H   SFRSYM    DATA     BYTE      IE
       00000093H   SFRSYM    DATA     BYTE      TMR3RLH
-LX51 LINKER/LOCATER V4.66.30.0                                                        01/30/2020  11:13:10  PAGE 26
+LX51 LINKER/LOCATER V4.66.30.0                                                        02/10/2020  16:02:20  PAGE 26
 
 
       000000F3H   SFRSYM    DATA     BYTE      EIP1
@@ -1689,7 +1689,7 @@ SYMBOL TABLE OF MODULE:  EFM8BB1_BLDC_PORT.OMF.CRBUILD (ASSERT)
       000000C0H.3 SFRSYM    DATA     BIT       SMB0CN0_ACKRQ
       000000FFH   SFRSYM    DATA     BYTE      VDM0CN
       000000F1H   SFRSYM    DATA     BYTE      P0MDIN
-LX51 LINKER/LOCATER V4.66.30.0                                                        01/30/2020  11:13:10  PAGE 27
+LX51 LINKER/LOCATER V4.66.30.0                                                        02/10/2020  16:02:20  PAGE 27
 
 
       00000098H.4 SFRSYM    DATA     BIT       SCON0_REN
@@ -1754,7 +1754,7 @@ SYMBOL TABLE OF MODULE:  EFM8BB1_BLDC_PORT.OMF.CRBUILD (ASSERT)
       0000008BH   SFRSYM    DATA     BYTE      TL1
       000000F9H   SFRSYM    DATA     BYTE      PCA0L
       000000C0H   SFRSYM    DATA     BIT       SMB0CN0_SI
-LX51 LINKER/LOCATER V4.66.30.0                                                        01/30/2020  11:13:10  PAGE 28
+LX51 LINKER/LOCATER V4.66.30.0                                                        02/10/2020  16:02:20  PAGE 28
 
 
       000000D0H.1 SFRSYM    DATA     BIT       PSW_F1
@@ -1819,7 +1819,7 @@ SYMBOL TABLE OF MODULE:  EFM8BB1_BLDC_PORT.OMF.CRBUILD (ASSERT)
       000000F8H.5 SFRSYM    DATA     BIT       SPI0CN0_MODF
       000000B8H.6 SFRSYM    DATA     BIT       IP_PSPI0
       0000009CH   SFRSYM    DATA     BYTE      PCA0CLR
-LX51 LINKER/LOCATER V4.66.30.0                                                        01/30/2020  11:13:10  PAGE 29
+LX51 LINKER/LOCATER V4.66.30.0                                                        02/10/2020  16:02:20  PAGE 29
 
 
       000000C8H   SFRSYM    DATA     BYTE      TMR2CN0
@@ -1884,7 +1884,7 @@ SYMBOL TABLE OF MODULE:  EFM8BB1_BLDC_PORT.OMF.CRBUILD (ASSERT)
       01001CF4H   LINE      CODE     ---       #182
       01001CF6H   LINE      CODE     ---       #183
       01001CF9H   LINE      CODE     ---       #184
-LX51 LINKER/LOCATER V4.66.30.0                                                        01/30/2020  11:13:10  PAGE 30
+LX51 LINKER/LOCATER V4.66.30.0                                                        02/10/2020  16:02:20  PAGE 30
 
 
       01001CFCH   LINE      CODE     ---       #186
@@ -1949,7 +1949,7 @@ SYMBOL TABLE OF MODULE:  EFM8BB1_BLDC_PORT.OMF.CRBUILD (ASSERT)
       01000E3BH   LINE      CODE     ---       #425
       01000E53H   LINE      CODE     ---       #427
       01000E58H   LINE      CODE     ---       #428
-LX51 LINKER/LOCATER V4.66.30.0                                                        01/30/2020  11:13:10  PAGE 31
+LX51 LINKER/LOCATER V4.66.30.0                                                        02/10/2020  16:02:20  PAGE 31
 
 
       01000E58H   LINE      CODE     ---       #429
@@ -2014,7 +2014,7 @@ SYMBOL TABLE OF MODULE:  EFM8BB1_BLDC_PORT.OMF.CRBUILD (ASSERT)
       0000005EH   SYMBOL    DATA     CHAR      PT_YIELD_FLAG
       ---         BLOCKEND  ---      ---       LVL=1
       0100152EH   LINE      CODE     ---       #544
-LX51 LINKER/LOCATER V4.66.30.0                                                        01/30/2020  11:13:10  PAGE 32
+LX51 LINKER/LOCATER V4.66.30.0                                                        02/10/2020  16:02:20  PAGE 32
 
 
       0100152EH   LINE      CODE     ---       #545
@@ -2079,7 +2079,7 @@ SYMBOL TABLE OF MODULE:  EFM8BB1_BLDC_PORT.OMF.CRBUILD (ASSERT)
       01001B68H   LINE      CODE     ---       #690
       01001B68H   LINE      CODE     ---       #691
       01001B68H   LINE      CODE     ---       #692
-LX51 LINKER/LOCATER V4.66.30.0                                                        01/30/2020  11:13:10  PAGE 33
+LX51 LINKER/LOCATER V4.66.30.0                                                        02/10/2020  16:02:20  PAGE 33
 
 
       01001B74H   LINE      CODE     ---       #693
@@ -2144,7 +2144,7 @@ SYMBOL TABLE OF MODULE:  EFM8BB1_BLDC_PORT.OMF.CRBUILD (ASSERT)
       01000A37H   LINE      CODE     ---       #785
       01000A39H   LINE      CODE     ---       #786
       01000A39H   LINE      CODE     ---       #787
-LX51 LINKER/LOCATER V4.66.30.0                                                        01/30/2020  11:13:10  PAGE 34
+LX51 LINKER/LOCATER V4.66.30.0                                                        02/10/2020  16:02:20  PAGE 34
 
 
       01000A4AH   LINE      CODE     ---       #790
@@ -2209,7 +2209,7 @@ SYMBOL TABLE OF MODULE:  EFM8BB1_BLDC_PORT.OMF.CRBUILD (ASSERT)
       01000AF9H   LINE      CODE     ---       #868
       01000AF9H   LINE      CODE     ---       #869
       01000AFCH   LINE      CODE     ---       #871
-LX51 LINKER/LOCATER V4.66.30.0                                                        01/30/2020  11:13:10  PAGE 35
+LX51 LINKER/LOCATER V4.66.30.0                                                        02/10/2020  16:02:20  PAGE 35
 
 
       01000AFFH   LINE      CODE     ---       #872
@@ -2274,7 +2274,7 @@ SYMBOL TABLE OF MODULE:  EFM8BB1_BLDC_PORT.OMF.CRBUILD (ASSERT)
       01001325H   LINE      CODE     ---       #1025
       01001326H   LINE      CODE     ---       #1026
       0100132DH   LINE      CODE     ---       #1027
-LX51 LINKER/LOCATER V4.66.30.0                                                        01/30/2020  11:13:10  PAGE 36
+LX51 LINKER/LOCATER V4.66.30.0                                                        02/10/2020  16:02:20  PAGE 36
 
 
       0100132DH   LINE      CODE     ---       #1028
@@ -2339,7 +2339,7 @@ SYMBOL TABLE OF MODULE:  EFM8BB1_BLDC_PORT.OMF.CRBUILD (ASSERT)
       000000BCH   SFRSYM    DATA     BYTE      ADC0CF
       000000C8H   SFRSYM    DATA     BIT       TMR2CN0_T2XCLK
       000000C0H.7 SFRSYM    DATA     BIT       SMB0CN0_MASTER
-LX51 LINKER/LOCATER V4.66.30.0                                                        01/30/2020  11:13:10  PAGE 37
+LX51 LINKER/LOCATER V4.66.30.0                                                        02/10/2020  16:02:20  PAGE 37
 
 
       000000F9H   SFRSYM    DATA     WORD      PCA0
@@ -2404,7 +2404,7 @@ SYMBOL TABLE OF MODULE:  EFM8BB1_BLDC_PORT.OMF.CRBUILD (ASSERT)
       000000E0H.3 SFRSYM    DATA     BIT       ACC_ACC3
       00000081H   SFRSYM    DATA     BYTE      SP
       0000009DH   SFRSYM    DATA     BYTE      CMP0MD
-LX51 LINKER/LOCATER V4.66.30.0                                                        01/30/2020  11:13:10  PAGE 38
+LX51 LINKER/LOCATER V4.66.30.0                                                        02/10/2020  16:02:20  PAGE 38
 
 
       000000E0H.4 SFRSYM    DATA     BIT       ACC_ACC4
@@ -2469,7 +2469,7 @@ SYMBOL TABLE OF MODULE:  EFM8BB1_BLDC_PORT.OMF.CRBUILD (ASSERT)
       000000CEH   SFRSYM    DATA     BYTE      CRC0CN0
       00000090H.4 SFRSYM    DATA     BIT       BSP_LED0
       0000008CH   SFRSYM    DATA     BYTE      TH0
-LX51 LINKER/LOCATER V4.66.30.0                                                        01/30/2020  11:13:10  PAGE 39
+LX51 LINKER/LOCATER V4.66.30.0                                                        02/10/2020  16:02:20  PAGE 39
 
 
       000000B8H.4 SFRSYM    DATA     BIT       IP_PS0
@@ -2534,7 +2534,7 @@ SYMBOL TABLE OF MODULE:  EFM8BB1_BLDC_PORT.OMF.CRBUILD (ASSERT)
       00000088H   SFRSYM    DATA     BIT       TCON_IT0
       000000E8H.1 SFRSYM    DATA     BIT       ADC0CN0_ADCM1
       000000EFH   SFRSYM    DATA     BYTE      RSTSRC
-LX51 LINKER/LOCATER V4.66.30.0                                                        01/30/2020  11:13:10  PAGE 40
+LX51 LINKER/LOCATER V4.66.30.0                                                        02/10/2020  16:02:20  PAGE 40
 
 
       000000FDH   SFRSYM    DATA     BYTE      P0MAT
@@ -2599,7 +2599,7 @@ SYMBOL TABLE OF MODULE:  EFM8BB1_BLDC_PORT.OMF.CRBUILD (ASSERT)
       010015E1H   LINE      CODE     ---       #220
       010015E7H   LINE      CODE     ---       #221
       010015EDH   LINE      CODE     ---       #222
-LX51 LINKER/LOCATER V4.66.30.0                                                        01/30/2020  11:13:10  PAGE 41
+LX51 LINKER/LOCATER V4.66.30.0                                                        02/10/2020  16:02:20  PAGE 41
 
 
       010015F4H   LINE      CODE     ---       #225
@@ -2664,7 +2664,7 @@ SYMBOL TABLE OF MODULE:  EFM8BB1_BLDC_PORT.OMF.CRBUILD (ASSERT)
       010016F0H   LINE      CODE     ---       #339
       010016FDH   LINE      CODE     ---       #341
       01001701H   LINE      CODE     ---       #343
-LX51 LINKER/LOCATER V4.66.30.0                                                        01/30/2020  11:13:10  PAGE 42
+LX51 LINKER/LOCATER V4.66.30.0                                                        02/10/2020  16:02:20  PAGE 42
 
 
       01001708H   LINE      CODE     ---       #345
@@ -2729,7 +2729,7 @@ SYMBOL TABLE OF MODULE:  EFM8BB1_BLDC_PORT.OMF.CRBUILD (ASSERT)
       01001655H   LINE      CODE     ---       #553
       0100165AH   LINE      CODE     ---       #555
       0100165CH   LINE      CODE     ---       #557
-LX51 LINKER/LOCATER V4.66.30.0                                                        01/30/2020  11:13:10  PAGE 43
+LX51 LINKER/LOCATER V4.66.30.0                                                        02/10/2020  16:02:20  PAGE 43
 
 
       0100165CH   LINE      CODE     ---       #558
@@ -2794,7 +2794,7 @@ SYMBOL TABLE OF MODULE:  EFM8BB1_BLDC_PORT.OMF.CRBUILD (ASSERT)
       01001E09H   LINE      CODE     ---       #672
       01001E09H   LINE      CODE     ---       #673
       01001E09H   LINE      CODE     ---       #674
-LX51 LINKER/LOCATER V4.66.30.0                                                        01/30/2020  11:13:10  PAGE 44
+LX51 LINKER/LOCATER V4.66.30.0                                                        02/10/2020  16:02:20  PAGE 44
 
 
       01001E1BH   LINE      CODE     ---       #679
@@ -2859,7 +2859,7 @@ SYMBOL TABLE OF MODULE:  EFM8BB1_BLDC_PORT.OMF.CRBUILD (ASSERT)
       000000A2H   SFRSYM    DATA     BYTE      SPI0CKR
       00000080H   SFRSYM    DATA     BYTE      P0
       000000D0H.2 SFRSYM    DATA     BIT       PSW_OV
-LX51 LINKER/LOCATER V4.66.30.0                                                        01/30/2020  11:13:10  PAGE 45
+LX51 LINKER/LOCATER V4.66.30.0                                                        02/10/2020  16:02:20  PAGE 45
 
 
       00000090H   SFRSYM    DATA     BYTE      P1
@@ -2924,7 +2924,7 @@ SYMBOL TABLE OF MODULE:  EFM8BB1_BLDC_PORT.OMF.CRBUILD (ASSERT)
       0000008EH   SFRSYM    DATA     BYTE      CKCON0
       000000E0H.1 SFRSYM    DATA     BIT       ACC_ACC1
       000000C9H   SFRSYM    DATA     BYTE      REG0CN
-LX51 LINKER/LOCATER V4.66.30.0                                                        01/30/2020  11:13:10  PAGE 46
+LX51 LINKER/LOCATER V4.66.30.0                                                        02/10/2020  16:02:20  PAGE 46
 
 
       000000DDH   SFRSYM    DATA     BYTE      CRC0IN
@@ -2989,7 +2989,7 @@ SYMBOL TABLE OF MODULE:  EFM8BB1_BLDC_PORT.OMF.CRBUILD (ASSERT)
       00000092H   SFRSYM    DATA     WORD      TMR3RL
       000000D8H   SFRSYM    DATA     BYTE      PCA0CN0
       000000E0H   SFRSYM    DATA     BYTE      ACC
-LX51 LINKER/LOCATER V4.66.30.0                                                        01/30/2020  11:13:10  PAGE 47
+LX51 LINKER/LOCATER V4.66.30.0                                                        02/10/2020  16:02:20  PAGE 47
 
 
       000000FBH   SFRSYM    DATA     WORD      PCA0CP0
@@ -3054,7 +3054,7 @@ SYMBOL TABLE OF MODULE:  EFM8BB1_BLDC_PORT.OMF.CRBUILD (ASSERT)
       00000087H   SFRSYM    DATA     BYTE      PCON0
       000000C3H   SFRSYM    DATA     BYTE      ADC0GTL
       000000C8H.6 SFRSYM    DATA     BIT       TMR2CN0_TF2L
-LX51 LINKER/LOCATER V4.66.30.0                                                        01/30/2020  11:13:10  PAGE 48
+LX51 LINKER/LOCATER V4.66.30.0                                                        02/10/2020  16:02:20  PAGE 48
 
 
       00000098H.1 SFRSYM    DATA     BIT       SCON0_TI
@@ -3119,7 +3119,7 @@ SYMBOL TABLE OF MODULE:  EFM8BB1_BLDC_PORT.OMF.CRBUILD (ASSERT)
       01001E55H   LINE      CODE     ---       #142
       01001E57H   LINE      CODE     ---       #145
       01001E59H   LINE      CODE     ---       #146
-LX51 LINKER/LOCATER V4.66.30.0                                                        01/30/2020  11:13:10  PAGE 49
+LX51 LINKER/LOCATER V4.66.30.0                                                        02/10/2020  16:02:20  PAGE 49
 
 
       ---         BLOCKEND  ---      ---       LVL=0
@@ -3184,7 +3184,7 @@ SYMBOL TABLE OF MODULE:  EFM8BB1_BLDC_PORT.OMF.CRBUILD (ASSERT)
       ---         BLOCKEND  ---      ---       LVL=0
 
       01001824H   BLOCK     CODE     ---       LVL=0
-LX51 LINKER/LOCATER V4.66.30.0                                                        01/30/2020  11:13:10  PAGE 50
+LX51 LINKER/LOCATER V4.66.30.0                                                        02/10/2020  16:02:20  PAGE 50
 
 
       01001824H   LINE      CODE     ---       #292
@@ -3249,7 +3249,7 @@ SYMBOL TABLE OF MODULE:  EFM8BB1_BLDC_PORT.OMF.CRBUILD (ASSERT)
       000000ADH   SFRSYM    DATA     BYTE      DERIVID
       000000A4H   SFRSYM    DATA     BYTE      P0MDOUT
       000000A5H   SFRSYM    DATA     BYTE      P1MDOUT
-LX51 LINKER/LOCATER V4.66.30.0                                                        01/30/2020  11:13:10  PAGE 51
+LX51 LINKER/LOCATER V4.66.30.0                                                        02/10/2020  16:02:20  PAGE 51
 
 
       000000E8H.5 SFRSYM    DATA     BIT       ADC0CN0_ADINT
@@ -3314,7 +3314,7 @@ SYMBOL TABLE OF MODULE:  EFM8BB1_BLDC_PORT.OMF.CRBUILD (ASSERT)
       000000E0H.6 SFRSYM    DATA     BIT       ACC_ACC6
       000000CCH   SFRSYM    DATA     WORD      TMR2
       000000D8H.2 SFRSYM    DATA     BIT       PCA0CN0_CCF2
-LX51 LINKER/LOCATER V4.66.30.0                                                        01/30/2020  11:13:10  PAGE 52
+LX51 LINKER/LOCATER V4.66.30.0                                                        02/10/2020  16:02:20  PAGE 52
 
 
       000000E0H.7 SFRSYM    DATA     BIT       ACC_ACC7
@@ -3379,7 +3379,7 @@ SYMBOL TABLE OF MODULE:  EFM8BB1_BLDC_PORT.OMF.CRBUILD (ASSERT)
       000000B8H.5 SFRSYM    DATA     BIT       IP_PT2
       0000008AH   SFRSYM    DATA     BYTE      TL0
       000000F8H.1 SFRSYM    DATA     BIT       SPI0CN0_TXBMT
-LX51 LINKER/LOCATER V4.66.30.0                                                        01/30/2020  11:13:10  PAGE 53
+LX51 LINKER/LOCATER V4.66.30.0                                                        02/10/2020  16:02:20  PAGE 53
 
 
       000000D0H.5 SFRSYM    DATA     BIT       PSW_F0
@@ -3444,7 +3444,7 @@ SYMBOL TABLE OF MODULE:  EFM8BB1_BLDC_PORT.OMF.CRBUILD (ASSERT)
       000000EDH   SFRSYM    DATA     BYTE      P1MAT
       000000E8H.3 SFRSYM    DATA     BIT       ADC0CN0_ADWINT
       000000E8H.4 SFRSYM    DATA     BIT       ADC0CN0_ADBUSY
-LX51 LINKER/LOCATER V4.66.30.0                                                        01/30/2020  11:13:10  PAGE 54
+LX51 LINKER/LOCATER V4.66.30.0                                                        02/10/2020  16:02:20  PAGE 54
 
 
       000000D6H   SFRSYM    DATA     BYTE      SMB0ADM
@@ -3509,7 +3509,7 @@ SYMBOL TABLE OF MODULE:  EFM8BB1_BLDC_PORT.OMF.CRBUILD (ASSERT)
       01001A13H   LINE      CODE     ---       #130
       01001A29H   LINE      CODE     ---       #131
       01001A2BH   LINE      CODE     ---       #133
-LX51 LINKER/LOCATER V4.66.30.0                                                        01/30/2020  11:13:10  PAGE 55
+LX51 LINKER/LOCATER V4.66.30.0                                                        02/10/2020  16:02:20  PAGE 55
 
 
       01001A38H   LINE      CODE     ---       #134
@@ -3574,7 +3574,7 @@ SYMBOL TABLE OF MODULE:  EFM8BB1_BLDC_PORT.OMF.CRBUILD (ASSERT)
       000000DBH   SFRSYM    DATA     BYTE      PCA0CPM1
       000000EBH   SFRSYM    DATA     BYTE      PCA0CPL2
       000000F0H.5 SFRSYM    DATA     BIT       B_B5
-LX51 LINKER/LOCATER V4.66.30.0                                                        01/30/2020  11:13:10  PAGE 56
+LX51 LINKER/LOCATER V4.66.30.0                                                        02/10/2020  16:02:20  PAGE 56
 
 
       000000DCH   SFRSYM    DATA     BYTE      PCA0CPM2
@@ -3639,7 +3639,7 @@ SYMBOL TABLE OF MODULE:  EFM8BB1_BLDC_PORT.OMF.CRBUILD (ASSERT)
       000000D4H   SFRSYM    DATA     BYTE      P0SKIP
       000000A8H.5 SFRSYM    DATA     BIT       IE_ET2
       000000D5H   SFRSYM    DATA     BYTE      P1SKIP
-LX51 LINKER/LOCATER V4.66.30.0                                                        01/30/2020  11:13:10  PAGE 57
+LX51 LINKER/LOCATER V4.66.30.0                                                        02/10/2020  16:02:20  PAGE 57
 
 
       000000E8H   SFRSYM    DATA     BYTE      ADC0CN0
@@ -3704,7 +3704,7 @@ SYMBOL TABLE OF MODULE:  EFM8BB1_BLDC_PORT.OMF.CRBUILD (ASSERT)
       00000090H.5 SFRSYM    DATA     BIT       P1_B5
       00000080H.6 SFRSYM    DATA     BIT       P0_B6
       00000090H.6 SFRSYM    DATA     BIT       P1_B6
-LX51 LINKER/LOCATER V4.66.30.0                                                        01/30/2020  11:13:10  PAGE 58
+LX51 LINKER/LOCATER V4.66.30.0                                                        02/10/2020  16:02:20  PAGE 58
 
 
       00000080H.7 SFRSYM    DATA     BIT       P0_B7
@@ -3769,7 +3769,7 @@ SYMBOL TABLE OF MODULE:  EFM8BB1_BLDC_PORT.OMF.CRBUILD (ASSERT)
       000000A3H   SFRSYM    DATA     BYTE      SPI0DAT
       000000F8H.3 SFRSYM    DATA     BIT       SPI0CN0_NSSMD1
       000000BDH   SFRSYM    DATA     WORD      ADC0
-LX51 LINKER/LOCATER V4.66.30.0                                                        01/30/2020  11:13:10  PAGE 59
+LX51 LINKER/LOCATER V4.66.30.0                                                        02/10/2020  16:02:20  PAGE 59
 
 
       000000D0H   SFRSYM    DATA     BYTE      PSW
@@ -3834,7 +3834,7 @@ SYMBOL TABLE OF MODULE:  EFM8BB1_BLDC_PORT.OMF.CRBUILD (ASSERT)
       000000C8H   SFRSYM    DATA     BIT       TMR2CN0_T2XCLK
       000000C0H.7 SFRSYM    DATA     BIT       SMB0CN0_MASTER
       000000F9H   SFRSYM    DATA     WORD      PCA0
-LX51 LINKER/LOCATER V4.66.30.0                                                        01/30/2020  11:13:10  PAGE 60
+LX51 LINKER/LOCATER V4.66.30.0                                                        02/10/2020  16:02:20  PAGE 60
 
 
       000000E6H   SFRSYM    DATA     BYTE      EIE1
@@ -3899,7 +3899,7 @@ SYMBOL TABLE OF MODULE:  EFM8BB1_BLDC_PORT.OMF.CRBUILD (ASSERT)
       00000081H   SFRSYM    DATA     BYTE      SP
       0000009DH   SFRSYM    DATA     BYTE      CMP0MD
       000000E0H.4 SFRSYM    DATA     BIT       ACC_ACC4
-LX51 LINKER/LOCATER V4.66.30.0                                                        01/30/2020  11:13:10  PAGE 61
+LX51 LINKER/LOCATER V4.66.30.0                                                        02/10/2020  16:02:20  PAGE 61
 
 
       000000B1H   SFRSYM    DATA     BYTE      LFO0CN
@@ -3964,7 +3964,7 @@ SYMBOL TABLE OF MODULE:  EFM8BB1_BLDC_PORT.OMF.CRBUILD (ASSERT)
       00000090H.4 SFRSYM    DATA     BIT       BSP_LED0
       0000008CH   SFRSYM    DATA     BYTE      TH0
       000000B8H.4 SFRSYM    DATA     BIT       IP_PS0
-LX51 LINKER/LOCATER V4.66.30.0                                                        01/30/2020  11:13:10  PAGE 62
+LX51 LINKER/LOCATER V4.66.30.0                                                        02/10/2020  16:02:20  PAGE 62
 
 
       0000008DH   SFRSYM    DATA     BYTE      TH1
@@ -4029,7 +4029,7 @@ SYMBOL TABLE OF MODULE:  EFM8BB1_BLDC_PORT.OMF.CRBUILD (ASSERT)
       000000E8H.1 SFRSYM    DATA     BIT       ADC0CN0_ADCM1
       000000EFH   SFRSYM    DATA     BYTE      RSTSRC
       000000FDH   SFRSYM    DATA     BYTE      P0MAT
-LX51 LINKER/LOCATER V4.66.30.0                                                        01/30/2020  11:13:10  PAGE 63
+LX51 LINKER/LOCATER V4.66.30.0                                                        02/10/2020  16:02:20  PAGE 63
 
 
       000000DEH   SFRSYM    DATA     BYTE      CRC0DAT
@@ -4094,7 +4094,7 @@ SYMBOL TABLE OF MODULE:  EFM8BB1_BLDC_PORT.OMF.CRBUILD (ASSERT)
       02000051H   PUBLIC    XDATA    WORD      SLW_motor_max_rpm
       0200004DH   PUBLIC    XDATA    DWORD     zc_total_per_mech_rotation
       0200004CH   PUBLIC    XDATA    BYTE      SLW_current_limit
-LX51 LINKER/LOCATER V4.66.30.0                                                        01/30/2020  11:13:10  PAGE 64
+LX51 LINKER/LOCATER V4.66.30.0                                                        02/10/2020  16:02:20  PAGE 64
 
 
       00000021H.0 PUBLIC    BIT      BIT       speed_updated
@@ -4159,7 +4159,7 @@ SYMBOL TABLE OF MODULE:  EFM8BB1_BLDC_PORT.OMF.CRBUILD (ASSERT)
       000000C0H.7 SFRSYM    DATA     BIT       SMB0CN0_MASTER
       000000F9H   SFRSYM    DATA     WORD      PCA0
       000000E6H   SFRSYM    DATA     BYTE      EIE1
-LX51 LINKER/LOCATER V4.66.30.0                                                        01/30/2020  11:13:10  PAGE 65
+LX51 LINKER/LOCATER V4.66.30.0                                                        02/10/2020  16:02:20  PAGE 65
 
 
       000000C0H.1 SFRSYM    DATA     BIT       SMB0CN0_ACK
@@ -4224,7 +4224,7 @@ SYMBOL TABLE OF MODULE:  EFM8BB1_BLDC_PORT.OMF.CRBUILD (ASSERT)
       0000009DH   SFRSYM    DATA     BYTE      CMP0MD
       000000E0H.4 SFRSYM    DATA     BIT       ACC_ACC4
       000000B1H   SFRSYM    DATA     BYTE      LFO0CN
-LX51 LINKER/LOCATER V4.66.30.0                                                        01/30/2020  11:13:10  PAGE 66
+LX51 LINKER/LOCATER V4.66.30.0                                                        02/10/2020  16:02:20  PAGE 66
 
 
       000000ABH   SFRSYM    DATA     BYTE      CMP1MD
@@ -4289,7 +4289,7 @@ SYMBOL TABLE OF MODULE:  EFM8BB1_BLDC_PORT.OMF.CRBUILD (ASSERT)
       0000008CH   SFRSYM    DATA     BYTE      TH0
       000000B8H.4 SFRSYM    DATA     BIT       IP_PS0
       0000008DH   SFRSYM    DATA     BYTE      TH1
-LX51 LINKER/LOCATER V4.66.30.0                                                        01/30/2020  11:13:10  PAGE 67
+LX51 LINKER/LOCATER V4.66.30.0                                                        02/10/2020  16:02:20  PAGE 67
 
 
       000000FAH   SFRSYM    DATA     BYTE      PCA0H
@@ -4354,7 +4354,7 @@ SYMBOL TABLE OF MODULE:  EFM8BB1_BLDC_PORT.OMF.CRBUILD (ASSERT)
       000000EFH   SFRSYM    DATA     BYTE      RSTSRC
       000000FDH   SFRSYM    DATA     BYTE      P0MAT
       000000DEH   SFRSYM    DATA     BYTE      CRC0DAT
-LX51 LINKER/LOCATER V4.66.30.0                                                        01/30/2020  11:13:10  PAGE 68
+LX51 LINKER/LOCATER V4.66.30.0                                                        02/10/2020  16:02:20  PAGE 68
 
 
       00000088H.2 SFRSYM    DATA     BIT       TCON_IT1
@@ -4419,7 +4419,7 @@ SYMBOL TABLE OF MODULE:  EFM8BB1_BLDC_PORT.OMF.CRBUILD (ASSERT)
       01001B00H   LINE      CODE     ---       #277
       01001B03H   LINE      CODE     ---       #278
       01001B06H   LINE      CODE     ---       #279
-LX51 LINKER/LOCATER V4.66.30.0                                                        01/30/2020  11:13:10  PAGE 69
+LX51 LINKER/LOCATER V4.66.30.0                                                        02/10/2020  16:02:20  PAGE 69
 
 
       01001B09H   LINE      CODE     ---       #280
@@ -4484,7 +4484,7 @@ SYMBOL TABLE OF MODULE:  EFM8BB1_BLDC_PORT.OMF.CRBUILD (ASSERT)
       0100198FH   LINE      CODE     ---       #406
       0100198FH   LINE      CODE     ---       #407
       0100198FH   LINE      CODE     ---       #411
-LX51 LINKER/LOCATER V4.66.30.0                                                        01/30/2020  11:13:10  PAGE 70
+LX51 LINKER/LOCATER V4.66.30.0                                                        02/10/2020  16:02:20  PAGE 70
 
 
       01001991H   LINE      CODE     ---       #413
@@ -4549,7 +4549,7 @@ SYMBOL TABLE OF MODULE:  EFM8BB1_BLDC_PORT.OMF.CRBUILD (ASSERT)
       0100175FH   LINE      CODE     ---       #497
       01001761H   LINE      CODE     ---       #498
       01001763H   LINE      CODE     ---       #500
-LX51 LINKER/LOCATER V4.66.30.0                                                        01/30/2020  11:13:10  PAGE 71
+LX51 LINKER/LOCATER V4.66.30.0                                                        02/10/2020  16:02:20  PAGE 71
 
 
       01001763H   LINE      CODE     ---       #501
@@ -4614,7 +4614,7 @@ SYMBOL TABLE OF MODULE:  EFM8BB1_BLDC_PORT.OMF.CRBUILD (ASSERT)
       ---         BLOCKEND  ---      ---       LVL=0
 
       010006D9H   BLOCK     CODE     ---       LVL=0
-LX51 LINKER/LOCATER V4.66.30.0                                                        01/30/2020  11:13:10  PAGE 72
+LX51 LINKER/LOCATER V4.66.30.0                                                        02/10/2020  16:02:20  PAGE 72
 
 
       010006D9H   BLOCK     CODE     NEAR LAB  LVL=1
@@ -4679,7 +4679,7 @@ SYMBOL TABLE OF MODULE:  EFM8BB1_BLDC_PORT.OMF.CRBUILD (ASSERT)
       010007F3H   LINE      CODE     ---       #708
       010007F3H   LINE      CODE     ---       #709
       010007F8H   LINE      CODE     ---       #710
-LX51 LINKER/LOCATER V4.66.30.0                                                        01/30/2020  11:13:10  PAGE 73
+LX51 LINKER/LOCATER V4.66.30.0                                                        02/10/2020  16:02:20  PAGE 73
 
 
       010007F8H   LINE      CODE     ---       #711
@@ -4744,7 +4744,7 @@ SYMBOL TABLE OF MODULE:  EFM8BB1_BLDC_PORT.OMF.CRBUILD (ASSERT)
       010008B2H   LINE      CODE     ---       #805
       010008B7H   LINE      CODE     ---       #806
       010008BAH   LINE      CODE     ---       #807
-LX51 LINKER/LOCATER V4.66.30.0                                                        01/30/2020  11:13:10  PAGE 74
+LX51 LINKER/LOCATER V4.66.30.0                                                        02/10/2020  16:02:20  PAGE 74
 
 
       010008BEH   LINE      CODE     ---       #808
@@ -4809,7 +4809,7 @@ SYMBOL TABLE OF MODULE:  EFM8BB1_BLDC_PORT.OMF.CRBUILD (ASSERT)
       01000994H   LINE      CODE     ---       #901
       01000996H   LINE      CODE     ---       #904
       01000999H   LINE      CODE     ---       #905
-LX51 LINKER/LOCATER V4.66.30.0                                                        01/30/2020  11:13:10  PAGE 75
+LX51 LINKER/LOCATER V4.66.30.0                                                        02/10/2020  16:02:20  PAGE 75
 
 
       0100099CH   LINE      CODE     ---       #907
@@ -4874,7 +4874,7 @@ SYMBOL TABLE OF MODULE:  EFM8BB1_BLDC_PORT.OMF.CRBUILD (ASSERT)
       01001231H   LINE      CODE     ---       #1007
       01001231H   LINE      CODE     ---       #1017
       01001238H   LINE      CODE     ---       #1054
-LX51 LINKER/LOCATER V4.66.30.0                                                        01/30/2020  11:13:10  PAGE 76
+LX51 LINKER/LOCATER V4.66.30.0                                                        02/10/2020  16:02:20  PAGE 76
 
 
       0100123EH   LINE      CODE     ---       #1055
@@ -4939,7 +4939,7 @@ SYMBOL TABLE OF MODULE:  EFM8BB1_BLDC_PORT.OMF.CRBUILD (ASSERT)
       01000B74H   LINE      CODE     ---       #1151
       01000B74H   LINE      CODE     ---       #1155
       01000B7CH   LINE      CODE     ---       #1156
-LX51 LINKER/LOCATER V4.66.30.0                                                        01/30/2020  11:13:10  PAGE 77
+LX51 LINKER/LOCATER V4.66.30.0                                                        02/10/2020  16:02:20  PAGE 77
 
 
       01000B7CH   LINE      CODE     ---       #1158
@@ -5004,7 +5004,7 @@ SYMBOL TABLE OF MODULE:  EFM8BB1_BLDC_PORT.OMF.CRBUILD (ASSERT)
       01000D08H   LINE      CODE     ---       #1247
       01000D08H   LINE      CODE     ---       #1249
       01000D16H   LINE      CODE     ---       #1250
-LX51 LINKER/LOCATER V4.66.30.0                                                        01/30/2020  11:13:10  PAGE 78
+LX51 LINKER/LOCATER V4.66.30.0                                                        02/10/2020  16:02:20  PAGE 78
 
 
       01000D16H   LINE      CODE     ---       #1251
@@ -5069,7 +5069,7 @@ SYMBOL TABLE OF MODULE:  EFM8BB1_BLDC_PORT.OMF.CRBUILD (ASSERT)
       010003D5H   LINE      CODE     ---       #1342
       010003EDH   LINE      CODE     ---       #1343
       010003EFH   LINE      CODE     ---       #1345
-LX51 LINKER/LOCATER V4.66.30.0                                                        01/30/2020  11:13:10  PAGE 79
+LX51 LINKER/LOCATER V4.66.30.0                                                        02/10/2020  16:02:20  PAGE 79
 
 
       010003EFH   LINE      CODE     ---       #1346
@@ -5134,7 +5134,7 @@ SYMBOL TABLE OF MODULE:  EFM8BB1_BLDC_PORT.OMF.CRBUILD (ASSERT)
       01001084H   LINE      CODE     ---       #1451
       01001086H   LINE      CODE     ---       #1453
       01001086H   LINE      CODE     ---       #1454
-LX51 LINKER/LOCATER V4.66.30.0                                                        01/30/2020  11:13:10  PAGE 80
+LX51 LINKER/LOCATER V4.66.30.0                                                        02/10/2020  16:02:20  PAGE 80
 
 
       0100108CH   LINE      CODE     ---       #1455
@@ -5199,7 +5199,7 @@ SYMBOL TABLE OF MODULE:  EFM8BB1_BLDC_PORT.OMF.CRBUILD (ASSERT)
       01001142H   LINE      CODE     ---       #1527
       ---         BLOCKEND  ---      ---       LVL=0
 
-LX51 LINKER/LOCATER V4.66.30.0                                                        01/30/2020  11:13:10  PAGE 81
+LX51 LINKER/LOCATER V4.66.30.0                                                        02/10/2020  16:02:20  PAGE 81
 
 
       ---         MODULE    ---      ---       MTRAPP
@@ -5264,7 +5264,7 @@ SYMBOL TABLE OF MODULE:  EFM8BB1_BLDC_PORT.OMF.CRBUILD (ASSERT)
       000000E1H   SFRSYM    DATA     BYTE      XBR0
       000000C1H   SFRSYM    DATA     BYTE      SMB0CF
       000000E2H   SFRSYM    DATA     BYTE      XBR1
-LX51 LINKER/LOCATER V4.66.30.0                                                        01/30/2020  11:13:10  PAGE 82
+LX51 LINKER/LOCATER V4.66.30.0                                                        02/10/2020  16:02:20  PAGE 82
 
 
       000000C0H.5 SFRSYM    DATA     BIT       SMB0CN0_STA
@@ -5329,7 +5329,7 @@ SYMBOL TABLE OF MODULE:  EFM8BB1_BLDC_PORT.OMF.CRBUILD (ASSERT)
       000000A9H   SFRSYM    DATA     BYTE      CLKSEL
       000000F8H   SFRSYM    DATA     BIT       SPI0CN0_SPIEN
       000000F0H   SFRSYM    DATA     BYTE      B
-LX51 LINKER/LOCATER V4.66.30.0                                                        01/30/2020  11:13:10  PAGE 83
+LX51 LINKER/LOCATER V4.66.30.0                                                        02/10/2020  16:02:20  PAGE 83
 
 
       000000BEH   SFRSYM    DATA     BYTE      ADC0H
@@ -5394,7 +5394,7 @@ SYMBOL TABLE OF MODULE:  EFM8BB1_BLDC_PORT.OMF.CRBUILD (ASSERT)
       000000D0H.6 SFRSYM    DATA     BIT       PSW_AC
       000000F8H   SFRSYM    DATA     BYTE      SPI0CN0
       000000C7H   SFRSYM    DATA     BYTE      HFO0CAL
-LX51 LINKER/LOCATER V4.66.30.0                                                        01/30/2020  11:13:10  PAGE 84
+LX51 LINKER/LOCATER V4.66.30.0                                                        02/10/2020  16:02:20  PAGE 84
 
 
       00000088H.5 SFRSYM    DATA     BIT       TCON_TF0
@@ -5459,7 +5459,7 @@ SYMBOL TABLE OF MODULE:  EFM8BB1_BLDC_PORT.OMF.CRBUILD (ASSERT)
       00000022H.4 SYMBOL    BIT      BIT       start_by_pc
       00000068H   SYMBOL    DATA     WORD      prev_target_rpm
       0200008FH   SYMBOL    XDATA    WORD      read_speed_interval
-LX51 LINKER/LOCATER V4.66.30.0                                                        01/30/2020  11:13:10  PAGE 85
+LX51 LINKER/LOCATER V4.66.30.0                                                        02/10/2020  16:02:20  PAGE 85
 
 
 
@@ -5524,7 +5524,7 @@ SYMBOL TABLE OF MODULE:  EFM8BB1_BLDC_PORT.OMF.CRBUILD (ASSERT)
       01000FE7H   LINE      CODE     ---       #171
       01000FF1H   LINE      CODE     ---       #176
       01000FF1H   LINE      CODE     ---       #177
-LX51 LINKER/LOCATER V4.66.30.0                                                        01/30/2020  11:13:10  PAGE 86
+LX51 LINKER/LOCATER V4.66.30.0                                                        02/10/2020  16:02:20  PAGE 86
 
 
       01000FF4H   LINE      CODE     ---       #185
@@ -5589,7 +5589,7 @@ SYMBOL TABLE OF MODULE:  EFM8BB1_BLDC_PORT.OMF.CRBUILD (ASSERT)
       010011A6H   LINE      CODE     ---       #288
       010011A8H   LINE      CODE     ---       #290
       010011A8H   LINE      CODE     ---       #291
-LX51 LINKER/LOCATER V4.66.30.0                                                        01/30/2020  11:13:10  PAGE 87
+LX51 LINKER/LOCATER V4.66.30.0                                                        02/10/2020  16:02:20  PAGE 87
 
 
       010011AEH   LINE      CODE     ---       #292
@@ -5654,7 +5654,7 @@ SYMBOL TABLE OF MODULE:  EFM8BB1_BLDC_PORT.OMF.CRBUILD (ASSERT)
       000000ECH   SFRSYM    DATA     BYTE      PCA0CPH2
       000000A0H.1 SFRSYM    DATA     BIT       BTN0
       000000F0H.1 SFRSYM    DATA     BIT       B_B1
-LX51 LINKER/LOCATER V4.66.30.0                                                        01/30/2020  11:13:10  PAGE 88
+LX51 LINKER/LOCATER V4.66.30.0                                                        02/10/2020  16:02:20  PAGE 88
 
 
       000000C3H   SFRSYM    DATA     WORD      ADC0GT
@@ -5719,7 +5719,7 @@ SYMBOL TABLE OF MODULE:  EFM8BB1_BLDC_PORT.OMF.CRBUILD (ASSERT)
       000000F8H.4 SFRSYM    DATA     BIT       SPI0CN0_RXOVRN
       000000D0H.4 SFRSYM    DATA     BIT       PSW_RS1
       000000E8H.7 SFRSYM    DATA     BIT       ADC0CN0_ADEN
-LX51 LINKER/LOCATER V4.66.30.0                                                        01/30/2020  11:13:10  PAGE 89
+LX51 LINKER/LOCATER V4.66.30.0                                                        02/10/2020  16:02:20  PAGE 89
 
 
       00000089H   SFRSYM    DATA     BYTE      TMOD
@@ -5784,7 +5784,7 @@ SYMBOL TABLE OF MODULE:  EFM8BB1_BLDC_PORT.OMF.CRBUILD (ASSERT)
       00000090H.1 SFRSYM    DATA     BIT       P1_B1
       00000080H.2 SFRSYM    DATA     BIT       P0_B2
       000000BFH   SFRSYM    DATA     BYTE      CMP1CN0
-LX51 LINKER/LOCATER V4.66.30.0                                                        01/30/2020  11:13:10  PAGE 90
+LX51 LINKER/LOCATER V4.66.30.0                                                        02/10/2020  16:02:20  PAGE 90
 
 
       00000088H.3 SFRSYM    DATA     BIT       TCON_IE1
@@ -5849,7 +5849,7 @@ SYMBOL TABLE OF MODULE:  EFM8BB1_BLDC_PORT.OMF.CRBUILD (ASSERT)
       00000095H   SFRSYM    DATA     BYTE      TMR3H
       000000D3H   SFRSYM    DATA     BYTE      CRC0CNT
       00000096H   SFRSYM    DATA     BYTE      PCA0POL
-LX51 LINKER/LOCATER V4.66.30.0                                                        01/30/2020  11:13:10  PAGE 91
+LX51 LINKER/LOCATER V4.66.30.0                                                        02/10/2020  16:02:20  PAGE 91
 
 
       000000CCH   SFRSYM    DATA     BYTE      TMR2L
@@ -5914,7 +5914,7 @@ SYMBOL TABLE OF MODULE:  EFM8BB1_BLDC_PORT.OMF.CRBUILD (ASSERT)
       010004F6H   LINE      CODE     ---       #113
       010004F6H   LINE      CODE     ---       #114
       0100051EH   LINE      CODE     ---       #116
-LX51 LINKER/LOCATER V4.66.30.0                                                        01/30/2020  11:13:10  PAGE 92
+LX51 LINKER/LOCATER V4.66.30.0                                                        02/10/2020  16:02:20  PAGE 92
 
 
       0100051EH   LINE      CODE     ---       #117
@@ -5979,7 +5979,7 @@ SYMBOL TABLE OF MODULE:  EFM8BB1_BLDC_PORT.OMF.CRBUILD (ASSERT)
       00000097H   SFRSYM    DATA     BYTE      WDTCN
       000000A0H   SFRSYM    DATA     BYTE      P2
       000000BCH   SFRSYM    DATA     BYTE      ADC0CF
-LX51 LINKER/LOCATER V4.66.30.0                                                        01/30/2020  11:13:10  PAGE 93
+LX51 LINKER/LOCATER V4.66.30.0                                                        02/10/2020  16:02:20  PAGE 93
 
 
       000000C8H   SFRSYM    DATA     BIT       TMR2CN0_T2XCLK
@@ -6044,7 +6044,7 @@ SYMBOL TABLE OF MODULE:  EFM8BB1_BLDC_PORT.OMF.CRBUILD (ASSERT)
       000000C8H.2 SFRSYM    DATA     BIT       TMR2CN0_TR2
       000000E0H.2 SFRSYM    DATA     BIT       ACC_ACC2
       000000E0H.3 SFRSYM    DATA     BIT       ACC_ACC3
-LX51 LINKER/LOCATER V4.66.30.0                                                        01/30/2020  11:13:10  PAGE 94
+LX51 LINKER/LOCATER V4.66.30.0                                                        02/10/2020  16:02:20  PAGE 94
 
 
       00000081H   SFRSYM    DATA     BYTE      SP
@@ -6109,7 +6109,7 @@ SYMBOL TABLE OF MODULE:  EFM8BB1_BLDC_PORT.OMF.CRBUILD (ASSERT)
       000000E9H   SFRSYM    DATA     WORD      PCA0CP1
       000000EBH   SFRSYM    DATA     WORD      PCA0CP2
       000000CEH   SFRSYM    DATA     BYTE      CRC0CN0
-LX51 LINKER/LOCATER V4.66.30.0                                                        01/30/2020  11:13:10  PAGE 95
+LX51 LINKER/LOCATER V4.66.30.0                                                        02/10/2020  16:02:20  PAGE 95
 
 
       00000090H.4 SFRSYM    DATA     BIT       BSP_LED0
@@ -6174,7 +6174,7 @@ SYMBOL TABLE OF MODULE:  EFM8BB1_BLDC_PORT.OMF.CRBUILD (ASSERT)
       000000E8H   SFRSYM    DATA     BIT       ADC0CN0_ADCM0
       000000C6H   SFRSYM    DATA     BYTE      ADC0LTH
       00000088H   SFRSYM    DATA     BIT       TCON_IT0
-LX51 LINKER/LOCATER V4.66.30.0                                                        01/30/2020  11:13:10  PAGE 96
+LX51 LINKER/LOCATER V4.66.30.0                                                        02/10/2020  16:02:20  PAGE 96
 
 
       000000E8H.1 SFRSYM    DATA     BIT       ADC0CN0_ADCM1
@@ -6239,7 +6239,7 @@ SYMBOL TABLE OF MODULE:  EFM8BB1_BLDC_PORT.OMF.CRBUILD (ASSERT)
       01001C90H   LINE      CODE     ---       #95
       01001C93H   LINE      CODE     ---       #96
       01001C95H   LINE      CODE     ---       #97
-LX51 LINKER/LOCATER V4.66.30.0                                                        01/30/2020  11:13:10  PAGE 97
+LX51 LINKER/LOCATER V4.66.30.0                                                        02/10/2020  16:02:20  PAGE 97
 
 
       01001C97H   LINE      CODE     ---       #99
@@ -6304,7 +6304,7 @@ SYMBOL TABLE OF MODULE:  EFM8BB1_BLDC_PORT.OMF.CRBUILD (ASSERT)
       01001410H   LINE      CODE     ---       #220
       ---         BLOCKEND  ---      ---       LVL=0
 
-LX51 LINKER/LOCATER V4.66.30.0                                                        01/30/2020  11:13:10  PAGE 98
+LX51 LINKER/LOCATER V4.66.30.0                                                        02/10/2020  16:02:20  PAGE 98
 
 
       010014A0H   BLOCK     CODE     ---       LVL=0
@@ -6369,7 +6369,7 @@ SYMBOL TABLE OF MODULE:  EFM8BB1_BLDC_PORT.OMF.CRBUILD (ASSERT)
       000000D0H.2 SFRSYM    DATA     BIT       PSW_OV
       00000090H   SFRSYM    DATA     BYTE      P1
       00000097H   SFRSYM    DATA     BYTE      WDTCN
-LX51 LINKER/LOCATER V4.66.30.0                                                        01/30/2020  11:13:10  PAGE 99
+LX51 LINKER/LOCATER V4.66.30.0                                                        02/10/2020  16:02:20  PAGE 99
 
 
       000000A0H   SFRSYM    DATA     BYTE      P2
@@ -6434,7 +6434,7 @@ SYMBOL TABLE OF MODULE:  EFM8BB1_BLDC_PORT.OMF.CRBUILD (ASSERT)
       000000C9H   SFRSYM    DATA     BYTE      REG0CN
       000000DDH   SFRSYM    DATA     BYTE      CRC0IN
       000000C8H.2 SFRSYM    DATA     BIT       TMR2CN0_TR2
-LX51 LINKER/LOCATER V4.66.30.0                                                        01/30/2020  11:13:10  PAGE 100
+LX51 LINKER/LOCATER V4.66.30.0                                                        02/10/2020  16:02:20  PAGE 100
 
 
       000000E0H.2 SFRSYM    DATA     BIT       ACC_ACC2
@@ -6499,7 +6499,7 @@ SYMBOL TABLE OF MODULE:  EFM8BB1_BLDC_PORT.OMF.CRBUILD (ASSERT)
       000000E0H   SFRSYM    DATA     BYTE      ACC
       000000FBH   SFRSYM    DATA     WORD      PCA0CP0
       000000E9H   SFRSYM    DATA     WORD      PCA0CP1
-LX51 LINKER/LOCATER V4.66.30.0                                                        01/30/2020  11:13:10  PAGE 101
+LX51 LINKER/LOCATER V4.66.30.0                                                        02/10/2020  16:02:20  PAGE 101
 
 
       000000EBH   SFRSYM    DATA     WORD      PCA0CP2
@@ -6564,7 +6564,7 @@ SYMBOL TABLE OF MODULE:  EFM8BB1_BLDC_PORT.OMF.CRBUILD (ASSERT)
       000000C8H.6 SFRSYM    DATA     BIT       TMR2CN0_TF2L
       00000098H.1 SFRSYM    DATA     BIT       SCON0_TI
       000000E8H   SFRSYM    DATA     BIT       ADC0CN0_ADCM0
-LX51 LINKER/LOCATER V4.66.30.0                                                        01/30/2020  11:13:10  PAGE 102
+LX51 LINKER/LOCATER V4.66.30.0                                                        02/10/2020  16:02:20  PAGE 102
 
 
       000000C6H   SFRSYM    DATA     BYTE      ADC0LTH
@@ -6629,7 +6629,7 @@ SYMBOL TABLE OF MODULE:  EFM8BB1_BLDC_PORT.OMF.CRBUILD (ASSERT)
       01001E6CH   BLOCK     CODE     ---       LVL=0
       01001E6CH   LINE      CODE     ---       #73
       01001E6CH   LINE      CODE     ---       #74
-LX51 LINKER/LOCATER V4.66.30.0                                                        01/30/2020  11:13:10  PAGE 103
+LX51 LINKER/LOCATER V4.66.30.0                                                        02/10/2020  16:02:20  PAGE 103
 
 
       01001E6CH   LINE      CODE     ---       #76
@@ -6694,7 +6694,7 @@ SYMBOL TABLE OF MODULE:  EFM8BB1_BLDC_PORT.OMF.CRBUILD (ASSERT)
 
       ---         MODULE    ---      ---       ?C?LSTKXDATA
       01000252H   PUBLIC    CODE     ---       ?C?LSTKXDATA
-LX51 LINKER/LOCATER V4.66.30.0                                                        01/30/2020  11:13:10  PAGE 104
+LX51 LINKER/LOCATER V4.66.30.0                                                        02/10/2020  16:02:20  PAGE 104
 
 
 

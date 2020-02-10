@@ -1,4 +1,4 @@
-C51 COMPILER V9.53.0.0   MTRPID                                                            01/30/2020 11:13:09 PAGE 1   
+C51 COMPILER V9.53.0.0   MTRPID                                                            02/10/2020 16:02:19 PAGE 1   
 
 
 C51 COMPILER V9.53.0.0, COMPILATION OF MODULE MTRPID
@@ -63,7 +63,7 @@ line level    source
   46   1      }
   47          
   48          //------------------------------------------------------------------------------
-C51 COMPILER V9.53.0.0   MTRPID                                                            01/30/2020 11:13:09 PAGE 2   
+C51 COMPILER V9.53.0.0   MTRPID                                                            02/10/2020 16:02:19 PAGE 2   
 
   49          // void MTR_pid_init(void)
   50          //------------------------------------------------------------------------------
@@ -128,7 +128,7 @@ line level    source
  109          //     PI control for computing the appropriate PWM value to be applied
  110          //     to the sensorless BLDC motor PWM signal.
  111          //------------------------------------------------------------------------------
-C51 COMPILER V9.53.0.0   MTRPID                                                            01/30/2020 11:13:09 PAGE 3   
+C51 COMPILER V9.53.0.0   MTRPID                                                            02/10/2020 16:02:19 PAGE 3   
 
  112          static U8 MTR_pid_compute_thread(void)
  113          {
@@ -193,7 +193,7 @@ line level    source
  172   6                      newpwm = tmpval.U16[LSB];
  173   6                  }
  174   5                  newpwm += SLR_pwm_duty;
-C51 COMPILER V9.53.0.0   MTRPID                                                            01/30/2020 11:13:09 PAGE 4   
+C51 COMPILER V9.53.0.0   MTRPID                                                            02/10/2020 16:02:19 PAGE 4   
 
  175   5                  if (newpwm < SLR_pwm_duty)
  176   5                  {

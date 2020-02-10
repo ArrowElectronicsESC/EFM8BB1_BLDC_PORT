@@ -1,4 +1,4 @@
-C51 COMPILER V9.53.0.0   TIMERS                                                            01/30/2020 11:13:10 PAGE 1   
+C51 COMPILER V9.53.0.0   TIMERS                                                            02/10/2020 16:02:20 PAGE 1   
 
 
 C51 COMPILER V9.53.0.0, COMPILATION OF MODULE TIMERS
@@ -63,7 +63,7 @@ line level    source
   46          //
   47          // This function configures the Timer0 as a 16-bit timer with auto-reload.
   48          //-----------------------------------------------------------------------------
-C51 COMPILER V9.53.0.0   TIMERS                                                            01/30/2020 11:13:10 PAGE 2   
+C51 COMPILER V9.53.0.0   TIMERS                                                            02/10/2020 16:02:20 PAGE 2   
 
   49          void TMR_init_timer0(void)
   50          {
@@ -128,7 +128,7 @@ line level    source
  109   1          {
  110   2              while (!(TMR3CN0 & 0x80));   // Wait for overflow
  111   2              TMR3CN0 &= ~0x80;            // Clear the overflow indicator
-C51 COMPILER V9.53.0.0   TIMERS                                                            01/30/2020 11:13:10 PAGE 3   
+C51 COMPILER V9.53.0.0   TIMERS                                                            02/10/2020 16:02:20 PAGE 3   
 
  112   2          }
  113   1          // Stop Timer 3
